@@ -7,7 +7,7 @@ import { data } from "autoprefixer";
 // https://api.zaocabs.in/api'
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.zaocabs.in/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
   tagTypes: ["user", "state", "category", "trip", "wallet", "Vehicle",'notification','feedback','carpoolSeat'],
   endpoints: (builder) => ({
     getDriver: builder.query({
