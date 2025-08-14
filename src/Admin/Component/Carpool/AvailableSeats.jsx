@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Eye, Edit, Trash2, ArrowLeft, Car } from 'lucide-react';
-import {useGetAllCarpoolSeatesQuery,useEditCarpoolseatMutation,useDeleteCarpoolVehicleMutation, useGetCarpoolSeatsQuery } from '../../Redux/Api';
+import {useGetAllCarpoolSeatesQuery,useEditCarpoolseatMutation,useDeleteCarpoolVehicleMutation, useGetCarpoolSeatsQuery, useDeleteSeatConfigMutation } from '../../Redux/Api';
 import Sidebar from '../Sidebar';
 import { useNavigate } from 'react-router-dom';
 
@@ -250,6 +250,7 @@ const AvailableSeates = () => {
   const { data: data, error, isLoading, refetch } = useGetCarpoolSeatsQuery();
   const [editCarpoolSeat, { isLoading: isEditing }] = useEditCarpoolseatMutation();
   const [deleteCarpoolVehicle, { isLoading: isDeleting }] = useDeleteCarpoolVehicleMutation();
+  const [deleteSeatConfig] =useDeleteSeatConfigMutation()
 
   // const data = date?.data || [];
   
@@ -278,17 +279,35 @@ const AvailableSeates = () => {
     return 'Other';
   };
 
+
+  const deleteSeatconfig = async(deleteConfigId) =>{
+    const payloadData ={
+      id:deleteConfigId
+    }
+    try {
+    const {data,error} = await deleteSeatConfig(payloadData)
+    if(data){
+      refetch()
+      alert("Seat deleted succesfully");
+    }
+    if(error){
+      alert("error in deleting seat");
+    }
+  } catch (error) {
+      
+  }
+
+  }
+
   const handleViewConfig = (config) => {
     setSelectedConfig(config);
     setShowViewModal(true);
   };
-
   // Integrated Edit Function
   const handleEdit = async (configId) => {
     try {
       // Navigate to edit page with config ID
       navigate(`/carpool/editSeat/${configId}`);
-      
       // Alternative: If you want to edit inline, you could open an edit modal
       // setSelectedConfigForEdit(config);
       // setShowEditModal(true);
@@ -602,7 +621,7 @@ const AvailableSeates = () => {
                                       className={`w-3 h-3 cursor-pointer hover:text-red-800 ${
                                         isDeleting ? 'text-gray-400 cursor-not-allowed' : 'text-red-600'
                                       }`}
-                                      onClick={() => !isDeleting && handleDelete(config)}
+                                      onClick={() => !isDeleting && deleteSeatconfig(config._id)}
                                       title="Delete Configuration"
                                     />
                                   </div>

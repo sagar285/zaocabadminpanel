@@ -1166,6 +1166,13 @@ getCategoryAllVehicle:builder.query({
   })
 }),
 
+getSingleCarpoolSeatConfig:builder.query({
+  query:(id)=>({
+    url:`/carpoolSeat/${id}`,
+    method:"GET"
+  })
+}),
+
 
 deleteCategoryAddVehicle:builder.mutation({
   query:(id)=>({
@@ -1181,28 +1188,34 @@ query:({id,updatedData })=>({
   method:"PUT",
   body:updatedData
 })
-})
+}),
+
+UpdateSeatConfig:builder.mutation({
+  query:(data)=>({
+    url:`/carpoolSeat/update`,
+    method:"POST",
+    body:data
+  })
+}),
 
 
-
-
-
+ deleteSeatConfig : builder.mutation({
+  query:(data) =>({
+    url:`/carpoolSeat/delete`,
+    method:"DELETE",
+    body:data
+  })
+ })
   }),
-
-
-
 });
-
-
-
-
-
-
     
   
 
 
 export const {
+  useDeleteSeatConfigMutation,
+  useUpdateSeatConfigMutation,
+  useGetSingleCarpoolSeatConfigQuery,
   useCreateSeatConfigMutation,
   useGetpercentagecutQuery,
   useAddpercentagecutMutation,

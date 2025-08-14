@@ -68,6 +68,8 @@ import ReportManagementSystem from "./Admin/Component/Report/AddReportReason.jsx
 import MembershipList from "./Admin/Component/Passenger/MembershipList.jsx";
 import FollowersList from "./Admin/Component/Passenger/FollowersList.jsx";
 import FollowingList from "./Admin/Component/Passenger/FollowingList.jsx";
+import EditSeat from "./Admin/Component/Carpool/EditSeat.jsx";
+import EditFareManagementScree2 from "./Admin/pages/EditFare.jsx";
 
 const App = () => {
   return (
@@ -159,6 +161,8 @@ const App = () => {
       <Route path="/other-services" element={<OtherServices />} />
       <Route path="/other-services/:id" element={<ViewAsPage />} />
 
+      <Route path="/faretrip/:id" element={<EditFareManagementScree2/>}/>
+
       <Route path="/vehicle/:id" element={<VehiclePage />} />
       <Route path="/carpool/brand-management" element={<BrandManagement />} />
       <Route
@@ -169,6 +173,11 @@ const App = () => {
       <Route path="/seat-management" element={<ManageVehicleSeats />} />
 
       <Route path="/carpool/available-seats" element={<AvailableSeates />} />
+
+
+      <Route path="/carpool/editSeat/:id" element={<EditSeat />} />
+
+
       <Route
         path="/carpool/available-seats/viewavailale-seat"
         element={<AvailableSeatDetails />}
