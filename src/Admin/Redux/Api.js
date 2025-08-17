@@ -187,11 +187,13 @@ editVechileCategory:builder.mutation({
       providesTags: ["trip"],
     }),
     getTripsAdminModel: builder.query({
-      query: () => ({
+      query: ({ page = 1, limit = 10 } = {}) => ({
         url: "/trip/getAdminTripsFromAdminModel",
+        params: { page, limit },
       }),
       providesTags: ["trip"],
     }),
+
 
     getAllTravel: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({

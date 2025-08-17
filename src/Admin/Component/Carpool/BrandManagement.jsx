@@ -20,7 +20,7 @@ import {
   useGetAllVehicleCategoryQuery,
   useUpdateCarpoolBrandMutation
 } from "../../Redux/Api.js";
-
+import SweetAlert2 from 'react-sweetalert2';
 
 
 
@@ -290,7 +290,6 @@ const EditBrandModal = ({ isOpen, onClose, brand, onSave }) => {
 // Add Brand Modal Component
 const AddBrandModal = ({ isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState({
-    orderNo: "",
     brandName: "",
     seats: "",
     status: "1",
@@ -309,7 +308,7 @@ const [errorHandle,seterrorHandle] =useState(null);
     // formdata.append("noOfSeats", formData.seats);
     // formdata.append("status", formData.status);
     const postdata ={
-       brandName :formData.brandName , orderNo : formData.orderNo,  status :formData.status
+       brandName :formData.brandName ,   status :formData.status
     }
 
     try {
@@ -318,7 +317,7 @@ const [errorHandle,seterrorHandle] =useState(null);
     if(result.data){
       onSave(result);
    setFormData({
-        orderNo: "",
+  
         brandName: "",
         seats: "",
         status: "1",
@@ -363,7 +362,7 @@ const [errorHandle,seterrorHandle] =useState(null);
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">
                 Order No.
               </label>
@@ -378,7 +377,7 @@ const [errorHandle,seterrorHandle] =useState(null);
                 required
                 disabled={isAddingBrand}
               />
-            </div>
+            </div> */}
             {/* <div>
               <label className="block text-sm font-medium mb-2">
                 No. of seats
@@ -498,7 +497,7 @@ export const AddVehicleNameModal = ({
 
   const [formData, setFormData] = useState({
     brandId: brand_id[0]?._id,
-    orderNo: "",
+    // orderNo: "",
     brandName: "",
     vehicleName: "",
     status: "1",
@@ -512,7 +511,7 @@ export const AddVehicleNameModal = ({
       const apiData = {
         brandId: formData.brandId,
         brandName: formData.brandName,
-        orderNo: formData.orderNo,
+        // orderNo: formData.orderNo,
         vehicleName: formData.vehicleName,
         status: formData.status,
       };
@@ -520,23 +519,24 @@ export const AddVehicleNameModal = ({
       console.log("Adding vehicle with data:", apiData);
 
       const result = await addVehicleMutation(apiData);
-      alert(result?.error?.data?.message)
-      console.log("Vehicle add result:", result?.error?.data?.message)
 
-      onSave(result);
-
-      setFormData({
-        brandId: "",
-        orderNo: "",
-        vehicleName: "",
-        brandName: "",
-        status: "1",
-      });
-
-      onClose();
+      if(result.data){
+        onSave(result);
+        setFormData({
+          brandId: "",
+          vehicleName: "",
+          brandName: "",
+          status: "1",
+        });
+        onClose();
+        alert("vehicle added succesfully");
+        return;
+      }
+     
     } catch (error) {
-console.error("Error adding vehicle:", error?.error?.data?.message);
-      alert("Error adding vehicle. Please try again.",error?.error?.data?.message);
+console.error("Error adding vehicle:", error);
+onClose();
+      // alert("Error adding vehicle. Please try again.",error);
     }
   };
 
@@ -558,7 +558,7 @@ console.error("Error adding vehicle:", error?.error?.data?.message);
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">
                 Order No.
               </label>
@@ -573,7 +573,7 @@ console.error("Error adding vehicle:", error?.error?.data?.message);
                 required
                 disabled={isAddingVehicle}
               />
-            </div>
+            </div> */}
             <div>
               <label className="block text-sm font-medium mb-2">
                 Status (1= Active, 00= De-Active)

@@ -436,3 +436,20 @@ className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 t
 )}
 {isLoading ? "Saving..." : "Save Complete Configuration"}
 </button>
+
+
+
+const [a,b,c]
+
+const df = {
+  a:{
+    input:{
+      placeholder:"dfff",
+      value:
+    },
+    selectbar
+  },
+  b:{
+
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   useGetTripsAdminModelQuery,
   useGetTripsQuery,
@@ -9,15 +9,18 @@ import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2 } from "lucide-react";
 
 const AdminTrips = () => {
+    const [page, setPage] = useState(1); // Current page
+    const limit = 10;
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetTripsQuery();
-  const { data: AdminTrips, error: AdminTripsError } =
-    useGetTripsAdminModelQuery();
+  const { data: AdminTrips, error: AdminTripsError,refetch } =
+    useGetTripsAdminModelQuery({ page, limit });
   const [triggerSearch, { data: searchData }] = useLazyAdminsearchTripsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState(10);
   const [showFilterModal, setShowFilterModal] = useState(false);
-
+  const totalPages = AdminTrips?.pagination?.totalPages || 1; 
+  const totalTrips = AdminTrips?.pagination?.totalTrips || 1; 
   // City dropdown states - हर trip के लिए अलग state
   const [cityDropdownStates, setCityDropdownStates] = useState({});
   const [cityInputs, setCityInputs] = useState({});
@@ -38,6 +41,9 @@ const AdminTrips = () => {
       triggerSearch(value);
     }
   };
+    useEffect(() => {
+      refetch();
+    }, [page]);
 
   // City dropdown change handler
   const handleCityDropdownChange = (tripId, value) => {
@@ -93,17 +99,6 @@ const AdminTrips = () => {
 
     // यहाँ आपका API call
     try {
-      // const response = await fetch('/api/add-city', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(cityData)
-      // });
-      // const result = await response.json();
-      // console.log('API Response:', result);
-
-      // City को dropdown options में add करें
       setAddedCities((prev) => ({
         ...prev,
         [selectedOption]: [...prev[selectedOption], cityValue.trim()],
@@ -151,6 +146,15 @@ const AdminTrips = () => {
 
   //  const cityValue = '' || cityInputs[tripId]?.[selectedOption];
   // console.log(cityValue);
+
+
+  const handleNext =()=>{
+    
+  }
+
+  const handlePrevious = ()=>{
+    
+  }
 
   const displayData =
     searchTerm.length > 0 ? searchData?.trips : AdminTrips?.trips;
@@ -456,19 +460,17 @@ const AdminTrips = () => {
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">
                 Showing {Math.min(showEntries, filteredData.length)} of{" "}
-                {filteredData.length} entries
+                {totalTrips} entries
               </div>
               <div className="flex space-x-2">
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
+                <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))} className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
                   Previous
                 </button>
                 <button className="px-3 py-1 bg-blue-600 text-white rounded text-sm">
-                  1
+                Page {page} of {totalPages}
                 </button>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                  2
-                </button>
-                <button className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
+            
+                <button  onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}  className="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100">
                   Next
                 </button>
               </div>
