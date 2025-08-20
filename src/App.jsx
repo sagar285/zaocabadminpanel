@@ -70,6 +70,9 @@ import FollowersList from "./Admin/Component/Passenger/FollowersList.jsx";
 import FollowingList from "./Admin/Component/Passenger/FollowingList.jsx";
 import EditSeat from "./Admin/Component/Carpool/EditSeat.jsx";
 import EditFareManagementScree2 from "./Admin/pages/EditFare.jsx";
+import OneWayTripsVehicle from "./Admin/pages/OnewayTripsVehicle.jsx";
+import CarpoolTripsVehicle from "./Admin/pages/CarpoolTripsVehicle.jsx";
+import ViewUserCarpoolTrip from "./Admin/pages/ViewuserCarpoolTrip.jsx";
 
 const App = () => {
   return (
@@ -156,6 +159,8 @@ const App = () => {
 
       <Route path="/trip/:id/:state" element={<TripStates />} />
       <Route path="/userTrip/:id" element={<ViewUserTrip />} />
+
+      <Route path="/carpoolTrip/:id" element={<ViewUserCarpoolTrip />} />
       <Route path="/userTrip/travel-partner" element={<TravelPartner />} />
       <Route path="/other-category" element={<OtherCategory />} />
       <Route path="/other-services" element={<OtherServices />} />
@@ -164,6 +169,10 @@ const App = () => {
       <Route path="/faretrip/:id" element={<EditFareManagementScree2/>}/>
 
       <Route path="/vehicle/:id" element={<VehiclePage />} />
+      <Route path="/vehicle/oneway" element={<OneWayTripsVehicle />} />
+      <Route path="/vehicle/carpool" element={<CarpoolTripsVehicle />} />
+
+
       <Route path="/carpool/brand-management" element={<BrandManagement />} />
       <Route
         path="/carpool/vechile-namemanagement"

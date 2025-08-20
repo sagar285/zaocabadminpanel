@@ -260,9 +260,35 @@ editVechileCategory:builder.mutation({
       providesTags: ['trip'],
     }),
 
+
+    getTripsofOnewayVehicleByAdmin: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/trip/getTripsofOnewayVehicleByAdmin`,
+        params: { page, limit }
+      }),
+      providesTags: ['trip'],
+    }),
+
+
+    getTripsofCarpoolVehicleByAdmin: builder.query({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: `/trip/getTripsofCarpoolVehicleByAdmin`,
+        params: { page, limit }
+      }),
+      providesTags: ['trip'],
+    }),
+
     getuserTripById: builder.query({
       query: (id) => ({
         url: `/trip/getUserTripByIdForAdmin/${id}`,
+      }),
+      providesTags: ["trip"],
+    }),
+
+
+    getCarpoolTripById: builder.query({
+      query: (id) => ({
+        url: `/trip/getCarpoolTripById/${id}`,
       }),
       providesTags: ["trip"],
     }),
@@ -426,6 +452,14 @@ editVechileCategory:builder.mutation({
     UsersearchTrips: builder.query({
       query: (searchTerm) => ({
         url: "admin/userTrips/search",
+        params: { search: searchTerm },
+      }),
+    }),
+
+
+    searchCarpoolTrips: builder.query({
+      query: (searchTerm) => ({
+        url: "admin/searchCarpoolTrips/search",
         params: { search: searchTerm },
       }),
     }),
@@ -1215,6 +1249,9 @@ UpdateSeatConfig:builder.mutation({
 
 
 export const {
+  useGetCarpoolTripByIdQuery,
+  useGetTripsofCarpoolVehicleByAdminQuery,
+  useGetTripsofOnewayVehicleByAdminQuery,
   useDeleteSeatConfigMutation,
   useUpdateSeatConfigMutation,
   useGetSingleCarpoolSeatConfigQuery,
@@ -1245,6 +1282,7 @@ export const {
   useEditCategoryMutation,
  useLazyDriverSearchQuery,
  useLazyTravelSearchQuery,
+ useLazySearchCarpoolTripsQuery,
   useGetuserWalletInfoQuery,
   useAddwalletMutation,
   useAddGeneralFuelMutation,

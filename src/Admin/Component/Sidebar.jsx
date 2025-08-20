@@ -113,7 +113,17 @@ const menuItems = [
   },  { title: 'State & City', icon: MapPin, path: '/stateCity' },
   { title: 'Carpool', icon: Share2, path: '/carpool' },
   { title: 'Passenger Trips', icon: UserCircle, path: '/userTrips' },
-  { title: 'Vehicle Trips', icon: Car, path: '/category' },
+  { 
+    title: 'VehicleTrips',
+    icon: Award, 
+    key: 'vehicleTrips', // Add this key property
+    isDropdown: true,
+    children: [
+      { title: 'oneway' ,icon: UserCircle, path: '/vehicle/oneway' },
+      { title: 'carpool', icon: UserCircle, path: '/vehicle/carpool' },
+    ]
+   },
+  // { title: 'Vehicle Trips', icon: Car, path: '/category' },
  {
   title: 'Payment',
   icon: CreditCard,

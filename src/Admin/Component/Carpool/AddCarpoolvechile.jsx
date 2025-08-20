@@ -263,31 +263,28 @@ const AddCarpoolVehicle = () => {
       
       // Find the specific brand by ID
       const currentBrand = brandsData.data.find(brand => brand._id === vehicleId);
-      
+        
       if (currentBrand) {
         console.log("Current Brand Found:", currentBrand);
         
         // Get vehicle names from the brand's vehicles array or vehicleName string
-        let vehicleNamesArray = [];
+        let vehicleArray = [];
         
         // Check if vehicles array exists
         if (currentBrand.vehicles && Array.isArray(currentBrand.vehicles)) {
-          vehicleNamesArray = currentBrand.vehicles;
+          vehicleArray = currentBrand.vehicles;
         } 
         // Check if vehicleName string exists (comma-separated)
-        else if (currentBrand.vehicleName) {
-          vehicleNamesArray = currentBrand.vehicleName
-            .split(',')
-            .map(name => name.trim())
-            .filter(name => name.length > 0);
-        }
+        // else if (currentBrand.vehicleName) {
+        //   vehicleArray = currentBrand.vehicleName
+        // }
 
-        console.log("Vehicle Names Array:", vehicleNamesArray);
+        console.log("Vehicle Names Array:", vehicleArray);
 
         // Convert to objects for table display
-        const vehicleObjects = vehicleNamesArray.map((vehicleName, index) => ({
-          _id: `${vehicleId}`, // Create unique ID
-          vehicleName: vehicleName,
+        const vehicleObjects = vehicleArray.map((vehicleName, index) => ({
+          _id: vehicleName._id, // Create unique ID
+          vehicleName: vehicleName.name,
           brandName: currentBrand.brandName,
           brandId: currentBrand._id,
           orderNo: index + 1,
@@ -401,14 +398,12 @@ await editVehicle({
   // Handle vehicle deletion
   const handleDeleteVehicle = async (vehicleId) => {
     console.log(vehicleId,"yeh vehicle id aa rhi hai");
-    return;
     if (window.confirm('Are you sure you want to delete this vehicle?')) {
       try {
         console.log(vehicleId);
-        const pureId = vehicleId?.split("_")[0];
-        console.log(pureId);
+
         
-        const result = await deleteVehicle(pureId);
+        const result = await deleteVehicle(vehicleId);
         console.log('Delete result:', result);
         
         // Refresh data after deletion
