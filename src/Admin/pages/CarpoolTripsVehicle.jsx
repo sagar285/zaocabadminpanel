@@ -117,6 +117,70 @@ const CarpoolTripsVehicle = () => {
     }
   };
 
+  const mergePassengersAdvanced = (passengers) => {
+    if (!passengers || !Array.isArray(passengers)) {
+      return [];
+    }
+  
+    const groupedByBooking = passengers.reduce((acc, passenger) => {
+      const bookingId = passenger.bookingId?._id || passenger.bookingId;
+      const passengerId = passenger.passengerId?._id || passenger.passengerId;
+      
+      // Use bookingId as primary key, fallback to passengerId
+      const groupKey = bookingId || passengerId || `temp_${Math.random()}`;
+  
+      if (!acc[groupKey]) {
+        // Create new passenger group
+        acc[groupKey] = {
+          bookingId: passenger.bookingId,
+          passengerId: passenger.passengerId,
+          pickupLocation: passenger.pickupLocation,
+          dropLocation: passenger.dropLocation,
+          status: passenger.status,
+          message: passenger.message,
+          totalFare: passenger.totalFare || 0,
+          
+          // Timestamps
+          confirmedTime: passenger.confirmedTime,
+          pickedUpTime: passenger.pickedUpTime,
+          droppedOffTime: passenger.droppedOffTime,
+          cancelledTime: passenger.cancelledTime,
+          
+          // Seats array
+          seats: [{
+            seatId: passenger.seatId,
+            seatLabel: passenger.seatLabel,
+            passengerRecordId: passenger._id
+          }],
+          
+          // Summary
+          totalSeats: 1,
+          seatLabels: [passenger.seatLabel], // Easy access to seat labels
+        };
+      } else {
+        // Add seat to existing passenger group
+        acc[groupKey].seats.push({
+          seatId: passenger.seatId,
+          seatLabel: passenger.seatLabel,
+          passengerRecordId: passenger._id
+        });
+        
+        // Update totals
+        acc[groupKey].totalSeats += 1;
+        acc[groupKey].seatLabels.push(passenger.seatLabel);
+        
+        // Add fare if it's per seat
+        if (passenger.totalFare) {
+          acc[groupKey].totalFare += passenger.totalFare;
+        }
+      }
+  
+      return acc;
+    }, {});
+  
+    return Object.values(groupedByBooking);
+  };
+
   return (
     <div className="flex">
       <Sidebar
@@ -210,7 +274,8 @@ const CarpoolTripsVehicle = () => {
                       </td>
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
-                          <span className="font-medium">{trip?.passengers?.length}</span>
+                          <span className="font-medium">{ mergePassengersAdvanced(trip?.passengers).length}</span>
+                          {console.log( mergePassengersAdvanced(trip?.passengers).length)}
                         
                         </div>
                       </td>

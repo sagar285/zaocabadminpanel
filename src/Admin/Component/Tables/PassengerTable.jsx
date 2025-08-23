@@ -459,11 +459,14 @@ const NotificationModal = ({ isOpen, onClose, passengerName, onSend }) => {
 
 const PassengerTable = ({ 
   setlength, 
-  PassengersData, 
+  PassengersData = [], 
   limitpage = 10, 
   searchTerm = "", 
   onSearchResults 
 }) => {
+
+
+  console.log(PassengersData,"paaassojojojfjkfsdkfjsdfjksdfjksdfdsfdsfsfdsfdf")
   // Pagination state
   const [page, setPage] = useState(1);
   const limit = limitpage;
@@ -473,39 +476,39 @@ const PassengerTable = ({
   const [role, setRole] = useState("passenger");
 
   // Filter passengers based on search term
-  const filteredPassengers = useMemo(() => {
-    const dataToFilter = PassengersData?.length > 0 ? PassengersData : mockPassengerData;
+  // const filteredPassengers = useMemo(() => {
+  //   const dataToFilter = PassengersData?.length > 0 && PassengersData;
     
-    if (!searchTerm.trim()) {
-      return dataToFilter;
-    }
+  //   if (!searchTerm.trim()) {
+  //     return dataToFilter;
+  //   }
     
-    const searchLower = searchTerm.toLowerCase();
-    return dataToFilter.filter(passenger => {
-      const fullName = `${passenger?.firstName || ''} ${passenger?.lastName || ''}`.toLowerCase();
-      const phone = passenger?.phoneNumber || '';
-      const city = passenger?.user?.city?.toLowerCase() || '';
-      const state = passenger?.user?.state?.toLowerCase() || '';
-      const status = passenger?.verified ? 'verified' : 'pending';
-      const vehicleNumber = passenger?.vehicle?.vehicleNumber || '';
+  //   const searchLower = searchTerm.toLowerCase();
+  //   return dataToFilter.filter(passenger => {
+  //     const fullName = `${passenger?.firstName || ''} ${passenger?.lastName || ''}`.toLowerCase();
+  //     const phone = passenger?.phoneNumber || '';
+  //     const city = passenger?.user?.city?.toLowerCase() || '';
+  //     const state = passenger?.user?.state?.toLowerCase() || '';
+  //     const status = passenger?.verified ? 'verified' : 'pending';
+  //     const vehicleNumber = passenger?.vehicle?.vehicleNumber || '';
       
-      return (
-        fullName.includes(searchLower) ||
-        phone.includes(searchTerm) ||
-        city.includes(searchLower) ||
-        state.includes(searchLower) ||
-        status.includes(searchLower) ||
-        vehicleNumber.includes(searchTerm)
-      );
-    });
-  }, [PassengersData, searchTerm]);
+  //     return (
+  //       fullName.includes(searchLower) ||
+  //       phone.includes(searchTerm) ||
+  //       city.includes(searchLower) ||
+  //       state.includes(searchLower) ||
+  //       status.includes(searchLower) ||
+  //       vehicleNumber.includes(searchTerm)
+  //     );
+  //   });
+  // }, [PassengersData, searchTerm]);
 
   // Pagination for filtered results
-  const totalPassengers = filteredPassengers.length;
+  const totalPassengers = PassengersData?.length;
   const totalPages = Math.ceil(totalPassengers / limit);
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
-  const currentPassengers = filteredPassengers.slice(startIndex, endIndex);
+  const currentPassengers = PassengersData?.slice(startIndex, endIndex);
 
   // Update length when filtered data changes
   useEffect(() => {
@@ -572,7 +575,7 @@ const PassengerTable = ({
   };
 
   // Empty state when no search results
-  if (searchTerm && filteredPassengers.length === 0) {
+  if (searchTerm && PassengersData.length === 0) {
     return (
       <div className="text-center py-12">
         <Search className="mx-auto h-12 w-12 text-gray-400" />
@@ -588,7 +591,7 @@ const PassengerTable = ({
   }
 
   // Empty state when no data at all
-  if (!searchTerm && filteredPassengers.length === 0) {
+  if (!searchTerm && PassengersData.length === 0) {
     return (
       <div className="text-center py-12">
         <Users className="mx-auto h-12 w-12 text-gray-400" />
@@ -608,8 +611,8 @@ const PassengerTable = ({
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">P.ID</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Img</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Name</th>
-            <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Carpool Vehicle</th>
-            <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Trips Completed</th>
+            {/* <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Carpool Vehicle</th>
+            <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Trips Completed</th> */}
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Location</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Balance</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Wallet</th>
@@ -619,7 +622,7 @@ const PassengerTable = ({
           </tr>
         </thead>
         <tbody>
-          {currentPassengers.map((passenger, index) => {
+          {PassengersData.map((passenger, index) => {
             // Determine the status for styling - same logic as driver table
             const status = passenger?.verified ? "Verified" : "Pending";
             
@@ -632,12 +635,12 @@ const PassengerTable = ({
                   {getIdNumber(index)}
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
-                  <a href="#" className="text-blue-500">#{passenger?.user?._id?.substring(0, 6) || "ZA0342"}</a>
+                  <a href="#" className="text-blue-500">#{passenger?._id?.substring(0, 6) || "ZA0342"}</a>
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
                   {passenger?.user?.profileImage ? (
                     <img
-                      src={passenger.user.profileImage}
+                      src={passenger.profileImage}
                       className="w-10 h-10 object-cover rounded-full"
                       alt=""
                     />
@@ -651,16 +654,16 @@ const PassengerTable = ({
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
                   {passenger?.firstName} {passenger?.lastName}<br/>
-                  <span className="text-blue-600">{passenger?.phoneNumber || "7676755676"}</span>
+                  <span className="text-blue-600">{passenger?.phone || "7676755676"}</span>
                 </td>
-                <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
+                {/* <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {passenger?.vehicle?.vehicleNumber || (index % 2 === 0 ? "08" : "07")}
-                </td>
-                <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
+                </td> */}
+                {/* <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {passenger?.tripsCompleted || [50, 500, 0, 342, 9][index % 5]}
-                </td>
+                </td> */}
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
-                  {passenger?.user?.city || (index % 2 === 0 ? "Lucknow" : "Ayodhya")}<br/>{passenger?.user?.state || "UP"}
+                  {passenger?.city || (index % 2 === 0 ? "Lucknow" : "Ayodhya")}<br/>{passenger?.state || "UP"}
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {/* Modified balance column to be clickable - same as driver table */}
@@ -677,7 +680,7 @@ const PassengerTable = ({
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300">
                   {passenger?.wallet?.balance !== undefined ? (
-                    <Link to={`/userWalletInfo/${passenger?.user?._id}`}>
+                    <Link to={`/userWalletInfo/${passenger?._id}`}>
                       <button className="flex items-center gap-2 hover:bg-gray-100 p-1 rounded">
                         <Edit size={16} color="green" />
                       </button>
@@ -740,7 +743,7 @@ const PassengerTable = ({
       </table>
 
       {/* Pagination Controls - same as driver table */}
-      {filteredPassengers.length > 0 && (
+      {PassengersData.length > 0 && (
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}

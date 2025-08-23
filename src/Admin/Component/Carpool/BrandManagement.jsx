@@ -692,7 +692,7 @@ const BrandManagement = () => {
         vehicleIcon: brand.vehicleIcon || "🚗",
         brandName: brand.brandName,
         seats: brand.seats || brand.noOfSeats,
-        vehicleName: brand.vehicles?.join(",") || "",
+        vehicleName: brand.vehicles[0]?.name,
         similarModel: brand.similarModel || brand.modelModels,
         status:
           brand.status === "1" || brand.status === 1 ? "Active" : "De-active",
@@ -931,6 +931,7 @@ const BrandManagement = () => {
                             key={`brand-${brand.id}-${index}`}
                             className="hover:bg-gray-50"
                           >
+                            {console.log(brand,"dihdsuifhfhdsfhfkjdsfhjksdfhjkdsfhsdkfhj")}
                             <td className="border border-gray-300 px-3 py-2 text-xs">
                               {brand.sn}
                             </td>

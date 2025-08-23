@@ -10,6 +10,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "https://api.zaocabs.in/api" }),
   tagTypes: ["user", "state", "category", "trip", "wallet", "Vehicle",'notification','feedback','carpoolSeat'],
   endpoints: (builder) => ({
+
     getDriver: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({
         url: "/driver/getAllDrivers",
@@ -17,9 +18,24 @@ export const apiSlice = createApi({
       }),
     }),
 
+
+    getAllPassengersyAdmin: builder.query({
+      query: ({ page = 1, limit = 10 } = {}) => ({
+        url: "/driver/getAllPassengersyAdmin",
+      params: { page, limit },
+      }),
+    }),
+
     getDriverById: builder.query({
       query: (id) => ({
         url: `/driver/viewDriverInfo/${id}`,
+      }),
+    }),
+
+
+    getPassengerInfo: builder.query({
+      query: (id) => ({
+        url: `/driver/getPassengerInfo/${id}`,
       }),
     }),
 
@@ -1249,6 +1265,9 @@ UpdateSeatConfig:builder.mutation({
 
 
 export const {
+  useGetPassengerInfoQuery,
+  useLazyGetAllPassengersyAdminQuery,
+  useGetAllPassengersyAdminQuery,
   useGetCarpoolTripByIdQuery,
   useGetTripsofCarpoolVehicleByAdminQuery,
   useGetTripsofOnewayVehicleByAdminQuery,

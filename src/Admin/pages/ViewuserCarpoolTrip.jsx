@@ -109,24 +109,24 @@ const TripHeader = ({
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
             {/* Travels Partner */}
-            <div className="text-center">
+            {/* <div className="text-center">
               <div className="text-xs text-gray-600">Travels Partner</div>
               <div className="font-medium">Atul Kumar</div>
               <div className="text-xs text-gray-500">+91-7654321457</div>
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mx-auto mt-1">
                 P
               </div>
-            </div>
+            </div> */}
 
             {/* Driver Partner */}
-            <div className="text-center ml-8">
+            {/* <div className="text-center ml-8">
               <div className="text-xs text-gray-600">Driver Partner</div>
               <div className="font-medium">Rohit Kumar</div>
               <div className="text-xs text-gray-500">+91-7654321457</div>
               <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mx-auto mt-1">
                 P
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Action Buttons */}
@@ -257,6 +257,72 @@ const PassengersTable = ({ passengers, onViewPassenger }) => {
     }
   };
 
+  const mergePassengersAdvanced = (passengers) => {
+    if (!passengers || !Array.isArray(passengers)) {
+      return [];
+    }
+  
+    const groupedByBooking = passengers.reduce((acc, passenger) => {
+      const bookingId = passenger.bookingId?._id || passenger.bookingId;
+      const passengerId = passenger.passengerId?._id || passenger.passengerId;
+      
+      // Use bookingId as primary key, fallback to passengerId
+      const groupKey = bookingId || passengerId || `temp_${Math.random()}`;
+  
+      if (!acc[groupKey]) {
+        // Create new passenger group
+        acc[groupKey] = {
+          bookingId: passenger.bookingId,
+          passengerId: passenger.passengerId,
+          pickupLocation: passenger.pickupLocation,
+          dropLocation: passenger.dropLocation,
+          status: passenger.status,
+          message: passenger.message,
+          totalFare: passenger.totalFare || 0,
+          
+          // Timestamps
+          confirmedTime: passenger.confirmedTime,
+          pickedUpTime: passenger.pickedUpTime,
+          droppedOffTime: passenger.droppedOffTime,
+          cancelledTime: passenger.cancelledTime,
+          
+          // Seats array
+          seats: [{
+            seatId: passenger.seatId,
+            seatLabel: passenger.seatLabel,
+            passengerRecordId: passenger._id
+          }],
+          
+          // Summary
+          totalSeats: 1,
+          seatLabels: [passenger.seatLabel], // Easy access to seat labels
+        };
+      } else {
+        // Add seat to existing passenger group
+        acc[groupKey].seats.push({
+          seatId: passenger.seatId,
+          seatLabel: passenger.seatLabel,
+          passengerRecordId: passenger._id
+        });
+        
+        // Update totals
+        acc[groupKey].totalSeats += 1;
+        acc[groupKey].seatLabels.push(passenger.seatLabel);
+        
+        // Add fare if it's per seat
+        if (passenger.totalFare) {
+          acc[groupKey].totalFare += passenger.totalFare;
+        }
+      }
+  
+      return acc;
+    }, {});
+  
+    return Object.values(groupedByBooking);
+  };
+
+  const mergepassenger = mergePassengersAdvanced(passengers)
+
   const getStatusText = (status) => {
     switch (status?.toLowerCase()) {
       case "pickedup":
@@ -288,13 +354,14 @@ const PassengersTable = ({ passengers, onViewPassenger }) => {
             <th className="px-4 py-3 text-left font-semibold border">Seat</th>
             <th className="px-4 py-3 text-left font-semibold border">Fare</th>
             <th className="px-4 py-3 text-left font-semibold border">Status</th>
-            <th className="px-4 py-3 text-left font-semibold border">Action</th>
+            {/* <th className="px-4 py-3 text-left font-semibold border">Action</th> */}
           </tr>
         </thead>
         <tbody>
-          {passengers?.map((passenger, index) => (
+          {mergepassenger?.map((passenger, index) => (
             <tr key={index}>
               <td className="px-4 py-2 border">
+                {console.log(passenger,"kya hai passenger detail")}
                 <div>
                   <div className="font-medium">
                     {passenger.passengerId?.firstName}{" "}
@@ -315,7 +382,7 @@ const PassengersTable = ({ passengers, onViewPassenger }) => {
                 {passenger.bookingId?.stopOvers?.[1]?.distance || "230 Kms"}
               </td>
               <td className="px-4 py-2 border text-center">
-                {passenger.seatLabel}
+                {passenger.totalSeats}
               </td>
               <td className="px-4 py-2 border text-center">
                 {passenger.totalFare}
@@ -329,14 +396,14 @@ const PassengersTable = ({ passengers, onViewPassenger }) => {
                   {getStatusText(passenger.status)}
                 </span>
               </td>
-              <td className="px-4 py-2 border">
+              {/* <td className="px-4 py-2 border">
                 <button
                   onClick={() => onViewPassenger(passenger)}
                   className="text-blue-500 hover:text-blue-700 text-sm"
                 >
                   view
                 </button>
-              </td>
+              </td> */}
             </tr>
           ))}
         </tbody>
@@ -428,25 +495,25 @@ const TripSummary = ({ trip, showCommentBox, onToggleComment }) => {
             <tr className="border-b">
               <td className="px-4 py-2 font-medium">Air condition (AC)</td>
               <td className="px-4 py-2 text-center">
-                {trip.AcAvaiilable ? "Yes" : "No"} / No
+                {trip.AcAvaiilable ? "Yes" : "No"}
               </td>
             </tr>
             <tr className="border-b bg-gray-50">
               <td className="px-4 py-2 font-medium">Instant Booking</td>
               <td className="px-4 py-2 text-center">
-                {trip.instantBooking ? "Yes" : "No"} / No
+                {trip.instantBooking ? "Yes" : "No"} 
               </td>
             </tr>
             <tr className="border-b">
               <td className="px-4 py-2 font-medium">Review every request</td>
-              <td className="px-4 py-2 text-center">Yes / No</td>
+              <td className="px-4 py-2 text-center">Yes</td>
             </tr>
             <tr className="border-b bg-gray-50">
               <td className="px-4 py-2 font-medium">
                 There is no fare for this trip
               </td>
               <td className="px-4 py-2 text-center">
-                {trip.nofare ? "Yes" : "No"} / No
+                {trip.nofare ? "Yes" : "No"}
               </td>
             </tr>
             <tr className="border-b">
@@ -454,7 +521,7 @@ const TripSummary = ({ trip, showCommentBox, onToggleComment }) => {
                 {trip.isReturn ? "Coming Back" : "Coming Back"}
               </td>
               <td className="px-4 py-2 text-center">
-                {trip.isReturn ? "Yes" : "No"} / No
+                {trip.isReturn ? "Yes" : "No"}
               </td>
             </tr>
             <tr className="border-b bg-gray-50">

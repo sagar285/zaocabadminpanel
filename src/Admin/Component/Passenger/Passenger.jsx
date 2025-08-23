@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Search, Plus, Users, Bell } from "lucide-react";
 import Sidebar from "../Sidebar";
 import PassengerTable from "../Tables/PassengerTable"; // Import the PassengerTable component
+import { useGetAllPassengersyAdminQuery, useLazyGetAllPassengersyAdminQuery } from "../../Redux/Api";
 
 const Passenger = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -11,7 +12,11 @@ const Passenger = () => {
   const [notificationModal, setNotificationModal] = useState(false);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
 
+  const [triggerSearch, { data: searchData }] = useLazyGetAllPassengersyAdminQuery();
+ const {data,error} = useGetAllPassengersyAdminQuery()
+
   const handleSearch = (e) => {
+    triggerSearch(e.target.value);
     setSearchTerm(e.target.value);
   };
 
@@ -19,6 +24,8 @@ const Passenger = () => {
     setLimit(Number(e.target.value));
   };
 
+
+  const DriversData = searchTerm.length > 0 && searchData?.drivers.length > 0 ? searchData?.drivers :data?.drivers;
   const limitOptions = [10, 25, 50, 100];
 
   // Global notification handler
@@ -108,10 +115,10 @@ const Passenger = () => {
                 </div>
 
                 {/* Add Button */}
-                <button className="flex items-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-medium">
+                {/* <button className="flex items-center px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors text-sm font-medium">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Passenger
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -153,7 +160,7 @@ const Passenger = () => {
                 {/* Pass search props to PassengerTable */}
                 <PassengerTable 
                   setlength={setLength}
-                  PassengersData={[]} // Keep empty for using mock data
+                  PassengersData={DriversData || []} // Keep empty for using mock data
                   limitpage={limit}
                   searchTerm={searchTerm} // Pass search term
                   onSearchResults={(count) => setLength(count)} // Callback for result count

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { User, FileCheck, X, Clock, AlertTriangle, History, Car, Edit, Eye, Trash } from "lucide-react";
 import Sidebar from "../Sidebar";
-import { useNavigate } from "react-router-dom";
-import {useGetStateAndCitiesQuery} from '../../Redux/Api'
+import { useNavigate, useParams } from "react-router-dom";
+import {useGetPassengerInfoQuery, useGetStateAndCitiesQuery, useUpdateAadharStatusMutation, useUpdateLicenseStatusMutation} from '../../Redux/Api'
 
 // PersonalInfoTab Component - Updated with navigation logic
 const PersonalInfoTab = ({
@@ -85,7 +85,7 @@ const PersonalInfoTab = ({
 
       {/* Passenger Name */}
       <div className="mb-4">
-        <h3 className="text-lg font-medium">{data?.PassengerInfo?.firstName} {data?.PassengerInfo?.lastName}</h3>
+        <h3 className="text-lg font-medium">{data?.firstName} {data?.lastName}</h3>
         <p className="text-gray-600 text-sm">Passenger</p>
       </div>
       
@@ -136,7 +136,8 @@ const PersonalInfoTab = ({
           <label className="block text-sm font-medium mb-1">Gender</label>
           <select 
             className="w-full p-3 border rounded-md bg-black text-white"
-            value={formData.gender}
+            value={data?.Gender}
+            aria-readonly
             onChange={(e) => handleInputChange('gender', e.target.value)}
           >
             <option value="Male">Male</option>
@@ -150,8 +151,9 @@ const PersonalInfoTab = ({
           <input 
             type="text" 
             className="w-full p-3 border rounded-md"
-            value={formData.firstName}
-            onChange={(e) => handleInputChange('firstName', e.target.value)}
+            value={data?.firstName}
+            readOnly
+            // onChange={(e) => handleInputChange('firstName', e.target.value)}
             placeholder="Enter first name"
           />
         </div>
@@ -161,8 +163,9 @@ const PersonalInfoTab = ({
           <input 
             type="text" 
             className="w-full p-3 border rounded-md"
-            value={formData.lastName}
-            onChange={(e) => handleInputChange('lastName', e.target.value)}
+            value={data?.lastName}
+            readOnly
+            // onChange={(e) => handleInputChange('lastName', e.target.value)}
             placeholder="Enter last name"
           />
         </div>
@@ -172,7 +175,7 @@ const PersonalInfoTab = ({
           <input 
             type="date" 
             className="w-full p-3 border rounded-md"
-            value={formData.dateOfBirth}
+            value={data?.dateOfBirth}
             onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
           />
         </div>
@@ -182,7 +185,8 @@ const PersonalInfoTab = ({
           <input 
             type="text" 
             className="w-full p-3 border rounded-md"
-            value={formData.mobileNumber}
+            value={data?.phone}
+            readOnly
             onChange={(e) => handleInputChange('mobileNumber', e.target.value)}
             placeholder="Enter mobile number"
           />
@@ -194,7 +198,8 @@ const PersonalInfoTab = ({
             type="email" 
             className="w-full p-3 border rounded-md"
             placeholder="abc@gmail.com"
-            value={formData.email}
+            value={data?.email}
+            readOnly
             onChange={(e) => handleInputChange('email', e.target.value)}
           />
         </div>
@@ -204,7 +209,8 @@ const PersonalInfoTab = ({
           <label className="block text-sm font-medium mb-1">State</label>
           <select 
             className="w-full p-3 border rounded-md"
-            value={selectedState}
+            value={data?.state}
+            aria-readonly
             onChange={handleStateChange}
           >
             <option value="">Select State</option>
@@ -221,7 +227,8 @@ const PersonalInfoTab = ({
           <label className="block text-sm font-medium mb-1">City</label>
           <select 
             className="w-full p-3 border rounded-md"
-            value={selectedCity}
+            value={data?.city}
+            aria-readonly
             onChange={handleCityChange}
             disabled={!selectedState}
           >
@@ -234,7 +241,7 @@ const PersonalInfoTab = ({
           </select>
         </div>
         
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium mb-1">Pin</label>
           <input 
             type="text" 
@@ -243,7 +250,7 @@ const PersonalInfoTab = ({
             onChange={(e) => handleInputChange('pin', e.target.value)}
             placeholder="Enter PIN code"
           />
-        </div>
+        </div> */}
       </div>
       
       {/* Address Field */}
@@ -252,14 +259,15 @@ const PersonalInfoTab = ({
         <input 
           type="text" 
           className="w-full p-3 border rounded-md"
-          value={formData.address}
+          value={data?.address}
+          readOnly
           onChange={(e) => handleInputChange('address', e.target.value)}
           placeholder="Enter address"
         />
       </div>
 
       {/* Action Buttons */}
-      <div className="grid grid-cols-6 gap-2 mb-4">
+      {/* <div className="grid grid-cols-6 gap-2 mb-4">
         <button className="bg-blue-500 text-white py-2 px-3 rounded text-sm font-medium hover:bg-blue-600">
           Notification
         </button>
@@ -279,7 +287,7 @@ const PersonalInfoTab = ({
           {isSuspended ? 'Unsuspend' : 'Suspended'}
         </button>
         
-        {/* Dynamic Update Button */}
+        Dynamic Update Button
         <button 
           onClick={handleUpdate}
           className={`py-2 px-3 rounded text-sm font-medium transition-colors duration-200 ${
@@ -291,10 +299,10 @@ const PersonalInfoTab = ({
         >
           Update
         </button>
-      </div>
+      </div> */}
 
       {/* Navigation Fields Section - Updated to navigate to new pages */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-12">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6 mt-12">
         <div>
           <label className="block text-sm font-medium mb-1">Follower ({followersList.length})</label>
           <div 
@@ -366,10 +374,10 @@ const PersonalInfoTab = ({
             </svg>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* ManageTrip Expandable Fields */}
-      {showManageTripFields && (
+      {/* {showManageTripFields && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6 mt-4 p-4 bg-gray-50 rounded-md border">
           <div>
             <label className="block text-sm font-medium mb-1">City Ride</label>
@@ -431,10 +439,10 @@ const PersonalInfoTab = ({
             </select>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Payment Details Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-1">Payment Method</label>
           <input 
@@ -475,10 +483,10 @@ const PersonalInfoTab = ({
             onChange={(e) => handleInputChange('ifsc', e.target.value)}
           />
         </div> 
-      </div>
+      </div> */}
 
       {/* Emergency Contact Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <label className="block text-sm font-medium mb-1">Emergency Contact</label>
           <input 
@@ -519,10 +527,10 @@ const PersonalInfoTab = ({
             onChange={(e) => handleInputChange('emergency03', e.target.value)}
           />
         </div>
-      </div>
+      </div> */}
 
       {/* About You Section */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <label className="block text-sm font-medium mb-1">About you</label>
         <textarea 
           className="w-full p-3 border rounded-md h-24 resize-none bg-blue-50"
@@ -530,10 +538,10 @@ const PersonalInfoTab = ({
           value={formData.aboutYou}
           onChange={(e) => handleInputChange('aboutYou', e.target.value)}
         />
-      </div>
+      </div> */}
 
       {/* Preferences Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div>
           <div className="flex items-center justify-between p-3 border rounded-md bg-white">
             <div>
@@ -570,10 +578,10 @@ const PersonalInfoTab = ({
             <span className="text-gray-400">›</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Suspension Cards - Shows when user is suspended */}
-      {isSuspended && (
+      {/* {isSuspended && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {suspensionEndTime ? (
             <div className="bg-white border-2 border-red-500 rounded-lg p-4">
@@ -606,14 +614,14 @@ const PersonalInfoTab = ({
             </div>
           )}
         </div>
-      )}
+      )} */}
 
       {/* Verification Success Message */}
-      {isProfileVerified && (
+      {/* {isProfileVerified && (
         <div className="bg-orange-400 text-center p-3 rounded-md mb-4 text-white">
           Your profile has been verified
         </div>
-      )}
+      )} */}
 
       {/* Suspension Modal */}
       {showSuspendModal && (
@@ -764,7 +772,7 @@ const PersonalInfoTab = ({
           <h3 className="text-sm font-medium text-blue-700">Total Vehicles</h3>
           <p className="text-2xl font-bold text-blue-900">{vehiclesList?.length}</p>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg">
+        {/* <div className="bg-green-50 p-4 rounded-lg">
           <h3 className="text-sm font-medium text-green-700">Active Vehicles</h3>
           <p className="text-2xl font-bold text-green-900">
             {vehiclesList?.filter(v => v.status === 'Active').length}
@@ -781,7 +789,7 @@ const PersonalInfoTab = ({
           <p className="text-2xl font-bold text-purple-900">
             {vehiclesList?.filter(v => v.fuel === 'Electric').length}
           </p>
-        </div>
+        </div> */}
       </div>
 
       {/* Vehicle List Table */}
@@ -799,12 +807,18 @@ const PersonalInfoTab = ({
                 Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Model
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Number
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Fuel
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Seat
+              </th>
+              {/* <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Date & Time
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -812,7 +826,7 @@ const PersonalInfoTab = ({
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
-              </th>
+              </th> */}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -823,17 +837,24 @@ const PersonalInfoTab = ({
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
-                    <Car className="w-6 h-6 text-gray-400" />
+                    {
+                      vehicle?.vehicleImages?.map((item)=>(
+                        <img src={item}/>
+                      ))
+                    }
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div>
-                    <div className="text-sm font-medium text-gray-900">{vehicle?.name}</div>
-                    <div className="text-sm text-gray-500">{vehicle.brand} - {vehicle?.model}</div>
+                    <div className="text-sm font-medium text-gray-900">{vehicle?.vehicleName}</div>
+                    {/* <div className="text-sm text-gray-500">{vehicle?.modelYear}</div> */}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {vehicle?.number}
+                  {vehicle?.modelYear}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {vehicle?.vehicleNumber}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
@@ -846,9 +867,12 @@ const PersonalInfoTab = ({
                   </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {vehicle?.dateTime}
+                  {vehicle?.seat}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap">
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {vehicle?.dateTime}
+                </td> */}
+                {/* <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                     vehicle?.status === 'Active' 
                       ? 'bg-green-100 text-green-800' 
@@ -856,8 +880,8 @@ const PersonalInfoTab = ({
                   }`}>
                     {vehicle?.status}
                   </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                </td> */}
+                {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div className="flex space-x-2">
                     <button className="text-blue-600 hover:text-blue-900">
                      <Edit size={14}/>
@@ -869,7 +893,7 @@ const PersonalInfoTab = ({
                       <Trash  size={16}/>
                     </button>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
@@ -894,6 +918,16 @@ const PersonalInfoTab = ({
 const ViewPassenger = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+   const { id } = useParams();
+  const {data:passengerData,error:passengerError} =useGetPassengerInfoQuery(id);
+  
+  
+ const [updateAadharStatus] = useUpdateAadharStatusMutation();
+  const [updateDriverLicenseStatus] = useUpdateLicenseStatusMutation();
+
+
+
+  console.log(passengerData,passengerError,"dkjfdhifkhdsjkdhs")
   
   // Mock data
   const [data] = useState({
@@ -1300,7 +1334,7 @@ const ViewPassenger = () => {
   const tabs = [
     { id: "personal", label: "Personal Info", icon: User },
     { id: "documents", label: "Documents", icon: FileCheck },
-    { id: "travel", label: "Travel History", icon: History },
+    // { id: "travel", label: "Travel History", icon: History },
     { id: "vehicles", label: "Vehicle Details", icon: Car },
   ];
 
@@ -1348,7 +1382,32 @@ const ViewPassenger = () => {
   }
 
   // Documents Tab
-  const DocumentsTab = () => (
+  const DocumentsTab = ({documents}) => 
+  {
+     
+    const DrivingLicenseStatusUpdate =async(status,docId)=>{
+      const payload = {
+        documentId: docId,
+        status: status,
+      };
+      const {data,error} = await updateDriverLicenseStatus(payload);
+      if(data){
+        alert("status updated succesfully")
+      }
+ 
+    }
+    const aadharStatusUpdate = async(status,docId)=>{
+      const payload = {
+        documentId: docId,
+        status: status,
+      };
+      const {data,error} = await updateAadharStatus(data);
+      if(data){
+        alert("status updated succesfully")
+      }
+    }
+
+    return(
     <div className="bg-white rounded-xl shadow-sm p-6">
       <h2 className="text-2xl font-semibold mb-6 text-center">DOCUMENT</h2>
       
@@ -1358,25 +1417,27 @@ const ViewPassenger = () => {
           <div className="flex justify-between items-center mb-2">
             <div>
               <h3 className="text-lg font-medium">Aadhar Card</h3>
-              <p className="text-gray-500">{data?.documents?.aadhar?.aadharStatus || "Pending"}</p>
+              <p className="text-gray-500">{documents?.aadhar?.aadharStatus}</p>
             </div>
-            <button className="bg-yellow-400 text-black px-4 py-1 rounded font-medium">
+            {/* <button className="bg-yellow-400 text-black px-4 py-1 rounded font-medium">
               UPLOAD
-            </button>
+            </button> */}
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
               <span>Front</span>
+              <img src={documents?.aadhar?.aadharFront} style={{objectFit:"cover"}}/>
             </div>
             <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
               <span>Back</span>
+              <img src={documents?.aadhar?.aadharBack} style={{objectFit:"cover"}}/>
             </div>
           </div>
-          
+           
           <div className="text-center mb-4">
             <p className="font-medium">Aadhar Number</p>
-            <p className="text-lg">{data?.documents?.aadhar?.aadharNumber || "9 8 7 6 - 5 4 3 2 - 1 9 8 7"}</p>
+            <p className="text-lg">{documents?.aadhar?.aadharNumber || "9 8 7 6 - 5 4 3 2 - 1 9 8 7"}</p>
           </div>
           
           <div className="grid grid-cols-2 gap-3">
@@ -1386,7 +1447,7 @@ const ViewPassenger = () => {
                   ? "bg-green-500 text-white" 
                   : "border border-green-500 text-green-500"
               }`}
-              onClick={() => handleStatusChange("aadhar", "Accepted", data?.documents?._id)}
+              onClick={() => aadharStatusUpdate("Accepted", documents?._id)}
             >
               VERIFIED
             </button>
@@ -1396,7 +1457,7 @@ const ViewPassenger = () => {
                   ? "bg-red-500 text-white" 
                   : "border border-red-500 text-red-600"
               }`}
-              onClick={() => handleStatusChange("aadhar", "Rejected", data?.documents?._id)}
+              onClick={() => aadharStatusUpdate("Rejected",documents?._id)}
             >
               REJECT
             </button>
@@ -1408,45 +1469,47 @@ const ViewPassenger = () => {
           <div className="flex justify-between items-center mb-2">
             <div>
               <h3 className="text-lg font-medium">License Verification</h3>
-              <p className="text-gray-500">Verified</p>
+              <p className="text-gray-500">{documents?.drivingLicense?.drivingStatus}</p>
             </div>
-            <button className="bg-yellow-400 text-black px-4 py-1 rounded font-medium">
+            {/* <button className="bg-yellow-400 text-black px-4 py-1 rounded font-medium">
               UPLOAD
-            </button>
+            </button> */}
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-              <span>Front</span>
+              {/* <span>Front</span> */}
+              <img src={documents?.drivingLicense?.licenseFront}/>
             </div>
             <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
               <span>Back</span>
+              <img src={documents?.drivingLicense?.licenseBack}/>
             </div>
           </div>
           
           <div className="text-center mb-4">
             <p className="font-medium">License Number</p>
-            <p className="text-lg">{data?.LicenseInfo?.licenseNumber || "DL-0420110012345"}</p>
+            <p className="text-lg">{documents?.drivingLicense?.licenseNumber || "DL-0420110012345"}</p>
           </div>
           
           <div className="grid grid-cols-2 gap-3">
             <button 
               className={`py-2 rounded font-medium ${
-                data?.documents?.license?.licenseStatus === "Accepted" 
+                documents?.drivingLicense?.drivingStatus === "Accepted" 
                   ? "bg-green-500 text-white" 
                   : "border border-green-500 text-green-500"
               }`}
-              onClick={() => handleStatusChange("license", "Accepted", data?.documents?._id)}
+              onClick={() => DrivingLicenseStatusUpdate( "Accepted",documents?._id)}
             >
               VERIFIED
             </button>
             <button 
               className={`py-2 rounded font-medium ${
-                data?.documents?.license?.licenseStatus === "Rejected" 
+                documents?.drivingLicense?.drivingStatus === "Rejected" 
                   ? "bg-red-500 text-white" 
                   : "border border-red-500 text-red-600"
               }`}
-              onClick={() => handleStatusChange("license", "Rejected", data?.documents?._id)}
+              onClick={() => DrivingLicenseStatusUpdate("Rejected", documents?._id)}
             >
               REJECT
             </button>
@@ -1454,7 +1517,7 @@ const ViewPassenger = () => {
         </div>
 
         {/* Profile Image Section */}
-        <div className="bg-gray-100 p-6 rounded-lg">
+        {/* <div className="bg-gray-100 p-6 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <div>
               <h3 className="text-lg font-medium">Profile Image</h3>
@@ -1479,11 +1542,11 @@ const ViewPassenger = () => {
               REJECT
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
-
+  }
   // Travel History Tab
   const TravelHistoryTab = () => (
     <div className="bg-white rounded-xl shadow-sm p-6">
@@ -1571,7 +1634,7 @@ const ViewPassenger = () => {
                   vehiclesList={vehiclesList}
                   isProfileVerified={isProfileVerified}
                   setIsProfileVerified={setIsProfileVerified}
-                  data={data}
+                  data={passengerData?.personalInfo}
                   handleOnClickReport={handleOnClickReport}
                   handleInputChange={handleInputChange}
                   selectedState={selectedState}
@@ -1615,10 +1678,10 @@ const ViewPassenger = () => {
               
               )}
 
-              {activeTab === "documents" && <DocumentsTab />}
-              {activeTab === "travel" && <TravelHistoryTab />}
+              {activeTab === "documents" && <DocumentsTab documents={passengerData?.Documents} />}
+              {/* {activeTab === "travel" && <TravelHistoryTab />} */}
               {activeTab === "vehicles" && <VehicleDetailsTab 
-              vehiclesList={vehiclesList}
+              vehiclesList={passengerData?.Vehicles}
               />}
             </div>
           </div>
