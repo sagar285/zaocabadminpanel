@@ -86,7 +86,7 @@ const App = () => {
         path="/driver-travels"
         element={
           <Provider>
-            <DriverTravels />
+            <DriverTravels />   
           </Provider>
         }
       />
