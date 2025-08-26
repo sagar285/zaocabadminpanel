@@ -756,6 +756,7 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
 
   // Create the API payload according to required structure
   const postdata = {
+    perKmFare:false,
     tripType: tripType,
     vehicleCategory: selectedCategory,
     vehicleSubCategory: selectedSubCategories.join(","), // Convert array to string

@@ -321,6 +321,7 @@ const PerKmFareManagementScreen = () => {
     e.preventDefault();
 
     const postdata = {
+      perKmFare:true,
       vehicleCategory: selectedCategory,
       vehicleSubCategory: selectedSubCategories,
       tripType: tripType,
