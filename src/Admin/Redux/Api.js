@@ -7,22 +7,30 @@ import { data } from "autoprefixer";
 // https://api.zaocabs.in/api'
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.zaocabs.in/api" }),
-  tagTypes: ["user", "state", "category", "trip", "wallet", "Vehicle",'notification','feedback','carpoolSeat'],
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
+  tagTypes: [
+    "user",
+    "state",
+    "category",
+    "trip",
+    "wallet",
+    "Vehicle",
+    "notification",
+    "feedback",
+    "carpoolSeat",
+  ],
   endpoints: (builder) => ({
-
     getDriver: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({
         url: "/driver/getAllDrivers",
-      params: { page, limit },
+        params: { page, limit },
       }),
     }),
-
 
     getAllPassengersyAdmin: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({
         url: "/driver/getAllPassengersyAdmin",
-      params: { page, limit },
+        params: { page, limit },
       }),
     }),
 
@@ -31,7 +39,6 @@ export const apiSlice = createApi({
         url: `/driver/viewDriverInfo/${id}`,
       }),
     }),
-
 
     getPassengerInfo: builder.query({
       query: (id) => ({
@@ -109,8 +116,8 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["category"],
     }),
-    createVechileCategory:builder.mutation({
-            query: (data) => ({
+    createVechileCategory: builder.mutation({
+      query: (data) => ({
         url: "/category/createCategory",
         method: "POST",
         body: data,
@@ -118,44 +125,29 @@ export const apiSlice = createApi({
       invalidatesTags: ["category"],
     }),
 
-
-    
-
-
-    getAllVehicleCategory:builder.query({
-      query:()=>({
-
-    
-        url:'/category/getAllCategories'
-
-
+    getAllVehicleCategory: builder.query({
+      query: () => ({
+        url: "/category/getAllCategories",
       }),
-      providesTags:["category"]
+      providesTags: ["category"],
     }),
 
-
-
-
-    deleteCategory:builder.mutation({
-      query:(id)=>({
-        url:`/category/deleteVechileCategories/${id}`,
-        method:"DELETE"
-      })
-    })
-,
-
-
-editVechileCategory:builder.mutation({
-  query:({id,data})=>({
-      url:`/category/editVechileCategory/${id}`,
-      method:"PUT",
-      body:data,
-  })
-}),
-
+    deleteCategory: builder.mutation({
+      query: (id) => ({
+        url: `/category/deleteVechileCategories/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    editVechileCategory: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/category/editVechileCategory/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
 
     EditCategory: builder.mutation({
-      query: ({id,data}) => ({
+      query: ({ id, data }) => ({
         url: `/category/editCateogry/${id}`,
         method: "POST",
         body: data,
@@ -209,7 +201,6 @@ editVechileCategory:builder.mutation({
       }),
       providesTags: ["trip"],
     }),
-
 
     getAllTravel: builder.query({
       query: ({ page = 1, limit = 10 } = {}) => ({
@@ -271,27 +262,25 @@ editVechileCategory:builder.mutation({
     getUserTrips: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
         url: `/trip/getTripsofuserByAdmin`,
-        params: { page, limit }
+        params: { page, limit },
       }),
-      providesTags: ['trip'],
+      providesTags: ["trip"],
     }),
-
 
     getTripsofOnewayVehicleByAdmin: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
         url: `/trip/getTripsofOnewayVehicleByAdmin`,
-        params: { page, limit }
+        params: { page, limit },
       }),
-      providesTags: ['trip'],
+      providesTags: ["trip"],
     }),
-
 
     getTripsofCarpoolVehicleByAdmin: builder.query({
       query: ({ page = 1, limit = 10 }) => ({
         url: `/trip/getTripsofCarpoolVehicleByAdmin`,
-        params: { page, limit }
+        params: { page, limit },
       }),
-      providesTags: ['trip'],
+      providesTags: ["trip"],
     }),
 
     getuserTripById: builder.query({
@@ -300,7 +289,6 @@ editVechileCategory:builder.mutation({
       }),
       providesTags: ["trip"],
     }),
-
 
     getCarpoolTripById: builder.query({
       query: (id) => ({
@@ -472,7 +460,6 @@ editVechileCategory:builder.mutation({
       }),
     }),
 
-
     searchCarpoolTrips: builder.query({
       query: (searchTerm) => ({
         url: "admin/searchCarpoolTrips/search",
@@ -514,235 +501,232 @@ editVechileCategory:builder.mutation({
         params: { search: searchTern },
       }),
     }),
-   updateWalletAmount:builder.mutation({
-    query: (data) => ({
-    url: "/admin/updateWalletAmount",
-    method: "PUT",
-    body: data,
-  })
-  }),
-
-   addwallet:builder.mutation({
-    query: (data) => ({
-    url: "/admin/addwallet",
-    method: "POST",
-    body: data,
-  })
-  }),
-
-  getuserWalletInfo: builder.query({
-    query: (id) => ({
-      url: `/admin/getTransactionInfo/${id}`,
+    updateWalletAmount: builder.mutation({
+      query: (data) => ({
+        url: "/admin/updateWalletAmount",
+        method: "PUT",
+        body: data,
+      }),
     }),
-    providesTags: ["wallet"],
-  }),
 
-
-  DriverSearch: builder.query({
-    query: (searchTern) => ({
-      url: "admin/SearchDriver/search",
-      params: { search: searchTern },
+    addwallet: builder.mutation({
+      query: (data) => ({
+        url: "/admin/addwallet",
+        method: "POST",
+        body: data,
+      }),
     }),
-  }),
-  TravelSearch: builder.query({
-    query: (searchTern) => ({
-      url: "admin/SearchTravels/search",
-      params: { search: searchTern },
+
+    getuserWalletInfo: builder.query({
+      query: (id) => ({
+        url: `/admin/getTransactionInfo/${id}`,
+      }),
+      providesTags: ["wallet"],
     }),
-  }),
 
-  CreateNotification: builder.mutation({
-    query: (data) => ({
-      url: "/notification/createNotification",
-      method: "POST",
-      body: data,
+    DriverSearch: builder.query({
+      query: (searchTern) => ({
+        url: "admin/SearchDriver/search",
+        params: { search: searchTern },
+      }),
     }),
-  }),
-  CreateRoleNotification: builder.mutation({
-    query: (data) => ({
-      url: "/notification/notificationRoleBase",
-      method: "POST",
-      body: data,
+    TravelSearch: builder.query({
+      query: (searchTern) => ({
+        url: "admin/SearchTravels/search",
+        params: { search: searchTern },
+      }),
     }),
-  }),
 
-  SingleUserNotification: builder.mutation({
-    query: (data) => ({
-      url: "/notification/scheduleSingleUserNotification",
-      method: "POST",
-      body: data,
+    CreateNotification: builder.mutation({
+      query: (data) => ({
+        url: "/notification/createNotification",
+        method: "POST",
+        body: data,
+      }),
     }),
-  }),
-
-  getNotification:builder.query({
-    query: () => ({
-      url: "/notification/getnotifications",
+    CreateRoleNotification: builder.mutation({
+      query: (data) => ({
+        url: "/notification/notificationRoleBase",
+        method: "POST",
+        body: data,
+      }),
     }),
-    providesTags: ["notification"],
-  }),
 
-  deletenotification:builder.mutation({
-    query: (id) => ({
-      url: `/notification/deletenotifications/${id}`,
-      method: "DELETE",
+    SingleUserNotification: builder.mutation({
+      query: (data) => ({
+        url: "/notification/scheduleSingleUserNotification",
+        method: "POST",
+        body: data,
+      }),
     }),
-    invalidatesTags: ["notification"],
-  }),
 
-  verifiedDriverPersonalInfo: builder.mutation({
-    query:(data)=>({
-      url: "/admin/verifiedDriverPersonalInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-  verifiedDocumentInfo: builder.mutation({
-    query:(data)=>({
-      url: "/admin/verifiedDocumentInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-  verifiedVehicleInfo: builder.mutation({
-    query:(data)=>({
-      url: "/admin/verifiedVehicleInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-  
-  verifiedTravelPersonalInfo: builder.mutation({
-    query:(data)=>({
-      url: "/admin/verifiedTravelPersonalInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-  updateVehicleInfo: builder.mutation({
-    query: (data) => ({
-      url: "/admin/updateVehicleInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-  updateDriverInfo: builder.mutation({
-    query: (data) => ({
-      url: "/admin/updateDriverInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-  updateTravelInfo: builder.mutation({
-    query: (data) => ({
-      url: "/admin/updateTravelInfo",
-      method: "POST",
-      body: data,
-    })
-  }),
-  DeleteUser: builder.mutation({
-    query: (data) => ({
-      url: "/admin/deleteUser",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-  getDashboard: builder.query({
-    query: () => ({
-      url: "/admin/dashboard",
+    getNotification: builder.query({
+      query: () => ({
+        url: "/notification/getnotifications",
+      }),
+      providesTags: ["notification"],
     }),
-    providesTags: ["dashboard"],
-  }),
 
-  SuspendUser: builder.mutation({
-    query: (data) => ({
-      url: "/user/SuspendUser",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-  changeUserRole:builder.mutation({
-    query: (data) => ({
-      url: "/admin/changeUserRole",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-  getAllFeedback : builder.query({
-    query: () => ({
-      url: "/admin/getAllFeedback",
+    deletenotification: builder.mutation({
+      query: (id) => ({
+        url: `/notification/deletenotifications/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["notification"],
     }),
-    providesTags: ["feedback"],
-  }),
 
-  getTripsByStatus: builder.query({
-    query: ({ status, page = 1, limit = 10 }) => ({
-      url: `/admin/getTrips/${status}?page=${page}&limit=${limit}`,
+    verifiedDriverPersonalInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/verifiedDriverPersonalInfo",
+        method: "POST",
+        body: data,
+      }),
     }),
-    providesTags: ["trip"],
-  }),
-
-  getVerifiedDrivers: builder.query({
-    query: () => ({
-      url: "/admin/getVerifiedDrivers",
+    verifiedDocumentInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/verifiedDocumentInfo",
+        method: "POST",
+        body: data,
+      }),
     }),
-  }),
-  getVerifiedTravels: builder.query({
-    query: () => ({
-      url: "/admin/getVerifiedTravels",
+    verifiedVehicleInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/verifiedVehicleInfo",
+        method: "POST",
+        body: data,
+      }),
     }),
-  }),
 
-  addpercentagecut:builder.mutation({
-    query: (data) => ({
-      url: "/wallet/addpercentagecut",
-      method: "POST",
-      body: data,
-    })
-  }),
-
-
-
-  getpercentagecut:builder.query({
-    query: () => ({
-      url: "/wallet/getpercentagecut",
+    verifiedTravelPersonalInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/verifiedTravelPersonalInfo",
+        method: "POST",
+        body: data,
+      }),
     }),
-  }),
-  createSeatConfig : builder.mutation({
-    query:(data) => ({
-      url:"/carpoolSeat/add-seat",
-      method:"POST",
-      body:data,
-    }),
-    invalidatesTags:["carpoolSeat"]
-  }),
 
-   getAllTransactions: builder.query({
+    updateVehicleInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/updateVehicleInfo",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    updateDriverInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/updateDriverInfo",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateTravelInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/updateTravelInfo",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    DeleteUser: builder.mutation({
+      query: (data) => ({
+        url: "/admin/deleteUser",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getDashboard: builder.query({
+      query: () => ({
+        url: "/admin/dashboard",
+      }),
+      providesTags: ["dashboard"],
+    }),
+
+    SuspendUser: builder.mutation({
+      query: (data) => ({
+        url: "/user/SuspendUser",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    changeUserRole: builder.mutation({
+      query: (data) => ({
+        url: "/admin/changeUserRole",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getAllFeedback: builder.query({
+      query: () => ({
+        url: "/admin/getAllFeedback",
+      }),
+      providesTags: ["feedback"],
+    }),
+
+    getTripsByStatus: builder.query({
+      query: ({ status, page = 1, limit = 10 }) => ({
+        url: `/admin/getTrips/${status}?page=${page}&limit=${limit}`,
+      }),
+      providesTags: ["trip"],
+    }),
+
+    getVerifiedDrivers: builder.query({
+      query: () => ({
+        url: "/admin/getVerifiedDrivers",
+      }),
+    }),
+    getVerifiedTravels: builder.query({
+      query: () => ({
+        url: "/admin/getVerifiedTravels",
+      }),
+    }),
+
+    addpercentagecut: builder.mutation({
+      query: (data) => ({
+        url: "/wallet/addpercentagecut",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getpercentagecut: builder.query({
+      query: () => ({
+        url: "/wallet/getpercentagecut",
+      }),
+    }),
+    createSeatConfig: builder.mutation({
+      query: (data) => ({
+        url: "/carpoolSeat/add-seat",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["carpoolSeat"],
+    }),
+
+    getAllTransactions: builder.query({
       async queryFn() {
         return {
           data: [
-            { id: 1, amount: 100, type: 'Credit', date: '2025-05-25' },
-            { id: 2, amount: 200, type: 'Debit', date: '2025-05-26' },
+            { id: 1, amount: 100, type: "Credit", date: "2025-05-25" },
+            { id: 2, amount: 200, type: "Debit", date: "2025-05-26" },
           ],
         };
       },
     }),
-      getPercentageTransactions: builder.query({
+    getPercentageTransactions: builder.query({
       async queryFn() {
         // Dummy transactions — internal use only
         const transactions = [
-          { id: 1, amount: 100, type: 'Credit', date: '2025-05-25' },
-          { id: 2, amount: 200, type: 'Debit', date: '2025-05-26' },
-          { id: 3, amount: 150, type: 'Credit', date: '2025-05-27' },
+          { id: 1, amount: 100, type: "Credit", date: "2025-05-25" },
+          { id: 2, amount: 200, type: "Debit", date: "2025-05-26" },
+          { id: 3, amount: 150, type: "Credit", date: "2025-05-27" },
         ];
 
         const total = transactions.length;
-        const credit = transactions.filter(t => t.type === 'Credit');
-        const debit = transactions.filter(t => t.type === 'Debit');
+        const credit = transactions.filter((t) => t.type === "Credit");
+        const debit = transactions.filter((t) => t.type === "Debit");
 
         const creditCount = credit.length;
         const debitCount = debit.length;
@@ -756,515 +740,473 @@ editVechileCategory:builder.mutation({
             totalTransactions: total,
             totalCredit: creditCount,
             totalDebit: debitCount,
-            creditPercentage: total ? Math.round((creditCount / total) * 100) : 0,
+            creditPercentage: total
+              ? Math.round((creditCount / total) * 100)
+              : 0,
             debitPercentage: total ? Math.round((debitCount / total) * 100) : 0,
             totalCreditAmount: creditAmount,
             totalDebitAmount: debitAmount,
-            creditAmountPercentage: totalAmount ? Math.round((creditAmount / totalAmount) * 100) : 0,
-            debitAmountPercentage: totalAmount ? Math.round((debitAmount / totalAmount) * 100) : 0,
+            creditAmountPercentage: totalAmount
+              ? Math.round((creditAmount / totalAmount) * 100)
+              : 0,
+            debitAmountPercentage: totalAmount
+              ? Math.round((debitAmount / totalAmount) * 100)
+              : 0,
           },
         };
       },
     }),
 
+    ///Carpool quries
 
-     ///Carpool quries
-
-    addCarpoolBrandName:builder.mutation({
-      query:(data)=>({
-        url:"/carpool/addBrandName/",
-        method:"POST",
-        body:data,
+    addCarpoolBrandName: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addBrandName/",
+        method: "POST",
+        body: data,
       }),
-          invalidatesTags:["carpoolBrand"]
-
+      invalidatesTags: ["carpoolBrand"],
     }),
-
 
     getAllCarpoolBrand: builder.query({
-      query:()=>({
-        url:"/carpool/getAllBrand"
+      query: () => ({
+        url: "/carpool/getAllBrand",
       }),
-
     }),
 
-
-    deleteCarpoolBrand:builder.mutation({
-      query:(id)=>({
-        url:`/carpool/deleteBrand/${id}`,
-        method:"DELETE",
-      })
-    }),
-
-
-  createCarpoolSeat:builder.mutation({
-
-    query:(data)=>({
-      url:'/carpool//add-seat',
-      method:"POST",
-      body:data
-    })
-
-  }),
-
-
-  getallSeatCarpool:builder.query({
-    query:(id)=>({
-      url:'/carpool/getall-seat'
-    })
-  })
-,
-
-
-
-
-editCarpoolseat:builder.mutation({
-
-  query:({id,data})=>({
-    url:`/carpool/editCarpool/${id}`,
-    method:"PUT",
-    body:data,
-  })
-}),
-
-
-
-//  deleteCarpoolBrand:builder.mutation({
-//       query:(id)=>({
-//         url:`/carpool/deleteBrand/${id}`,
-//         method:"DELETE",
-//       })
-//     }),
-
-
-
-deleteCarpoolseat:builder.mutation({
-  query:(id)=>({
-   url:`/carpool/deleteSeat/${id}`,
-   method:"DELETE"
-  })
-}),
-
-
-    updateCarpoolBrand:builder.mutation({
-      query:(data)=>({
-        url:`/carpool/updateBrand/${data.id}`,
-        method:"PUT",
-        body:data
+    deleteCarpoolBrand: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteBrand/${id}`,
+        method: "DELETE",
       }),
-      providesTags:["Update Brand"]
     }),
 
-    addCarpoolVechile:builder.mutation({
-      query:(data)=>({
-        url:"/carpool/addVehicle",
-        method:"POST",
-        body:data
-      })
+    createCarpoolSeat: builder.mutation({
+      query: (data) => ({
+        url: "/carpool//add-seat",
+        method: "POST",
+        body: data,
+      }),
     }),
 
-
-    addCarpoolAddVechile:builder.mutation({
-         query:(data)=>({
-        url:"/carpool/addCarpool-vehicle",
-        method:"POST",
-        body:data
-      }) 
+    getallSeatCarpool: builder.query({
+      query: (id) => ({
+        url: "/carpool/getall-seat",
+      }),
+    }),
+    editCarpoolseat: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/carpool/editCarpool/${id}`,
+        method: "PUT",
+        body: data,
+      }),
     }),
 
-    getAllCarpoolAddVechile:builder.query({
-       query:()=>({
-        url:'/carpool/getCarpool-addvehicle',
+    //  deleteCarpoolBrand:builder.mutation({
+    //       query:(id)=>({
+    //         url:`/carpool/deleteBrand/${id}`,
+    //         method:"DELETE",
+    //       })
+    //     }),
 
-       }),
-       providesTags:["Vehicle"]
+    deleteCarpoolseat: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteSeat/${id}`,
+        method: "DELETE",
+      }),
     }),
 
-
-
-    editCarpoolAddVechile:builder.mutation({
-      query:({id,updateData})=>({
-    
-         url:`/carpool/editCarpool-addVehicle/${id}`,
-         method:"PUT",
-         body:updateData
-      })
+    updateCarpoolBrand: builder.mutation({
+      query: (data) => ({
+        url: `/carpool/updateBrand/${data.id}`,
+        method: "PUT",
+        body: data,
+      }),
+      providesTags: ["Update Brand"],
     }),
 
-
- deleteCarpoolAddVehicle:builder.mutation({
-      query:(id)=>({
-        url:`/carpool/deleteCarpool-add/${id}`,
-        method:"DELETE"
-      })
+    addCarpoolVechile: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addVehicle",
+        method: "POST",
+        body: data,
+      }),
     }),
 
-
-    getAllCarpoolVechile:builder.query({
-       query:()=>({
-        url:'/carpool/getvehicle',
-
-       }),
-       providesTags:["Vehicle"]
+    addCarpoolAddVechile: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addCarpool-vehicle",
+        method: "POST",
+        body: data,
+      }),
     }),
 
-    editCarpoolVechile:builder.mutation({
-      query:({id,updateData})=>({
-    
-         url:`/carpool/edit-vehicle/${id}`,
-         method:"PUT",
-         body:updateData
-      })
+    getAllCarpoolAddVechile: builder.query({
+      query: () => ({
+        url: "/carpool/getCarpool-addvehicle",
+      }),
+      providesTags: ["Vehicle"],
     }),
 
-
-    deleteCarpoolVehicle:builder.mutation({
-      query:(id)=>({
-        url:`/carpool/delete-vehicle/${id}`,
-        method:"DELETE"
-      })
+    editCarpoolAddVechile: builder.mutation({
+      query: ({ id, updateData }) => ({
+        url: `/carpool/editCarpool-addVehicle/${id}`,
+        method: "PUT",
+        body: updateData,
+      }),
     }),
 
-
-
-   getVechilesByBrandName:builder.query({
-    query:()=>({
-      url:'/carpool/getVehiclesByBrandId/',
-
-    }),
-    providesTags:["Vehicle"]
-   }),
-
-
-   addCarpoolSeat:builder.mutation({
-       query:(data)=>({
-        url:"/carpoolSeat/addSeat",
-        method:"POST",
-        body:data
-       })
-   }),
-  addCarpoolFuel:builder.mutation({
-    query:(data)=>({
-      url:"/carpool/addFuel",
-      method:"POST",
-      body:data,
-    })
-  }),
-  getCarpoolFuel:builder.query({
-    query:()=>({
-      url:'/carpool/getAllFuels',
-    }),
-  }),
- updateCarpoolFuel: builder.mutation({
-  query: ({ id, body }) => ({
-    url: `/carpool/updateFuel/${id}`,
-    method: "PUT",
-    body: body,
-  }),
-  invalidatesTags:['CarpoolFuel']
-}),
-deleteCarpoolFuel: builder.mutation({
-  query: (id) => ({
-    url: `/carpool/deleteFuel/${id}`,
-    method: "DELETE",
-  }),
-}),
-
-
-addGeneralFuel:builder.mutation({
- 
-     query:(data)=>({
-      url:"/generalFuelSeatYearColor/addFuel",
-      method:"POST",
-      body:data,
-  })
-}),
-
-getAllGeneralFuel:builder.query({
-  query:()=>({
-      url:'/generalFuelSeatYearColor/getFuel',
-      method:"GET"
-    }),
-}),
-
-updateGeneralFuel:builder.mutation({
-  query:({id,body})=>({
-     url: `/generalFuelSeatYearColor/updateFuel/${id}`,
-    method: "PUT",
-    body: body,
-
-  })
-}),
-
-deleteGeneralFuel:builder.mutation({
-  query:(id)=>({
- query: (id) => ({
-    url: `/generalFuelSeatYearColor/deleteFuel/${id}`,
-    method: "DELETE",
-  }),
-  })
-}),
-
-
-///General Seat Management
-
-
-addGeneralSeat:builder.mutation({
-    query:(data)=>({
-      url:"/generalFuelSeatYearColor/addSeat",
-      method:"POST",
-      body:data,
-  })
-})
-,
-
-getAllGenralSeat:builder.query({
-  query:()=>({
-url:'/generalFuelSeatYearColor/getAllSeat',
-method:"GET",
-  })
-})
-,
-
-updateGeneralSeat:builder.mutation({
-query:({id,data })=>({
-  url:`/generalFuelSeatYearColor/updateSeat/${id}`,
-  method:"PUT",
-  body:data 
-
-})
-})
-,
-
-deleteGeneralSeat:builder.mutation({
-query:({id})=>({
-  url:`/generalFuelSeatYearColor/deleteSeat/${id}`,
-  method:"DELETE"
-})
-}),
-
-
-///General Color 
-addGeneralColor:builder.mutation({
-  query:(data)=>({
-    url:'/generalFuelSeatYearColor/addColor',
-    method:"POST",
-    body:data
-  })
-}),
-
-
-getAllGeneralColor:builder.query({
-  query:()=>({
-      url:'/generalFuelSeatYearColor/getAllColor',
-      method:"GET"
-  })
-})
-
-,
-
-updateGeneralColor:builder.mutation({
-  query:({id,data})=>({
-
-    url:`/generalFuelSeatYearColor/updateColor/${id}`,
-    method:'PUT',
-    body:data
-  })
-}),
-
-deleteGeneralColor:builder.mutation({
-  query:({id})=>({
-    url:`/generalFuelSeatYearColor/deleteColor/${id}`
-  })
-}),
-
-
-
-///General Year management
-
-
-
-addGeneralYear:builder.mutation({
-  query:(data)=>({
-
-    url:`/generalFuelSeatYearColor/addYear/`,
-    method:"POST",
-    body:data
-  })
-}),
-
-
-getAllGeneralYear:builder.query({
-  query:()=>({
-
-    url:`/generalFuelSeatYearColor/getYear/`,
-    method:"GET"
-  })
-}),
-
-
-updateGeneralYear:builder.mutation({
-  query:({id,data})=>({
-    url:`/generalFuelSeatYearColor/updateYear/${id}`,
-    method:"PUT",
-    body:data
-  })
-}),
-
-
-deleteGeneralYear:builder.mutation({
-  query:(id)=>({
-
-    url:`/generalFuelSeatYearColor/deleteYear/${id}`,
-    method:"DELETE"
-
-  })
-})
-,
-
-
-
-
-  addCarpoolVechileColor:builder.mutation({
-    query:(data)=>({
-      url:'/carpool/addColors',
-      method:"POST",
-      body:data
-    })
-  }),
-
-  getCarpoolColors:builder.query({
-      query:()=>({
-        url:"/carpool/getColors"
-      })
+    deleteCarpoolAddVehicle: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteCarpool-add/${id}`,
+        method: "DELETE",
+      }),
     }),
 
-   deleteCarpoolColor:builder.mutation({
-     query:(id)=>({
-      url:`/carpool/deleteColors/${id}`,
-      method:"DELETE"
-     }),
-   }),
-
-
-
-
-    addCarpoolYears:builder.mutation({
-      query:(data)=>({
-        url:'/carpool/addYears',
-        method:"POST",
-        body:data
-      })
+    getAllCarpoolVechile: builder.query({
+      query: () => ({
+        url: "/carpool/getvehicle",
+      }),
+      providesTags: ["Vehicle"],
     }),
 
-
-    getCarpoolYears:builder.query({
-      query:()=>({
-        url:'/carpool/getYears'
-      })
+    editCarpoolVechile: builder.mutation({
+      query: ({ id, updateData }) => ({
+        url: `/carpool/edit-vehicle/${id}`,
+        method: "PUT",
+        body: updateData,
+      }),
     }),
 
-
-
-
-    deleteCarpoolYear:builder.mutation({
-      query:(id)=>({
-        url:`/carpool/deleteYear/${id}`,
-        method:"DELETE"
-      })
-    })
-,
-
-   updateCarpoolYear:builder.mutation({
-    query:({id,data})=>({
-     url:`/carpool/updateYear/${id}`,
-     method:"PUT",
-     body:data
-    })
-   }),
-
-
-    getCarpoolSeats:builder.query({
-      query:()=>({
-        url:'/carpoolSeat/available-seats',
-      })
+    deleteCarpoolVehicle: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/delete-vehicle/${id}`,
+        method: "DELETE",
+      }),
     }),
 
-
-    getAllCarpoolSeates:builder.query({
-      query:()=>({
-        url:'/carpool/getAllSeats/'
-        
-      })
+    getVechilesByBrandName: builder.query({
+      query: () => ({
+        url: "/carpool/getVehiclesByBrandId/",
+      }),
+      providesTags: ["Vehicle"],
     }),
 
+    addCarpoolSeat: builder.mutation({
+      query: (data) => ({
+        url: "/carpoolSeat/addSeat",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    addCarpoolFuel: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addFuel",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getCarpoolFuel: builder.query({
+      query: () => ({
+        url: "/carpool/getAllFuels",
+      }),
+    }),
+    updateCarpoolFuel: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/carpool/updateFuel/${id}`,
+        method: "PUT",
+        body: body,
+      }),
+      invalidatesTags: ["CarpoolFuel"],
+    }),
+    deleteCarpoolFuel: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteFuel/${id}`,
+        method: "DELETE",
+      }),
+    }),
 
-/// Categoryaaaadvechile
+    addGeneralFuel: builder.mutation({
+      query: (data) => ({
+        url: "/generalFuelSeatYearColor/addFuel",
+        method: "POST",
+        body: data,
+      }),
+    }),
 
+    getAllGeneralFuel: builder.query({
+      query: () => ({
+        url: "/generalFuelSeatYearColor/getFuel",
+        method: "GET",
+      }),
+    }),
 
-createCategoryAddVechile:builder.mutation({
-  query:(data)=>({
-    url:'/category/createCategory-addVehcile',
-    method:"POST",
-    body:data
-  })
-}),
+    updateGeneralFuel: builder.mutation({
+      query: ({ id, body }) => ({
+        url: `/generalFuelSeatYearColor/updateFuel/${id}`,
+        method: "PUT",
+        body: body,
+      }),
+    }),
 
+    deleteGeneralFuel: builder.mutation({
+      query: (id) => ({
+        query: (id) => ({
+          url: `/generalFuelSeatYearColor/deleteFuel/${id}`,
+          method: "DELETE",
+        }),
+      }),
+    }),
 
-getCategoryAllVehicle:builder.query({
-  query:()=>({
-    url:'/category/getCategoryAddVechile',
-    method:"GET"
-  })
-}),
+    ///General Seat Management
 
-getSingleCarpoolSeatConfig:builder.query({
-  query:(id)=>({
-    url:`/carpoolSeat/${id}`,
-    method:"GET"
-  })
-}),
+    addGeneralSeat: builder.mutation({
+      query: (data) => ({
+        url: "/generalFuelSeatYearColor/addSeat",
+        method: "POST",
+        body: data,
+      }),
+    }),
+    getAllGenralSeat: builder.query({
+      query: () => ({
+        url: "/generalFuelSeatYearColor/getAllSeat",
+        method: "GET",
+      }),
+    }),
+    updateGeneralSeat: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/generalFuelSeatYearColor/updateSeat/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+    deleteGeneralSeat: builder.mutation({
+      query: ({ id }) => ({
+        url: `/generalFuelSeatYearColor/deleteSeat/${id}`,
+        method: "DELETE",
+      }),
+    }),
 
+    ///General Color
+    addGeneralColor: builder.mutation({
+      query: (data) => ({
+        url: "/generalFuelSeatYearColor/addColor",
+        method: "POST",
+        body: data,
+      }),
+    }),
 
-deleteCategoryAddVehicle:builder.mutation({
-  query:(id)=>({
-url:`/category/deleteCategoryAddVehicle/${id}`,
-method:"DELETE"
-  })
-})
-,
+    getAllGeneralColor: builder.query({
+      query: () => ({
+        url: "/generalFuelSeatYearColor/getAllColor",
+        method: "GET",
+      }),
+    }),
 
-editCategoryAddVehicle:builder.mutation({
-query:({id,updatedData })=>({
-  url:`/category/editCategoryAddVehicle/${id}`,
-  method:"PUT",
-  body:updatedData
-})
-}),
+    updateGeneralColor: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/generalFuelSeatYearColor/updateColor/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
 
-UpdateSeatConfig:builder.mutation({
-  query:(data)=>({
-    url:`/carpoolSeat/update`,
-    method:"POST",
-    body:data
-  })
-}),
+    deleteGeneralColor: builder.mutation({
+      query: ({ id }) => ({
+        url: `/generalFuelSeatYearColor/deleteColor/${id}`,
+      }),
+    }),
 
+    ///General Year management
 
- deleteSeatConfig : builder.mutation({
-  query:(data) =>({
-    url:`/carpoolSeat/delete`,
-    method:"DELETE",
-    body:data
-  })
- })
+    addGeneralYear: builder.mutation({
+      query: (data) => ({
+        url: `/generalFuelSeatYearColor/addYear/`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getAllGeneralYear: builder.query({
+      query: () => ({
+        url: `/generalFuelSeatYearColor/getYear/`,
+        method: "GET",
+      }),
+    }),
+
+    updateGeneralYear: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/generalFuelSeatYearColor/updateYear/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
+    deleteGeneralYear: builder.mutation({
+      query: (id) => ({
+        url: `/generalFuelSeatYearColor/deleteYear/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    addCarpoolVechileColor: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addColors",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getCarpoolColors: builder.query({
+      query: () => ({
+        url: "/carpool/getColors",
+      }),
+    }),
+
+    deleteCarpoolColor: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteColors/${id}`,
+        method: "DELETE",
+      }),
+    }),
+
+    addCarpoolYears: builder.mutation({
+      query: (data) => ({
+        url: "/carpool/addYears",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getCarpoolYears: builder.query({
+      query: () => ({
+        url: "/carpool/getYears",
+      }),
+    }),
+
+    deleteCarpoolYear: builder.mutation({
+      query: (id) => ({
+        url: `/carpool/deleteYear/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    updateCarpoolYear: builder.mutation({
+      query: ({ id, data }) => ({
+        url: `/carpool/updateYear/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+    }),
+
+    getCarpoolSeats: builder.query({
+      query: () => ({
+        url: "/carpoolSeat/available-seats",
+      }),
+    }),
+
+    getAllCarpoolSeates: builder.query({
+      query: () => ({
+        url: "/carpool/getAllSeats/",
+      }),
+    }),
+
+    /// Categoryaaaadvechile
+
+    createCategoryAddVechile: builder.mutation({
+      query: (data) => ({
+        url: "/category/createCategory-addVehcile",
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    getCategoryAllVehicle: builder.query({
+      query: () => ({
+        url: "/category/getCategoryAddVechile",
+        method: "GET",
+      }),
+    }),
+
+    getSingleCarpoolSeatConfig: builder.query({
+      query: (id) => ({
+        url: `/carpoolSeat/${id}`,
+        method: "GET",
+      }),
+    }),
+
+    deleteCategoryAddVehicle: builder.mutation({
+      query: (id) => ({
+        url: `/category/deleteCategoryAddVehicle/${id}`,
+        method: "DELETE",
+      }),
+    }),
+    editCategoryAddVehicle: builder.mutation({
+      query: ({ id, updatedData }) => ({
+        url: `/category/editCategoryAddVehicle/${id}`,
+        method: "PUT",
+        body: updatedData,
+      }),
+    }),
+
+    UpdateSeatConfig: builder.mutation({
+      query: (data) => ({
+        url: `/carpoolSeat/update`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+
+    deleteSeatConfig: builder.mutation({
+      query: (data) => ({
+        url: `/carpoolSeat/delete`,
+        method: "DELETE",
+        body: data,
+      }),
+    }),
+
+    getPackages: builder.query({
+      query: ({ page = 1, limit = 10 } = {}) => ({
+        url: "/package",
+        params: { page, limit },
+      }),
+      providesTags: ["package"],
+    }),
+
+    // Add new package
+    addPackage: builder.mutation({
+      query: (data) => ({
+        url: "/package/add",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["package"],
+    }),
+
+    // Edit package
+    editPackage: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/package/edit/${id}`, // if backend expects id as query
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["package"],
+    }),
+
+    // Delete package
+    deletePackage: builder.mutation({
+      query: (id) => ({
+        url: `/package/delete?id=${id}`, // if backend expects id as query
+        method: "DELETE",
+      }),
+      invalidatesTags: ["package"],
+    }),
   }),
 });
-    
-  
-
 
 export const {
+  useGetPackagesQuery,
+  useAddPackageMutation,
+  useEditPackageMutation,
+  useDeletePackageMutation,
   useGetPassengerInfoQuery,
   useLazyGetAllPassengersyAdminQuery,
   useGetAllPassengersyAdminQuery,
@@ -1299,9 +1241,9 @@ export const {
   useGetNotificationQuery,
   useCreateNotificationMutation,
   useEditCategoryMutation,
- useLazyDriverSearchQuery,
- useLazyTravelSearchQuery,
- useLazySearchCarpoolTripsQuery,
+  useLazyDriverSearchQuery,
+  useLazyTravelSearchQuery,
+  useLazySearchCarpoolTripsQuery,
   useGetuserWalletInfoQuery,
   useAddwalletMutation,
   useAddGeneralFuelMutation,
@@ -1310,12 +1252,10 @@ export const {
   useDeleteGeneralFuelMutation,
   useAddGeneralSeatMutation,
 
-
-useAddGeneralYearMutation,
-useGetAllGeneralYearQuery,
-useUpdateGeneralYearMutation,
-useDeleteGeneralYearMutation,
-
+  useAddGeneralYearMutation,
+  useGetAllGeneralYearQuery,
+  useUpdateGeneralYearMutation,
+  useDeleteGeneralYearMutation,
 
   useAddGeneralColorMutation,
   useGetAllGeneralColorQuery,
@@ -1325,9 +1265,9 @@ useDeleteGeneralYearMutation,
   useGetAllGenralSeatQuery,
   useUpdateGeneralSeatMutation,
   useDeleteGeneralSeatMutation,
-useUpdateWalletAmountMutation,
-useCreateCategoryAddVechileMutation,
-useGetCategoryAllVehicleQuery,
+  useUpdateWalletAmountMutation,
+  useCreateCategoryAddVechileMutation,
+  useGetCategoryAllVehicleQuery,
   useLazyVehicleSearchQuery,
   useLazySearchTravelDriverQuery,
   useLazyCityInStateQuery,
@@ -1398,24 +1338,24 @@ useGetCategoryAllVehicleQuery,
   useEditVechileCategoryMutation,
   useEditCarpoolVechileMutation,
   useDeleteCarpoolVehicleMutation,
-    useGetAllTransactionsQuery,
-    useGetPercentageTransactionsQuery,
-    useAddCarpoolBrandNameMutation,
-    useGetAllCarpoolBrandQuery,
-    useAddCarpoolVechileMutation,
-    useGetAllCarpoolVechileQuery,
-    useGetVechilesByBrandNameQuery,
-    useAddCarpoolSeatMutation,
-    useGetCarpoolFuelQuery,
-    useAddCarpoolFuelMutation,
-    useAddCarpoolVechileColorMutation,
-    useGetCarpoolColorsQuery,
-    useAddCarpoolYearsMutation,
-    useGetCarpoolYearsQuery,
-    useGetCarpoolSeatsQuery,
-    useDeleteCarpoolBrandMutation,
-    useAddCarpoolAddVechileMutation,
-    useGetAllCarpoolAddVechileQuery,
-    useEditCarpoolAddVechileMutation,
-    useDeleteCarpoolAddVehicleMutation
+  useGetAllTransactionsQuery,
+  useGetPercentageTransactionsQuery,
+  useAddCarpoolBrandNameMutation,
+  useGetAllCarpoolBrandQuery,
+  useAddCarpoolVechileMutation,
+  useGetAllCarpoolVechileQuery,
+  useGetVechilesByBrandNameQuery,
+  useAddCarpoolSeatMutation,
+  useGetCarpoolFuelQuery,
+  useAddCarpoolFuelMutation,
+  useAddCarpoolVechileColorMutation,
+  useGetCarpoolColorsQuery,
+  useAddCarpoolYearsMutation,
+  useGetCarpoolYearsQuery,
+  useGetCarpoolSeatsQuery,
+  useDeleteCarpoolBrandMutation,
+  useAddCarpoolAddVechileMutation,
+  useGetAllCarpoolAddVechileQuery,
+  useEditCarpoolAddVechileMutation,
+  useDeleteCarpoolAddVehicleMutation,
 } = apiSlice;

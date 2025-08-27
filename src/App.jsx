@@ -73,6 +73,7 @@ import EditFareManagementScree2 from "./Admin/pages/EditFare.jsx";
 import OneWayTripsVehicle from "./Admin/pages/OnewayTripsVehicle.jsx";
 import CarpoolTripsVehicle from "./Admin/pages/CarpoolTripsVehicle.jsx";
 import ViewUserCarpoolTrip from "./Admin/pages/ViewuserCarpoolTrip.jsx";
+import Packages from "./Admin/pages/Packages.jsx";
 
 const App = () => {
   return (
@@ -123,6 +124,7 @@ const App = () => {
 
       <Route path="/carpool/color" element={<ColorManagement />} />
       <Route path="/color" element={<ColorManagement />} />
+      <Route path="/packages" element={<Packages />} />
 
       <Route path="/driver/:id" element={<ViewDriver />} />
       <Route path="/report-reason/" element={<AddReportReason />} />

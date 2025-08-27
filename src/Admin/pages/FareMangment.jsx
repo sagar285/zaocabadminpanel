@@ -7,6 +7,7 @@ import {
   useAddTripDetailInAdminMutation,
   useAddTripDetailMutation,
   useGetCategoriesQuery,
+  useGetPackagesQuery,
   useGetStateAndCitiesQuery,
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
@@ -22,18 +23,15 @@ const FareManagementScreen = () => {
   const [isCarpool,setIsCarpool] = useState(true)
   const { data, error } = useGetStateAndCitiesQuery();
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
-
-  console.log(categoryData, categoryError, "Select");
-
+    const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [subscategories, setSubscategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-
   const [tripType, setTripType] = useState("");
   const [recommendedFare, setRecommendedFare] = useState("");
   const [minFare, setMinFare] = useState("");
@@ -257,6 +255,8 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   };
 
 
+  console.log(selectedRentalPkg,"selectedRentalpkg")
+
   const [newOtherFare, setNewOtherFare] = useState({
     state: "",
     city: "",
@@ -266,7 +266,7 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     action: "Active",
   });
 
-  console.log(tripType);
+
 
 
   
@@ -405,6 +405,16 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
       setSubscategories([]);
     }
   };
+
+
+  const handleRentalPackageChange = (e) =>{
+
+
+    setselectedRentalPkg(e.target.value)
+   
+  }
+
+
 
   const handleStateChange = (e) => {
     const stateName = e.target.value;
@@ -791,13 +801,11 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     FareRules: fareRules,
     advanceFareDistance: parseInt(distanceVoice) || 0,
     advanceTimeAfter5hours: timeVoice,
-    package: selectedPackage
+    package: selectedPackage,
+    Rentalpkg:selectedRentalPkg
   };
-
-
     try {
     const { data: dataInAdmin, error: errorInAdmin } = await AddTripApiInAdmin(postdata);
-    
     if (dataInAdmin) {
       toast.success("Trip added successfully!");
       // Reset all fields (keep your existing reset logic)
@@ -975,7 +983,32 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                         </Option>
                       ))}
                     </Select>
-                  </div>
+                  </div>                  
+                  {
+                    tripType == "Rental" && (
+                      <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Package
+                      </label>
+                      <Select
+                        className="w-full"
+                        value={selectedRentalPkg}
+                        onChange={handleRentalPackageChange}
+                      >
+                        <Option value="">Select</Option>
+                        {packages?.map((pkg) => (
+                          <Option
+                            key={pkg.name}
+                            value={pkg.name}
+                          >
+                            {pkg.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                    )
+                  }
+                 
 
                  
                 </div>

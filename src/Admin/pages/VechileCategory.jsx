@@ -532,7 +532,7 @@ const url = `${baseUrl}/categoryIcons/`
   const [deleteCategory, { isLoading: isDeleting}] =
     useDeleteCategoryMutation();
 
-  console.log(apiData);
+ 
 
   // Handle different API response structures
   const categories = React.useMemo(() => {

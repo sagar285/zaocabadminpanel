@@ -19,7 +19,7 @@ const PerKmFareManagementScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
-
+ const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -28,6 +28,7 @@ const PerKmFareManagementScreen = () => {
   const [subscategories, setSubscategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
+   
 
   const [tripType, setTripType] = useState("");
 
@@ -158,6 +159,11 @@ const PerKmFareManagementScreen = () => {
       },
     ]);
   };
+
+
+  const handleRentalPackageChange = (e) =>{
+    setselectedRentalPkg(e.target.value)
+  }
 
   const updateBookingFeeRow = (index, field, value) => {
     const updatedRows = bookingFeeRows.map((row, i) =>
@@ -542,6 +548,32 @@ const PerKmFareManagementScreen = () => {
                       ))}
                     </Select>
                   </div>
+
+
+                   {
+                                      tripType == "Rental" && (
+                                        <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                          Package
+                                        </label>
+                                        <Select
+                                          className="w-full"
+                                          value={selectedRentalPkg}
+                                          onChange={handleRentalPackageChange}
+                                        >
+                                          <Option value="">Select</Option>
+                                          {packages?.map((pkg) => (
+                                            <Option
+                                              key={pkg.name}
+                                              value={pkg.name}
+                                            >
+                                              {pkg.name}
+                                            </Option>
+                                          ))}
+                                        </Select>
+                                      </div>
+                                      )
+                                    }
                 </div>
                 <div className="pt-4">
                   <label className="block text-sm font-medium text-black mb-2">
