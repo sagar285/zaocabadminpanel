@@ -7,6 +7,7 @@ import {
   useAddTripDetailInAdminMutation,
   useAddTripDetailMutation,
   useGetCategoriesQuery,
+  useGetPackagesQuery,
   useGetStateAndCitiesQuery,
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
@@ -19,6 +20,7 @@ const PerKmFareManagementScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+    const { data: packages, isLoading } = useGetPackagesQuery();
  const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
@@ -382,6 +384,7 @@ const PerKmFareManagementScreen = () => {
       termsConditions: termsConditions,
       fareRules: fareRules,
       settings: settings,
+      Rentalpkg:selectedRentalPkg
     };
 
     try {
