@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Plus, X, Edit, Trash2,Check} from "lucide-react";
+import { Plus, X, Edit, Trash2, Check } from "lucide-react";
 import Sidebar from "../Component/Sidebar";
 import Input from "../Component/Input";
 import { Select, Option } from "../Component/Select";
@@ -14,16 +14,13 @@ import toast, { Toaster } from "react-hot-toast";
 import MultiSelectSubCategory from "../Component/MultipleSelectSubCategory";
 
 const FareManagementScreen = () => {
-
-
-  const [perKmFare,setPerKmFare]= useState(false)
-  
+  const [perKmFare, setPerKmFare] = useState(false);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCarpool,setIsCarpool] = useState(true)
+  const [isCarpool, setIsCarpool] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
-    const { data: packages, isLoading } = useGetPackagesQuery();
+  const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -43,36 +40,34 @@ const FareManagementScreen = () => {
   const [urgentTimeLimit, setUrgentTimeLimit] = useState("");
   const [perHours, setPerHours] = useState("");
 
-
-
-
-
-
-
-
-
   ///////////////////////////////////////////////////
-  
-const [platformFeeDriverType, setPlatformFeeDriverType] = useState("Fixed");
-const [platformFeeDriverAmount, setPlatformFeeDriverAmount] = useState("");
-const [platformFeeUserType, setPlatformFeeUserType] = useState("Fixed");
-const [platformFeeUserAmount, setPlatformFeeUserAmount] = useState("");
-const [advanceDriverCommissionType, setAdvanceDriverCommissionType] = useState("Fixed");
-const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] = useState("");
-const [advanceDriverCommissionWalletType, setAdvanceDriverCommissionWalletType] = useState("Fixed");
-const [advanceDriverCommissionWalletAmount, setAdvanceDriverCommissionWalletAmount] = useState("");
-const [advanceUserCommissionType, setAdvanceUserCommissionType] = useState("Fixed");
-const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] = useState("");
-const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] = useState("Fixed");
-const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] = useState("");
 
-
-
-
-  
-
-
-
+  const [platformFeeDriverType, setPlatformFeeDriverType] = useState("Fixed");
+  const [platformFeeDriverAmount, setPlatformFeeDriverAmount] = useState("");
+  const [platformFeeUserType, setPlatformFeeUserType] = useState("Fixed");
+  const [platformFeeUserAmount, setPlatformFeeUserAmount] = useState("");
+  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] =
+    useState("Fixed");
+  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] =
+    useState("");
+  const [
+    advanceDriverCommissionWalletType,
+    setAdvanceDriverCommissionWalletType,
+  ] = useState("Fixed");
+  const [
+    advanceDriverCommissionWalletAmount,
+    setAdvanceDriverCommissionWalletAmount,
+  ] = useState("");
+  const [advanceUserCommissionType, setAdvanceUserCommissionType] =
+    useState("Fixed");
+  const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] =
+    useState("");
+  const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] =
+    useState("Fixed");
+  const [
+    advanceUserCommissionWalletAmount,
+    setAdvanceUserCommissionWalletAmount,
+  ] = useState("");
 
   // Booking Fee Rows State
   const [bookingFeeRows, setBookingFeeRows] = useState([
@@ -88,7 +83,6 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     startDate: "",
     endDate: "",
   });
-  
 
   const [FromToTime, setFromToTime] = useState({
     fromTime: "",
@@ -139,6 +133,7 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   const [platformFeeU, setPlatformFeeU] = useState("");
   const [platformFeeD, setPlatformFeeD] = useState("");
   const [platformFeePercentage, setPlatformFeePercentage] = useState("");
+  const [tripFor, settripFor] = useState("");
   const [acFixed, setAcFixed] = useState("");
   const [advanceAcD, setAdvanceAcD] = useState("");
   const [fixedPercentage, setFixedPercentage] = useState("");
@@ -147,7 +142,6 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   const [acAdminCommission, setAcAdminCommission] = useState("");
   const [termsConditions, setTermsConditions] = useState("");
   const [fareRules, setFareRules] = useState("");
-  
 
   // Tables State - NEW ADDITION
   const [carpoolFares, setCarpoolFares] = useState([
@@ -244,18 +238,15 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   const [settings, setSettings] = useState({
     hideSeatView: false,
     hideChat: false,
-    hideNumber: false
+    hideNumber: false,
   });
 
   const toggleSetting = (settingKey) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [settingKey]: !prev[settingKey]
+      [settingKey]: !prev[settingKey],
     }));
   };
-
-
-  console.log(selectedRentalPkg,"selectedRentalpkg")
 
   const [newOtherFare, setNewOtherFare] = useState({
     state: "",
@@ -265,11 +256,6 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     tripType: "",
     action: "Active",
   });
-
-
-
-
-  
 
   // Package handlers
   const handlePackageChange = (e) => {
@@ -339,24 +325,21 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     }
   };
 
-   const ToggleButton = ({ label, isSelected, onClick }) => (
+  const ToggleButton = ({ label, isSelected, onClick }) => (
     <button
       onClick={onClick}
       className={`ml-10 px-4 py-2 rounded-lg   border-blue-500 transition-all duration-200 min-w-[140px] ${
-        isSelected 
-          ? 'border-blue-500 bg-blue-50 text-blue-700' 
-          : 'border-gray-300 bg-gray-100 text-gray-600 hover:border-gray-400'
+        isSelected
+          ? "border-blue-500 bg-blue-50 text-blue-700"
+          : "border-gray-300 bg-gray-100 text-gray-600 hover:border-gray-400"
       }`}
     >
       <div className="flex items-center justify-between ">
         <span className="text-sm font-medium">{label}</span>
-        {isSelected && (
-          <Check size={16} className="text-blue-600 ml-2" />
-        )}
+        {isSelected && <Check size={16} className="text-blue-600 ml-2" />}
       </div>
     </button>
   );
-
 
   const handlePackageDetailsChange = (field, value) => {
     setPackageDetails((prev) => ({
@@ -406,20 +389,13 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
     }
   };
 
-
-  const handleRentalPackageChange = (e) =>{
-
-
-    setselectedRentalPkg(e.target.value)
-   
-  }
-
-
+  const handleRentalPackageChange = (e) => {
+    setselectedRentalPkg(e.target.value);
+  };
 
   const handleStateChange = (e) => {
     const stateName = e.target.value;
     setSelectedState(stateName);
-
     const selectedStateObj = data?.state.find(
       (state) => state.name === stateName
     );
@@ -662,10 +638,7 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   //     otherFares: otherFares,
   //   };
 
-
   //   console.log(postdata)
-
-
 
   //   const { data: dataInAdmin, error: errorInAdmin } = await AddTripApiInAdmin(
   //     postdata
@@ -733,210 +706,196 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
   //   }
   // };
 
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (
-    parseInt(maxFare) < parseInt(recommendedFare) ||
-    parseInt(minFare) > parseInt(recommendedFare) ||
-    parseInt(maxFare) < parseInt(minFare)
-  ) {
-    toast.error(
-      "Max fare should be greater than recommended fare and min fare should be less than recommended fare"
-    );
-    return;
-  }
-
-  // Map booking fee rows to the required format
-  const bookingFeeConfiguration = bookingFeeRows.map(row => ({
-    bookingFeeType: row.bookingFeeType,
-    beeokingfeeFromKm: parseInt(row.beeokingfeeFromKm) || 0,
-    beeokingfeeToKm: parseInt(row.beeokingfeeToKm) || 0,
-    bookingFee: parseInt(row.bookingFee) || 0
-  }));
-
-  // Map commission rows to the required format
-  const AdminComissionConfiguration = commissionRows.map(row => ({
-    driverComissionType: row.driverComissionType || "Fixed",
-    driverComissionFromkm: parseInt(row.fromKm) || 0,
-    drivercomissionTokm: parseInt(row.toKm) || 0,
-    driverComissionValue: parseInt(row.amount) || 0
-  }));
-
-  // Create the API payload according to required structure
-  const postdata = {
-    perKmFare:false,
-    tripType: tripType,
-    vehicleCategory: selectedCategory,
-    vehicleSubCategory: selectedSubCategories.join(","), // Convert array to string
-    RecommndedFareKm: parseInt(recommendedFare) || 0,
-    minFareKm: parseInt(minFare) || 0,
-    maxFareKm: parseInt(maxFare) || 0,
-    GsTtaxinPercentage: parseInt(tax) || 0,
-    bookingFeeConfiguration: bookingFeeConfiguration,
-    AdminComissionConfiguration: AdminComissionConfiguration,
-    advanceFareType: AdvanceFare?.FareType || "Fixed",
-    advanceFee: parseInt(AdvanceFare?.price) || 0,
-    DriverRadius: parseInt(driverRadius) || 0,
-    DriverMinWalletAmount: parseInt(driverMinWallet) || 0,
-    urgentTimeValue: parseInt(urgentTimeLimit) || 0,
-    minTripDifferenceTime: parseInt(minTripDiffTime) || 0,
-    Perhours: parseInt(perHours) || 0,
-    platformFeeDriver: platformFeeDriverType,
-    paltformFeeDriverAmount: parseInt(platformFeeDriverAmount) || 0,
-    PlatformFeeUser: platformFeeUserType,
-    PlatformFeeUserAmount: parseInt(platformFeeUserAmount) || 0,
-    FareStartDate: FareDate?.startDate ? new Date(FareDate.startDate).toISOString() : null,
-    FareEndDate: FareDate?.endDate ? new Date(FareDate.endDate).toISOString() : null,
-    AdvanceDriverComission: advanceDriverCommissionType,
-    AdvanceDriverComissionAmount: parseInt(advanceDriverCommissionAmount) || 0,
-    AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
-    AdvancedrivercomissionWalletAmount: parseInt(advanceDriverCommissionWalletAmount) || 0,
-    AdvanceUserComission: advanceUserCommissionType,
-    AdvanceUserComissionAmount: parseInt(advanceUserCommissionAmount) || 0,
-    AdvanceUsercomissionWallet: advanceUserCommissionWalletType,
-    AdvancedUsercomissionWalletAmount: parseInt(advanceUserCommissionWalletAmount) || 0,
-    TermsCond: termsConditions,
-    FareRules: fareRules,
-    advanceFareDistance: parseInt(distanceVoice) || 0,
-    advanceTimeAfter5hours: timeVoice,
-    package: selectedPackage,
-    Rentalpkg:selectedRentalPkg
-  };
-    try {
-    const { data: dataInAdmin, error: errorInAdmin } = await AddTripApiInAdmin(postdata);
-    if (dataInAdmin) {
-      toast.success("Trip added successfully!");
-      // Reset all fields (keep your existing reset logic)
-      setSelectedSubCategories([]);
-      setSelectedState("");
-      setSelectedCity("");
-      setSelectedCategory("");
-      setSelectedSubCategory("");
-      setTripType("");
-      setRecommendedFare("");
-      setMinFare("");
-      setMaxFare("");
-      setTax("");
-      setDriverRadius("");
-      setDriverMinWallet("");
-      setMinTripDiffTime("");
-      setUrgentTimeLimit("");
-      setPerHours("");
-      setBookingFeeRows([
-        {
-          bookingFeeType: "PerKm",
-          beeokingfeeFromKm: 0,
-          beeokingfeeToKm: 0,
-          bookingFee: 0,
-        },
-      ]);
-      setAdvanceFare({
-        FareType: "",
-        price: 0,
-      });
-      setSelectedPackage("");
-      setPackageName("");
-      setShowPackageForm(false);
-      setPackageDetails({
-        packageName: "",
-        description: "",
-        validity: "",
-        features: "",
-        price: "",
-        discountPercentage: "",
-        maxTrips: "",
-        packageType: "Basic",
-      });
-      // Reset new fields
-      setCommissionRows([{ fromKm: "", toKm: "", amount: "" }]);
-      setDistanceVoice("");
-      setTimeVoice("");
-      setPlatformFeeDriverType("Fixed");
-      setPlatformFeeDriverAmount("");
-      setPlatformFeeUserType("Fixed");
-      setPlatformFeeUserAmount("");
-      setAdvanceDriverCommissionType("Fixed");
-      setAdvanceDriverCommissionAmount("");
-      setAdvanceDriverCommissionWalletType("Fixed");
-      setAdvanceDriverCommissionWalletAmount("");
-      setAdvanceUserCommissionType("Fixed");
-      setAdvanceUserCommissionAmount("");
-      setAdvanceUserCommissionWalletType("Fixed");
-      setAdvanceUserCommissionWalletAmount("");
-      setTermsConditions("");
-      setFareRules("");
-    } else {
-      toast.error(errorInAdmin?.message || "Failed to add trip!");
+    if (
+      parseInt(maxFare) < parseInt(recommendedFare) ||
+      parseInt(minFare) > parseInt(recommendedFare) ||
+      parseInt(maxFare) < parseInt(minFare)
+    ) {
+      toast.error(
+        "Max fare should be greater than recommended fare and min fare should be less than recommended fare"
+      );
+      return;
     }
-  } catch (error) {
-    console.error("API Error:", error);
-    toast.error("An error occurred while adding trip!");
-  }
 
+    // Map booking fee rows to the required format
+    const bookingFeeConfiguration = bookingFeeRows.map((row) => ({
+      bookingFeeType: row.bookingFeeType,
+      beeokingfeeFromKm: parseInt(row.beeokingfeeFromKm) || 0,
+      beeokingfeeToKm: parseInt(row.beeokingfeeToKm) || 0,
+      bookingFee: parseInt(row.bookingFee) || 0,
+    }));
 
+    // Map commission rows to the required format
+    const AdminComissionConfiguration = commissionRows.map((row) => ({
+      driverComissionType: row.driverComissionType || "Fixed",
+      driverComissionFromkm: parseInt(row.fromKm) || 0,
+      drivercomissionTokm: parseInt(row.toKm) || 0,
+      driverComissionValue: parseInt(row.amount) || 0,
+    }));
 
-  }
-
-
-
-
-
-
-
-
+    // Create the API payload according to required structure
+    const postdata = {
+      tripFor:tripFor,
+      perKmFare: false,
+      tripType: tripType,
+      vehicleCategory: selectedCategory,
+      vehicleSubCategory: selectedSubCategories.join(","), // Convert array to string
+      RecommndedFareKm: parseInt(recommendedFare) || 0,
+      minFareKm: parseInt(minFare) || 0,
+      maxFareKm: parseInt(maxFare) || 0,
+      GsTtaxinPercentage: parseInt(tax) || 0,
+      bookingFeeConfiguration: bookingFeeConfiguration,
+      AdminComissionConfiguration: AdminComissionConfiguration,
+      advanceFareType: AdvanceFare?.FareType || "Fixed",
+      advanceFee: parseInt(AdvanceFare?.price) || 0,
+      DriverRadius: parseInt(driverRadius) || 0,
+      DriverMinWalletAmount: parseInt(driverMinWallet) || 0,
+      urgentTimeValue: parseInt(urgentTimeLimit) || 0,
+      minTripDifferenceTime: parseInt(minTripDiffTime) || 0,
+      Perhours: parseInt(perHours) || 0,
+      platformFeeDriver: platformFeeDriverType,
+      paltformFeeDriverAmount: parseInt(platformFeeDriverAmount) || 0,
+      PlatformFeeUser: platformFeeUserType,
+      PlatformFeeUserAmount: parseInt(platformFeeUserAmount) || 0,
+      FareStartDate: FareDate?.startDate
+        ? new Date(FareDate.startDate).toISOString()
+        : null,
+      FareEndDate: FareDate?.endDate
+        ? new Date(FareDate.endDate).toISOString()
+        : null,
+      AdvanceDriverComission: advanceDriverCommissionType,
+      AdvanceDriverComissionAmount:
+        parseInt(advanceDriverCommissionAmount) || 0,
+      AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
+      AdvancedrivercomissionWalletAmount:
+        parseInt(advanceDriverCommissionWalletAmount) || 0,
+      AdvanceUserComission: advanceUserCommissionType,
+      AdvanceUserComissionAmount: parseInt(advanceUserCommissionAmount) || 0,
+      AdvanceUsercomissionWallet: advanceUserCommissionWalletType,
+      AdvancedUsercomissionWalletAmount:
+        parseInt(advanceUserCommissionWalletAmount) || 0,
+      TermsCond: termsConditions,
+      FareRules: fareRules,
+      advanceFareDistance: parseInt(distanceVoice) || 0,
+      advanceTimeAfter5hours: timeVoice,
+      package: selectedPackage,
+      Rentalpkg: selectedRentalPkg,
+    };
+    try {
+      const { data: dataInAdmin, error: errorInAdmin } =
+        await AddTripApiInAdmin(postdata);
+      if (dataInAdmin) {
+        toast.success("Trip added successfully!");
+        // Reset all fields (keep your existing reset logic)
+        setSelectedSubCategories([]);
+        setSelectedState("");
+        setSelectedCity("");
+        setSelectedCategory("");
+        setSelectedSubCategory("");
+        setTripType("");
+        setRecommendedFare("");
+        setMinFare("");
+        setMaxFare("");
+        setTax("");
+        setDriverRadius("");
+        setDriverMinWallet("");
+        setMinTripDiffTime("");
+        setUrgentTimeLimit("");
+        setPerHours("");
+        setBookingFeeRows([
+          {
+            bookingFeeType: "PerKm",
+            beeokingfeeFromKm: 0,
+            beeokingfeeToKm: 0,
+            bookingFee: 0,
+          },
+        ]);
+        setAdvanceFare({
+          FareType: "",
+          price: 0,
+        });
+        setSelectedPackage("");
+        setPackageName("");
+        setShowPackageForm(false);
+        setPackageDetails({
+          packageName: "",
+          description: "",
+          validity: "",
+          features: "",
+          price: "",
+          discountPercentage: "",
+          maxTrips: "",
+          packageType: "Basic",
+        });
+        // Reset new fields
+        setCommissionRows([{ fromKm: "", toKm: "", amount: "" }]);
+        setDistanceVoice("");
+        setTimeVoice("");
+        setPlatformFeeDriverType("Fixed");
+        setPlatformFeeDriverAmount("");
+        setPlatformFeeUserType("Fixed");
+        setPlatformFeeUserAmount("");
+        setAdvanceDriverCommissionType("Fixed");
+        setAdvanceDriverCommissionAmount("");
+        setAdvanceDriverCommissionWalletType("Fixed");
+        setAdvanceDriverCommissionWalletAmount("");
+        setAdvanceUserCommissionType("Fixed");
+        setAdvanceUserCommissionAmount("");
+        setAdvanceUserCommissionWalletType("Fixed");
+        setAdvanceUserCommissionWalletAmount("");
+        setTermsConditions("");
+        setFareRules("");
+      } else {
+        toast.error(errorInAdmin?.message || "Failed to add trip!");
+      }
+    } catch (error) {
+      console.error("API Error:", error);
+      toast.error("An error occurred while adding trip!");
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center bg-gray-50">
-
-      
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
-
-      
 
       <div
         className={`flex-1 p-6 ${
           isSidebarOpen ? "ml-64" : "ml-20"
         } transition-all duration-300`}
       >
-
         <div className="max-w-10xl bg-white rounded-lg shadow-lg">
-
-          
-      
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
             <h1 className="text-2xl font-bold">Add Fare Configuration</h1>
           </div>
 
-  <div className="mb-2 mt-4 ">
-        <div className="flex flex-wrap gap-4">
-         { tripType !== "CarPool" && (
-          <ToggleButton
-            label="Hide Seat View"
-            isSelected={settings.hideSeatView}
-
-            onClick={() => toggleSetting('hideSeatView')}/>
-         )
-          }
-          <ToggleButton
-            label="Hide Chat"
-            isSelected={settings.hideChat}
-
-             onClick={() => toggleSetting('hideChat')}
-
-          />
-          <ToggleButton
-            label="Hide Number"
-            isSelected={settings.hideNumber}
-            onClick={() => toggleSetting('hideNumber')}
-          />
-        </div>
-      </div>
+          <div className="mb-2 mt-4 ">
+            <div className="flex flex-wrap gap-4">
+              {tripType !== "CarPool" && (
+                <ToggleButton
+                  label="Hide Seat View"
+                  isSelected={settings.hideSeatView}
+                  onClick={() => toggleSetting("hideSeatView")}
+                />
+              )}
+              <ToggleButton
+                label="Hide Chat"
+                isSelected={settings.hideChat}
+                onClick={() => toggleSetting("hideChat")}
+              />
+              <ToggleButton
+                label="Hide Number"
+                isSelected={settings.hideNumber}
+                onClick={() => toggleSetting("hideNumber")}
+              />
+            </div>
+          </div>
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information Section */}
@@ -945,6 +904,21 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Trip For
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={tripType}
+                      onChange={(e) => settripFor(e.target.value)}
+                    >
+                      <Option value="Passenger">Passenger</Option>
+                     
+                      <Option value="Driver">Driver</Option>
+                    </Select>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip Type
@@ -983,10 +957,12 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                         </Option>
                       ))}
                     </Select>
-                  </div>                  
-                  {
-                    tripType == "Rental" && (
-                      <div>
+                  </div>
+
+                
+
+                  {tripType == "Rental" && (
+                    <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Package
                       </label>
@@ -997,33 +973,26 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       >
                         <Option value="">Select</Option>
                         {packages?.map((pkg) => (
-                          <Option
-                            key={pkg.name}
-                            value={pkg.name}
-                          >
+                          <Option key={pkg.name} value={pkg.name}>
                             {pkg.name}
                           </Option>
                         ))}
                       </Select>
                     </div>
-                    )
-                  }
-                 
-
-                 
+                  )}
                 </div>
-                 <div className="pt-4">
-                    <label className="block  text-sm font-medium text-black mb-2">
-                      Sub-Category
-                    </label>
-                    <MultiSelectSubCategory
-                      selectedSubCategories={selectedSubCategories}
-                      subcategories={subscategories}
-                      disabled={!selectedCategory}
-                      onChange={setSelectedSubCategories}
-                      className="w-full"
-                    />
-                  </div>
+                <div className="pt-4">
+                  <label className="block  text-sm font-medium text-black mb-2">
+                    Sub-Category
+                  </label>
+                  <MultiSelectSubCategory
+                    selectedSubCategories={selectedSubCategories}
+                    subcategories={subscategories}
+                    disabled={!selectedCategory}
+                    onChange={setSelectedSubCategories}
+                    className="w-full"
+                  />
+                </div>
               </div>
 
               {/* Fare Configuration Section */}
@@ -1288,10 +1257,10 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                   </h3>
                   <button
                     type="button"
-      onClick={addCommissionRow}
-      className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
-     >
-                    <Plus size={16} /> 
+                    onClick={addCommissionRow}
+                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  >
+                    <Plus size={16} />
                     Add Row
                   </button>
                 </div>
@@ -1304,17 +1273,17 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       <span className="text-sm font-medium text-indigo-700">
                         Platform fees Driver{" "}
                       </span>
-                     {commissionRows.length > 1 && (
-          <button
-            type="button"
-            onClick={() => {
-              if (commissionRows.length > 1) {
-                const updatedRows = commissionRows.filter(
-                  (_, i) => i !== index
-                );
-                setCommissionRows(updatedRows);
-              }
-            }}
+                      {commissionRows.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (commissionRows.length > 1) {
+                              const updatedRows = commissionRows.filter(
+                                (_, i) => i !== index
+                              );
+                              setCommissionRows(updatedRows);
+                            }
+                          }}
                           className="text-red-500 hover:text-red-700"
                         >
                           <X size={16} />
@@ -1327,10 +1296,16 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                           Driver Commision{" "}
                         </label>
                         <Select
-                            className="w-full"
-            value={row.driverComissionType || "Fixed"}
-            onChange={(e) => updateCommissionRow(index, "driverComissionType", e.target.value)}
-         >
+                          className="w-full"
+                          value={row.driverComissionType || "Fixed"}
+                          onChange={(e) =>
+                            updateCommissionRow(
+                              index,
+                              "driverComissionType",
+                              e.target.value
+                            )
+                          }
+                        >
                           <Option value="">All</Option>
                           <Option value="CityRide">Fixed</Option>
                           <Option value="Rental">Percentage</Option>
@@ -1338,35 +1313,43 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       </div>
 
                       {tripType === "CarPool" ? (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Carpool Commission
-            </label>
-            <Select
-              className="w-full"
-              value={row.carpoolCommissionType || "PerTrip"}
-              onChange={(e) => updateCommissionRow(index, "carpoolCommissionType", e.target.value)}
-            >
-              <Option value="PerTrip">Per/trip</Option>
-              <Option value="PerSeat">Per/seat</Option>
-            </Select>
-          </div>
-        ) : (
-          ""
-        )}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Carpool Commission
+                          </label>
+                          <Select
+                            className="w-full"
+                            value={row.carpoolCommissionType || "PerTrip"}
+                            onChange={(e) =>
+                              updateCommissionRow(
+                                index,
+                                "carpoolCommissionType",
+                                e.target.value
+                              )
+                            }
+                          >
+                            <Option value="PerTrip">Per/trip</Option>
+                            <Option value="PerSeat">Per/seat</Option>
+                          </Select>
+                        </div>
+                      ) : (
+                        ""
+                      )}
 
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           From/km
                         </label>
                         <Input
-                           type="number"
-            min={0}
-            placeholder="0"
-            className="w-full"
-            value={row.fromKm}
-            onChange={(e) => updateCommissionRow(index, "fromKm", e.target.value)}
-          />
+                          type="number"
+                          min={0}
+                          placeholder="0"
+                          className="w-full"
+                          value={row.fromKm}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "fromKm", e.target.value)
+                          }
+                        />
                       </div>
 
                       <div>
@@ -1375,12 +1358,14 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                         </label>
                         <Input
                           type="number"
-            min={0}
-            placeholder="0"
-            className="w-full"
-            value={row.toKm}
-            onChange={(e) => updateCommissionRow(index, "toKm", e.target.value)}
-         />
+                          min={0}
+                          placeholder="0"
+                          className="w-full"
+                          value={row.toKm}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "toKm", e.target.value)
+                          }
+                        />
                       </div>
 
                       <div>
@@ -1388,12 +1373,14 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                           Amount
                         </label>
                         <Input
-                        type="number"
-            placeholder="00"
-            className="w-full"
-            value={row.amount}
-            onChange={(e) => updateCommissionRow(index, "amount", e.target.value)}
-           />
+                          type="number"
+                          placeholder="00"
+                          className="w-full"
+                          value={row.amount}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "amount", e.target.value)
+                          }
+                        />
                       </div>
                     </div>
                   </div>
@@ -1477,18 +1464,16 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                 <h3 className="text-lg font-semibold text-orange-700 mb-4">
                   Platform Fee Configuration
                 </h3>
-              
 
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                   <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Platform fee Driver
                     </label>
                     <Select
-                       className="w-full"
-        value={platformFeeDriverType}
-        onChange={(e) => setPlatformFeeDriverType(e.target.value)}
+                      className="w-full"
+                      value={platformFeeDriverType}
+                      onChange={(e) => setPlatformFeeDriverType(e.target.value)}
                     >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
@@ -1500,25 +1485,27 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-        type="number"
-        placeholder="00"
-        className="w-full"
-        value={platformFeeDriverAmount}
-        onChange={(e) => setPlatformFeeDriverAmount(e.target.value)}
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={platformFeeDriverAmount}
+                      onChange={(e) =>
+                        setPlatformFeeDriverAmount(e.target.value)
+                      }
                     />
                   </div>
                 </div>
 
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                   Platform fee User
+                      Platform fee User
                     </label>
-                    <Select   
-  className="w-full"
-        value={platformFeeUserType}
-        onChange={(e) => setPlatformFeeUserType(e.target.value)}                    >
+                    <Select
+                      className="w-full"
+                      value={platformFeeUserType}
+                      onChange={(e) => setPlatformFeeUserType(e.target.value)}
+                    >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -1529,17 +1516,14 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-                         type="number"
-        placeholder="00"
-        className="w-full"
-        value={platformFeeUserAmount}
-        onChange={(e) => setPlatformFeeUserAmount(e.target.value)}
-  
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={platformFeeUserAmount}
+                      onChange={(e) => setPlatformFeeUserAmount(e.target.value)}
                     />
                   </div>
                 </div>
-
-            
               </div>
 
               {/* Trip Pickup Time Configuration */}
@@ -1564,7 +1548,7 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                    From Time
+                      From Time
                     </label>
                     <Input
                       type="time"
@@ -1879,13 +1863,16 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
 
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1"> Advance Driver Commission
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {" "}
+                      Advance Driver Commission
                     </label>
                     <Select
-                     className="w-full"
-        value={advanceDriverCommissionType}
-        onChange={(e) => setAdvanceDriverCommissionType(e.target.value)}
-      
+                      className="w-full"
+                      value={advanceDriverCommissionType}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionType(e.target.value)
+                      }
                     >
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
@@ -1898,12 +1885,13 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-                        type="number"
-        placeholder="00"
-        className="w-full"
-        value={advanceDriverCommissionAmount}
-        onChange={(e) => setAdvanceDriverCommissionAmount(e.target.value)}
-     
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={advanceDriverCommissionAmount}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionAmount(e.target.value)
+                      }
                     />
                   </div>
 
@@ -1912,10 +1900,12 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       wallet
                     </label>
                     <Select
-                       className="w-full"
-        value={advanceDriverCommissionWalletType}
-        onChange={(e) => setAdvanceDriverCommissionWalletType(e.target.value)}
-    >
+                      className="w-full"
+                      value={advanceDriverCommissionWalletType}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionWalletType(e.target.value)
+                      }
+                    >
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>
@@ -1926,13 +1916,13 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-                             type="number"
-        placeholder="00"
-        className="w-full"
-        value={advanceDriverCommissionWalletAmount}
-        onChange={(e) => setAdvanceDriverCommissionWalletAmount(e.target.value)}
-      
-                     
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={advanceDriverCommissionWalletAmount}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionWalletAmount(e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -1945,13 +1935,14 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                     Advance User commission
+                      Advance User commission
                     </label>
                     <Select
-                             className="w-full"
-        value={advanceUserCommissionType}
-        onChange={(e) => setAdvanceUserCommissionType(e.target.value)}
-      
+                      className="w-full"
+                      value={advanceUserCommissionType}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionType(e.target.value)
+                      }
                     >
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
@@ -1964,23 +1955,27 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-                       type="number"
-        placeholder="00"
-        className="w-full"
-        value={advanceUserCommissionAmount}
-        onChange={(e) => setAdvanceUserCommissionAmount(e.target.value)}
-      />
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={advanceUserCommissionAmount}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionAmount(e.target.value)
+                      }
+                    />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       wallet
                     </label>
-                    <Select 
-                        className="w-full"
-        value={advanceUserCommissionWalletType}
-        onChange={(e) => setAdvanceUserCommissionWalletType(e.target.value)}
-     >
+                    <Select
+                      className="w-full"
+                      value={advanceUserCommissionWalletType}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionWalletType(e.target.value)
+                      }
+                    >
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>
@@ -1991,12 +1986,14 @@ const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] 
                       Amount
                     </label>
                     <Input
-                   type="number"
-        placeholder="Amount"
-        className="w-full"
-        value={advanceUserCommissionWalletAmount}
-        onChange={(e) => setAdvanceUserCommissionWalletAmount(e.target.value)}
-      />
+                      type="number"
+                      placeholder="Amount"
+                      className="w-full"
+                      value={advanceUserCommissionWalletAmount}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionWalletAmount(e.target.value)
+                      }
+                    />
                   </div>
                 </div>
               </div>

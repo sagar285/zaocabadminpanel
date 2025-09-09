@@ -20,8 +20,8 @@ const PerKmFareManagementScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
-    const { data: packages, isLoading } = useGetPackagesQuery();
- const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
+  const { data: packages, isLoading } = useGetPackagesQuery();
+  const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
@@ -30,9 +30,9 @@ const PerKmFareManagementScreen = () => {
   const [subscategories, setSubscategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-   
 
   const [tripType, setTripType] = useState("");
+  const [tripFor, settripFor] = useState("");
 
   // Updated fare configuration fields based on PDF
   const [baseFare, setBaseFare] = useState("");
@@ -88,7 +88,6 @@ const PerKmFareManagementScreen = () => {
   const [acAdminCommission, setAcAdminCommission] = useState("");
   const [termsConditions, setTermsConditions] = useState("");
   const [fareRules, setFareRules] = useState("");
-
 
   const [AddTripApiInAdmin] = useAddTripDetailInAdminMutation();
 
@@ -162,10 +161,9 @@ const PerKmFareManagementScreen = () => {
     ]);
   };
 
-
-  const handleRentalPackageChange = (e) =>{
-    setselectedRentalPkg(e.target.value)
-  }
+  const handleRentalPackageChange = (e) => {
+    setselectedRentalPkg(e.target.value);
+  };
 
   const updateBookingFeeRow = (index, field, value) => {
     const updatedRows = bookingFeeRows.map((row, i) =>
@@ -329,7 +327,8 @@ const PerKmFareManagementScreen = () => {
     e.preventDefault();
 
     const postdata = {
-      perKmFare:true,
+      tripFor:tripFor,
+      perKmFare: true,
       vehicleCategory: selectedCategory,
       vehicleSubCategory: selectedSubCategories,
       tripType: tripType,
@@ -384,7 +383,7 @@ const PerKmFareManagementScreen = () => {
       termsConditions: termsConditions,
       fareRules: fareRules,
       settings: settings,
-      Rentalpkg:selectedRentalPkg
+      Rentalpkg: selectedRentalPkg,
     };
 
     try {
@@ -514,6 +513,21 @@ const PerKmFareManagementScreen = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Trip For
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={tripType}
+                      onChange={(e) => settripFor(e.target.value)}
+                    >
+                      <Option value="Passenger">Passenger</Option>
+
+                      <Option value="Driver">Driver</Option>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip Type
                     </label>
                     <Select
@@ -552,31 +566,25 @@ const PerKmFareManagementScreen = () => {
                     </Select>
                   </div>
 
-
-                   {
-                                      tripType == "Rental" && (
-                                        <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                          Package
-                                        </label>
-                                        <Select
-                                          className="w-full"
-                                          value={selectedRentalPkg}
-                                          onChange={handleRentalPackageChange}
-                                        >
-                                          <Option value="">Select</Option>
-                                          {packages?.map((pkg) => (
-                                            <Option
-                                              key={pkg.name}
-                                              value={pkg.name}
-                                            >
-                                              {pkg.name}
-                                            </Option>
-                                          ))}
-                                        </Select>
-                                      </div>
-                                      )
-                                    }
+                  {tripType == "Rental" && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Package
+                      </label>
+                      <Select
+                        className="w-full"
+                        value={selectedRentalPkg}
+                        onChange={handleRentalPackageChange}
+                      >
+                        <Option value="">Select</Option>
+                        {packages?.map((pkg) => (
+                          <Option key={pkg.name} value={pkg.name}>
+                            {pkg.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                  )}
                 </div>
                 <div className="pt-4">
                   <label className="block text-sm font-medium text-black mb-2">
@@ -673,14 +681,14 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Extra time charges
                     </label>
-                     <Select
-          value={chargeType}
-  onChange={(e) => setChargeType(e.target.value)} // ✅ e.target.value use करें
-          className="w-full"
-        >
-          <Option value="perHour">per/hour</Option>
-          <Option value="perMin">per/min</Option>
-        </Select>
+                    <Select
+                      value={chargeType}
+                      onChange={(e) => setChargeType(e.target.value)} // ✅ e.target.value use करें
+                      className="w-full"
+                    >
+                      <Option value="perHour">per/hour</Option>
+                      <Option value="perMin">per/min</Option>
+                    </Select>
                   </div>
 
                   <div>

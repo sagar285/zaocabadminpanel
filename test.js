@@ -1,56 +1,67 @@
-// packageApi.js
+// services/subscriptionApi.js
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const packageApi = createApi({
-  reducerPath: "packageApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "/api" }), // adjust baseUrl if needed
-  tagTypes: ["package"],
+export const subscriptionApi = createApi({
+  reducerPath: "subscriptionApi",
+  baseQuery: fetchBaseQuery({ baseUrl: "/api" }), // adjust if your backend prefix is different
+  tagTypes: ["Subscription"],
   endpoints: (builder) => ({
-    
-    // Get all packages
-    getPackages: builder.query({
-      query: ({ page = 1, limit = 10 } = {}) => ({
-        url: "/package",
-        params: { page, limit },
-      }),
-      providesTags: ["package"],
-    }),
-
-    // Add new package
-    addPackage: builder.mutation({
+    // ✅ Create
+    createSubscription: builder.mutation({
       query: (data) => ({
-        url: "/package/add",
+        url: "/subscription",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["package"],
+      invalidatesTags: ["Subscription"],
     }),
 
-    // Edit package
-    editPackage: builder.mutation({
+    // ✅ Get all
+    getSubscriptions: builder.query({
+      query: () => ({
+        url: "/subscription",
+        method: "GET",
+      }),
+      providesTags: ["Subscription"],
+    }),
+
+    // ✅ Get one by ID
+    getSubscriptionById: builder.query({
+      query: (id) => ({
+        url: `/subscription/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, id) => [{ type: "Subscription", id }],
+    }),
+
+    // ✅ Update
+    updateSubscription: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `/package/edit?id=${id}`, // if backend expects id as query
+        url: `/subscription/${id}`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["package"],
+      invalidatesTags: (result, error, { id }) => [
+        { type: "Subscription", id },
+        "Subscription",
+      ],
     }),
 
-    // Delete package
-    deletePackage: builder.mutation({
+    // ✅ Delete
+    deleteSubscription: builder.mutation({
       query: (id) => ({
-        url: `/package/delete?id=${id}`, // if backend expects id as query
+        url: `/subscription/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["package"],
+      invalidatesTags: ["Subscription"],
     }),
-
   }),
 });
 
 export const {
-  useGetPackagesQuery,
-  useAddPackageMutation,
-  useEditPackageMutation,
-  useDeletePackageMutation,
-} = packageApi;
+  useCreateSubscriptionMutation,
+  useGetSubscriptionsQuery,
+  useGetSubscriptionByIdQuery,
+  useUpdateSubscriptionMutation,
+  useDeleteSubscriptionMutation,
+} = subscriptionApi;

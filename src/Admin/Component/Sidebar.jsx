@@ -82,16 +82,25 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         { title: "Per/km-fare", icon: UserCircle, path: "/addfare/perkm" },
       ],
     },
-
     {
       title: "Fare-Details",
       icon: TicketIcon,
       path: "/trips",
     },
     {
+      title: "category",
+      icon: TicketIcon,
+      path: "/category",
+    },
+    {
       title: "Packages",
       icon: TicketIcon,
       path: "/packages",
+    },
+    {
+      title: "subricption-Packages",
+      icon: TicketIcon,
+      path: "/subcription-packages",
     },
     {
       title: "Users",

@@ -74,6 +74,7 @@ import OneWayTripsVehicle from "./Admin/pages/OnewayTripsVehicle.jsx";
 import CarpoolTripsVehicle from "./Admin/pages/CarpoolTripsVehicle.jsx";
 import ViewUserCarpoolTrip from "./Admin/pages/ViewuserCarpoolTrip.jsx";
 import Packages from "./Admin/pages/Packages.jsx";
+import SubscriptionPackages from "./Admin/pages/SubscriptionPackages.jsx";
 
 const App = () => {
   return (
@@ -83,11 +84,12 @@ const App = () => {
       <Route path="/addFare" element={<FareManagementScreen />} />
 
       <Route path="/addFare/perkm" element={<PerKmFareManagement />} />
+      <Route path="/subcription-packages" element={<SubscriptionPackages />} />
       <Route
         path="/driver-travels"
         element={
           <Provider>
-            <DriverTravels />   
+            <DriverTravels /> 
           </Provider>
         }
       />
