@@ -36,7 +36,7 @@ export const apiSlice = createApi({
 
     getDriverById: builder.query({
       query: (id) => ({
-        url: `/driver/viewDriverInfo/${id}`,
+        url: `/driver/viewDriverInfo/${id}`
       }),
     }),
 

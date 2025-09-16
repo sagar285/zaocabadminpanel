@@ -36,6 +36,8 @@ const PerKmFareManagementScreen = () => {
 
   // Updated fare configuration fields based on PDF
   const [baseFare, setBaseFare] = useState("");
+  const [Extratobepaid, setExtratobepaid] = useState("");
+  const [fareInclude, setfareInclude] = useState("");
   const [baseFareForKm, setBaseFareForKm] = useState("");
   const [baseFareForTime, setBaseFareForTime] = useState("");
   const [waitingTimeMinutes, setWaitingTimeMinutes] = useState("");
@@ -44,7 +46,6 @@ const PerKmFareManagementScreen = () => {
   const [waitingTimeCharges, setWaitingTimeCharges] = useState("");
 
   // Night time charges
-
   const [nightTimeCharge, setNightTimeCharge] = useState("");
   const [nightTimeFrom, setNightTimeFrom] = useState("");
   const [nightTimeTo, setNightTimeTo] = useState("");
@@ -327,6 +328,8 @@ const PerKmFareManagementScreen = () => {
     e.preventDefault();
 
     const postdata = {
+      Extratobepaid,
+      fareInclude,
       tripFor:tripFor,
       perKmFare: true,
       vehicleCategory: selectedCategory,
@@ -719,6 +722,119 @@ const PerKmFareManagementScreen = () => {
                     />
                   </div>
                 </div>
+
+                {/* Night Time Row */}
+                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-300">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Night time charge
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Night time charge"
+                      className="w-full"
+                      value={nightTimeCharge}
+                      min={0}
+                      onChange={(e) => setNightTimeCharge(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Night time from
+                    </label>
+                    <Input
+                      type="time"
+                      className="w-full"
+                      value={nightTimeFrom}
+                      onChange={(e) => setNightTimeFrom(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Night time to
+                    </label>
+                    <Input
+                      type="time"
+                      className="w-full"
+                      value={nightTimeTo}
+                      onChange={(e) => setNightTimeTo(e.target.value)}
+                    />
+                  </div>
+                </div> */}
+
+                {/* Surcharges Row
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-300">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Surcharges
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Surcharges amount"
+                      className="w-full"
+                      value={surcharges}
+                      min={0}
+                      onChange={(e) => setSurcharges(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Surcharges from
+                    </label>
+                    <Input
+                      type="time"
+                      className="w-full"
+                      value={surchargesFrom}
+                      onChange={(e) => setSurchargesFrom(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Surcharges to
+                    </label>
+                    <Input
+                      type="time"
+                      className="w-full"
+                      value={surchargesTo}
+                      onChange={(e) => setSurchargesTo(e.target.value)}
+                    />
+                  </div>
+                </div> */}
+              </div>
+              <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
+                <h3 className="text-lg font-semibold text-green-700 mb-4">
+                  Admin Lines
+                </h3>
+
+                {/* First Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Bold Line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Extra to be paid by you to driver"
+                      className="w-full"
+                      value={Extratobepaid}
+                      onChange={(e) => setExtratobepaid(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Lighter Line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="your fare does not include"
+                      className="w-full"
+                      value={fareInclude}
+                      onChange={(e) => setfareInclude(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+          
 
                 {/* Night Time Row */}
                 {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-300">
