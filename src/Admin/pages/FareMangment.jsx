@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Plus, X, Edit, Trash2, Check } from "lucide-react";
 import Sidebar from "../Component/Sidebar";
 import Input from "../Component/Input";
@@ -6,7 +6,9 @@ import { Select, Option } from "../Component/Select";
 import {
   useAddTripDetailInAdminMutation,
   useAddTripDetailMutation,
+  useGetAllVehicleCategoryQuery,
   useGetCategoriesQuery,
+  useGetCategoryAllVehicleQuery,
   useGetPackagesQuery,
   useGetStateAndCitiesQuery,
 } from "../Redux/Api";
@@ -19,7 +21,24 @@ const FareManagementScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isCarpool, setIsCarpool] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
-  const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+  // const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+
+
+    const {
+      data: categoryData,
+      // isLoading,
+      isError,
+      // error,
+      refetch: refetchCategory,
+    } = useGetAllVehicleCategoryQuery();
+
+
+    
+
+
+
+
+
   const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
@@ -375,18 +394,40 @@ const FareManagementScreen = () => {
     }
   };
 
+  const shouldFetchCategories = !!selectedCategory;
+
+    const {
+      data: categoriesDataa,
+      error: fetchErro,
+      isLoading: isFetchingCategorie,
+      refetch: refetchCategorie,
+    } = useGetCategoryAllVehicleQuery(selectedCategory);
+
+
+    useEffect(() => {
+      if (categoriesDataa && shouldFetchCategories) {
+        // Yahan subcategory set karein
+        setSubscategories(categoriesDataa);
+      }
+    }, [categoriesDataa, shouldFetchCategories]);
+
+    console.log(subscategories,"subscategories subscategories subscategories")
+    
+
+
+
   const handleCategoryChange = (e) => {
     const categoryName = e.target.value;
     setSelectedCategory(categoryName);
-    const selectedCategoryObj = categoryData?.categories.find(
-      (category) => category.categoryName === categoryName
-    );
-    if (selectedCategoryObj) {
-      setSubscategories(selectedCategoryObj.subcategory);
-      setSelectedSubCategories([]);
-    } else {
-      setSubscategories([]);
-    }
+    // const selectedCategoryObj = categoryData?.categories.find(
+    //   (category) => category.categoryName === categoryName
+    // );
+    // if (selectedCategoryObj) {
+    //   setSubscategories(selectedCategoryObj.subcategory);
+    //   setSelectedSubCategories([]);
+    // } else {
+    //   setSubscategories([]);
+    // }
   };
 
   const handleRentalPackageChange = (e) => {
@@ -949,12 +990,12 @@ const FareManagementScreen = () => {
                       onChange={handleCategoryChange}
                     >
                       <Option value="">Select</Option>
-                      {categoryData?.categories.map((category) => (
+                      {categoryData?.map((category) => (
                         <Option
-                          key={category.categoryName}
-                          value={category.categoryName}
+                          key={category.brandName}
+                          value={category.brandName}
                         >
-                          {category.categoryName}
+                          {category.brandName}
                         </Option>
                       ))}
                     </Select>

@@ -126,8 +126,8 @@ export const apiSlice = createApi({
     }),
 
     getAllVehicleCategory: builder.query({
-      query: () => ({
-        url: "/category/getAllCategories",
+      query: (brandName) => ({
+        url: `/category/getAllCategories`,
       }),
       providesTags: ["category"],
     }),
@@ -1170,8 +1170,8 @@ export const apiSlice = createApi({
     }),
 
     getCategoryAllVehicle: builder.query({
-      query: () => ({
-        url: "/category/getCategoryAddVechile",
+      query: (brandName) => ({
+        url: `/category/getCategoryAddVechile/${brandName}`,
         method: "GET",
       }),
     }),

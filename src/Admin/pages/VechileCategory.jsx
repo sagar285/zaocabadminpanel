@@ -529,6 +529,9 @@ const url = `${baseUrl}/categoryIcons/`
     error,
     refetch: refetchCategory,
   } = useGetAllVehicleCategoryQuery();
+
+
+  
   const [deleteCategory, { isLoading: isDeleting}] =
     useDeleteCategoryMutation();
 

@@ -609,6 +609,8 @@ const AddCategoryVehicle = () => {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [toast, setToast] = useState(null);
 
+  console.log(categoryName,"categoryName categoryName categoryName")
+
   // API Integration
   const {
     data: categoriesD,
@@ -624,7 +626,7 @@ const AddCategoryVehicle = () => {
     error: fetchErro,
     isLoading: isFetchingCategorie,
     refetch: refetchCategorie,
-  } = useGetCategoryAllVehicleQuery();
+  } = useGetCategoryAllVehicleQuery(categoryName);
 
   // ✅ Correct edit mutation hook
   const [editVehicle, { isLoading: isEditing }] = useEditCategoryAddVehicleMutation();

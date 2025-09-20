@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Plus, X, Edit, Trash2, Check } from "lucide-react";
 import Sidebar from "../Component/Sidebar";
 import Input from "../Component/Input";
@@ -6,7 +6,9 @@ import { Select, Option } from "../Component/Select";
 import {
   useAddTripDetailInAdminMutation,
   useAddTripDetailMutation,
+  useGetAllVehicleCategoryQuery,
   useGetCategoriesQuery,
+  useGetCategoryAllVehicleQuery,
   useGetPackagesQuery,
   useGetStateAndCitiesQuery,
 } from "../Redux/Api";
@@ -19,7 +21,15 @@ const PerKmFareManagementScreen = () => {
   const [waitingTimeCharge, setWaitingTimeCharge] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
-  const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+  // const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+
+  const {
+    data: categoryData,
+    // isLoading,
+    isError,
+    // error,
+    refetch: refetchCategory,
+  } = useGetAllVehicleCategoryQuery();
   const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [selectedState, setSelectedState] = useState("");
@@ -294,18 +304,36 @@ const PerKmFareManagementScreen = () => {
     </button>
   );
 
+  const shouldFetchCategories = !!selectedCategory;
+
+  const {
+    data: categoriesDataa,
+    error: fetchErro,
+    isLoading: isFetchingCategorie,
+    refetch: refetchCategorie,
+  } = useGetCategoryAllVehicleQuery(selectedCategory);
+
+  useEffect(() => {
+    if (categoriesDataa && shouldFetchCategories) {
+      // Yahan subcategory set karein
+      setSubscategories(categoriesDataa);
+    }
+  }, [categoriesDataa, shouldFetchCategories]);
+
+  console.log(subscategories, "subscategories subscategories subscategories");
+
   const handleCategoryChange = (e) => {
     const categoryName = e.target.value;
     setSelectedCategory(categoryName);
-    const selectedCategoryObj = categoryData?.categories.find(
-      (category) => category.categoryName === categoryName
-    );
-    if (selectedCategoryObj) {
-      setSubscategories(selectedCategoryObj.subcategory);
-      setSelectedSubCategories([]);
-    } else {
-      setSubscategories([]);
-    }
+    // const selectedCategoryObj = categoryData?.categories.find(
+    //   (category) => category.categoryName === categoryName
+    // );
+    // if (selectedCategoryObj) {
+    //   setSubscategories(selectedCategoryObj.subcategory);
+    //   setSelectedSubCategories([]);
+    // } else {
+    //   setSubscategories([]);
+    // }
   };
 
   const handleStateChange = (e) => {
@@ -335,7 +363,7 @@ const PerKmFareManagementScreen = () => {
       tripType: tripType,
       // Updated fare fields
       baseFare: baseFare,
-      baseFareForKm:parseInt(baseFareForKm),
+      baseFareForKm: parseInt(baseFareForKm),
       baseFareForTime: baseFareForTime,
       waitingTimeMinutes: waitingTimeMinutes,
       extraPerKmCharges: extraPerKmCharges,
@@ -387,9 +415,10 @@ const PerKmFareManagementScreen = () => {
       Rentalpkg: selectedRentalPkg,
     };
 
-    console.log(postdata?.FareStatus,"baseFareForKm baseFareForKm baseFareForKm")
-
-
+    console.log(
+      postdata?.FareStatus,
+      "baseFareForKm baseFareForKm baseFareForKm"
+    );
 
     try {
       const { data: dataInAdmin, error: errorInAdmin } =
@@ -560,12 +589,12 @@ const PerKmFareManagementScreen = () => {
                       onChange={handleCategoryChange}
                     >
                       <Option value="">Select</Option>
-                      {categoryData?.categories.map((category) => (
+                      {categoryData?.map((category) => (
                         <Option
-                          key={category.categoryName}
-                          value={category.categoryName}
+                          key={category.brandName}
+                          value={category.brandName}
                         >
-                          {category.categoryName}
+                          {category.brandName}
                         </Option>
                       ))}
                     </Select>

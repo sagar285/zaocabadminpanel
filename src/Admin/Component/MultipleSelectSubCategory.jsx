@@ -11,9 +11,9 @@ const MultiSelectSubCategory = ({
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSubcategory = (subcategory) => {
-    const updatedSelection = selectedSubCategories.includes(subcategory)
-      ? selectedSubCategories.filter(item => item !== subcategory)
-      : [...selectedSubCategories, subcategory];
+    const updatedSelection = selectedSubCategories.includes(subcategory.vehicleName)
+      ? selectedSubCategories.filter(item => item !== subcategory.vehicleName)
+      : [...selectedSubCategories, subcategory.vehicleName];
     onChange(updatedSelection);
   };
 
@@ -53,7 +53,7 @@ const MultiSelectSubCategory = ({
                   <Check className="w-3 h-3 text-black" />
                 )}
               </div>
-              {subcategory}
+              {subcategory.vehicleName}
             </div>
           ))}
         </div>
