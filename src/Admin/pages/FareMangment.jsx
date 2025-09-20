@@ -769,6 +769,7 @@ const FareManagementScreen = () => {
       AdvanceDriverComission: advanceDriverCommissionType,
       AdvanceDriverComissionAmount:
         parseInt(advanceDriverCommissionAmount) || 0,
+        FareStatus:FareStatus,
       AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
       AdvancedrivercomissionWalletAmount:
         parseInt(advanceDriverCommissionWalletAmount) || 0,

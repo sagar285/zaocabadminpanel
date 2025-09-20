@@ -44,12 +44,10 @@ const PerKmFareManagementScreen = () => {
   const [extraPerKmCharges, setExtraPerKmCharges] = useState("");
   const [extraTimeCharges, setExtraTimeCharges] = useState("");
   const [waitingTimeCharges, setWaitingTimeCharges] = useState("");
-
   // Night time charges
   const [nightTimeCharge, setNightTimeCharge] = useState("");
   const [nightTimeFrom, setNightTimeFrom] = useState("");
   const [nightTimeTo, setNightTimeTo] = useState("");
-
   // Surcharges
   const [surcharges, setSurcharges] = useState("");
   const [surchargesFrom, setSurchargesFrom] = useState("");
@@ -330,14 +328,14 @@ const PerKmFareManagementScreen = () => {
     const postdata = {
       Extratobepaid,
       fareInclude,
-      tripFor:tripFor,
+      tripFor: tripFor,
       perKmFare: true,
       vehicleCategory: selectedCategory,
       vehicleSubCategory: selectedSubCategories,
       tripType: tripType,
       // Updated fare fields
       baseFare: baseFare,
-      baseFareForKm: baseFareForKm,
+      baseFareForKm:parseInt(baseFareForKm),
       baseFareForTime: baseFareForTime,
       waitingTimeMinutes: waitingTimeMinutes,
       extraPerKmCharges: extraPerKmCharges,
@@ -388,6 +386,10 @@ const PerKmFareManagementScreen = () => {
       settings: settings,
       Rentalpkg: selectedRentalPkg,
     };
+
+    console.log(postdata?.FareStatus,"baseFareForKm baseFareForKm baseFareForKm")
+
+
 
     try {
       const { data: dataInAdmin, error: errorInAdmin } =
@@ -822,7 +824,7 @@ const PerKmFareManagementScreen = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Lighter Line
+                      Lighter Line
                     </label>
                     <Input
                       type="text"
@@ -833,8 +835,6 @@ const PerKmFareManagementScreen = () => {
                     />
                   </div>
                 </div>
-
-          
 
                 {/* Night Time Row */}
                 {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-300">
