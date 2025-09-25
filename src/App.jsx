@@ -75,6 +75,7 @@ import CarpoolTripsVehicle from "./Admin/pages/CarpoolTripsVehicle.jsx";
 import ViewUserCarpoolTrip from "./Admin/pages/ViewuserCarpoolTrip.jsx";
 import Packages from "./Admin/pages/Packages.jsx";
 import SubscriptionPackages from "./Admin/pages/SubscriptionPackages.jsx";
+import PerKmFareManagementScreen from "./Admin/pages/EditPerkmFareManagmentScreen.jsx";
 
 const App = () => {
   return (
@@ -83,8 +84,15 @@ const App = () => {
       <Route path="/trips/:status" element={<ShowTripByStatus />} />
       <Route path="/addFare" element={<FareManagementScreen />} />
 
+
+      <Route path="/editFareManagment/:id" element={<FareManagementScreen />} />
+
+
+
       <Route path="/addFare/perkm" element={<PerKmFareManagement />} />
+      <Route path="/faretrip/perkm/:id" element={<PerKmFareManagementScreen />} />
       <Route path="/subcription-packages" element={<SubscriptionPackages />} />
+
       <Route
         path="/driver-travels"
         element={

@@ -51,6 +51,14 @@ const ViewTrip = () => {
     }
   };
 
+  const handleEditTrip = () => {
+    if (trip?.perKmFare === true) {
+      navigate(`/faretrip/perkm/${trip?._id}`);
+    } else {
+      navigate(`/editFareManagment/${trip?._id}`);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       const {data,error} = await DeleteTrip(id)
@@ -193,7 +201,7 @@ const ViewTrip = () => {
         )}
 
         <div className="flex gap-4 mt-6">
-           <button onClick={()=>navigate(`/faretrip/${trip?._id}`)} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+           <button onClick={()=>handleEditTrip()} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
             Edit
           </button>
           <button onClick={()=>handleDelete(trip?._id)} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
