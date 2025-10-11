@@ -83,12 +83,7 @@ const App = () => {
       <Route path="/" element={<Dashboard />} />
       <Route path="/trips/:status" element={<ShowTripByStatus />} />
       <Route path="/addFare" element={<FareManagementScreen />} />
-
-
       <Route path="/editFareManagment/:id" element={<FareManagementScreen />} />
-
-
-
       <Route path="/addFare/perkm" element={<PerKmFareManagement />} />
       <Route path="/faretrip/perkm/:id" element={<PerKmFareManagementScreen />} />
       <Route path="/subcription-packages" element={<SubscriptionPackages />} />

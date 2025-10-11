@@ -108,7 +108,8 @@ const EditBrandModal = ({ isOpen, onClose, brand, onSave }) => {
         seats: brand.seats || "",
         status: brand.status || "",
         orderNo: brand.orderNo || "",
-
+        description:brand.description,
+        similarModal:brand.similarModal
       });
     }
   }, [brand]);
@@ -125,7 +126,6 @@ const EditBrandModal = ({ isOpen, onClose, brand, onSave }) => {
       editCategoryData.append("similarModal",formData.similarModal);
       editCategoryData.append("description",formData.description);
       // editCategoryData.append("category_icon",formData.image)
-     
       editCategoryData.append("category_icon", formData.image);
     
 
@@ -223,9 +223,9 @@ const EditBrandModal = ({ isOpen, onClose, brand, onSave }) => {
       <input
         type="text"
         placeholder="Similar Model"
-        value={formData.similarModel}
+        value={formData.similarModal}
         onChange={(e) =>
-          setFormData({ ...formData, similarModel: e.target.value })
+          setFormData({ ...formData, similarModal: e.target.value })
         }
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={isEditing}
@@ -770,7 +770,7 @@ const url = `${baseUrl}/categoryIcons/`
                             <td className="border border-gray-300 px-3 py-2 text-xs font-medium">
                               {
                                 <img
-                      src={`${url}/${brand?.vehicleIcon}`}
+                      src={`${brand?.vehicleIcon}`}
                       alt="Icon"
                       className="w-16 h-16 object-cover border rounded-md"
                     />
