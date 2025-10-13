@@ -468,7 +468,7 @@ useEffect(() => {
                   />
                   <button
                     onClick={addRow}
-                    disabled={totalRows >= 8 || isLoading}
+                    disabled={totalRows >= 15 || isLoading}
                     className="w-10 h-10 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors disabled:opacity-50"
                   >
                     <Plus className="w-4 h-4" />
@@ -500,7 +500,7 @@ useEffect(() => {
                       value={seatsPerRow}
                       onChange={(e) =>
                         setSeatsPerRow(
-                          Math.max(1, Math.min(6, parseInt(e.target.value) || 1))
+                          Math.max(1, Math.min(15, parseInt(e.target.value) || 1))
                         )
                       }
                       className="flex-1 px-4 py-2 text-center border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50"
@@ -508,7 +508,7 @@ useEffect(() => {
                     />
                     <button
                       onClick={() => setSeatsPerRow((prev) => Math.min(6, prev + 1))}
-                      disabled={seatsPerRow >= 6 || isLoading}
+                      disabled={seatsPerRow >= 15 || isLoading}
                       className="w-10 h-10 rounded-lg border-2 border-gray-300 flex items-center justify-center hover:border-blue-500 hover:text-blue-600 transition-colors disabled:opacity-50"
                     >
                       <Plus className="w-4 h-4" />
