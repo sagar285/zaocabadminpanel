@@ -44,7 +44,7 @@ const AddSeat = () => {
   const [addCarpoolSeat, { isLoading: isAddingSeat }] = useAddCarpoolSeatMutation();
     const {data,error} = useGetCarpoolSeatsQuery()
 
-console.log(data,error,"jjjjjjkkkkkkhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+
 
 
  const toggleSidebar = () => {
@@ -461,7 +461,7 @@ useEffect(() => {
                     max="8"
                     value={totalRows}
                     onChange={(e) =>
-                      setTotalRows(Math.max(1, Math.min(8, parseInt(e.target.value) || 1)))
+                      setTotalRows(Math.max(1, Math.min(15, parseInt(e.target.value) || 1)))
                     }
                     className="flex-1 px-4 py-2 text-center border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none disabled:opacity-50"
                     disabled={isLoading}
