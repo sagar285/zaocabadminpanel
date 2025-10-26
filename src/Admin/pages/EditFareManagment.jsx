@@ -22,7 +22,7 @@ const EditFareManagementScreen = () => {
   const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
   const navigate = useNavigate();
    console.log(tripData,"tripData in edit fare management screen")
-   const tripInfo = tripData?.trip ;
+   const tripInfo = tripData?.trip;
 
 
    const formatDateForInput = (isoString) => {

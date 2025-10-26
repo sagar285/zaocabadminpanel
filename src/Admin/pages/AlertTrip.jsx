@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
 import Sidebar from '../Component/Sidebar';
-import { useGetTripsByStatusQuery } from "../Redux/Api";
+import { useGetTripsByStatusQuery,useGetAllAlertsQuery } from "../Redux/Api";
 import { format } from 'date-fns';
 
-const ShowTripByStatus = () => {
+const AlertTrip = () => {
   const { status } = useParams();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +16,9 @@ const ShowTripByStatus = () => {
     limit
   });
 
-  
+    const { data: AlertsData } = useGetAllAlertsQuery();
+
+    const trips = AlertsData?.Trips;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -27,14 +29,14 @@ const ShowTripByStatus = () => {
       
       <div className={`flex-1 p-8 ${isSidebarOpen ? "ml-64" : "ml-20"} transition-all duration-300`}>
         {/* Header */}
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <h1 className="text-2xl font-bold text-gray-800">
             {status?.charAt(0).toUpperCase() + status?.slice(1)} Trips
           </h1>
           <p className="text-gray-600 mt-1">
             Showing trips with status: {status}
           </p>
-        </div>
+        </div> */}
 
         {/* Loading State */}
         {isLoading && (
@@ -64,51 +66,46 @@ const ShowTripByStatus = () => {
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trip Details</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vehicle Info</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pickup</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Drop</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">userName</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TripType</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {data?.trips.map((trip) => (
+                  {trips.map((trip) => (
                     <tr key={trip._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{trip.tripId}</div>
-                        <div className="text-sm text-gray-500">{format(new Date(trip.tripDate), 'MMM dd, yyyy')}</div>
+                        <div className="text-sm text-gray-500">{format(new Date(trip.createdAt), 'MMM dd, yyyy')}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">{trip.pickupLocation?.substring(0, 30) + '...'}</div>
-                        <div className="text-sm text-gray-500 mt-1">→</div>
+                      
+              
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="text-sm text-gray-900">{trip.dropLocation?.substring(0, 30) + '...'}</div>
+                      
+              
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{trip.vehicleType ? trip?.vehicleType : trip?.numberofpassengers + " Passenger"}</div>
-                        <div className="text-sm text-gray-500">
-                          {trip.requireAc && <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">AC</span>}
-                        </div>
+                        <div className="text-sm text-gray-900">{trip.userId?.firstName} {trip?.userId?.lastName}</div>
+                      
+              
                       </td>
                       <td className="px-6 py-4">
-                        <div className="text-sm font-medium text-gray-900">₹{trip.tripPrice}</div>
-                        {trip.negotiatedPrice && (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            Negotiable
-                          </span>
-                        )}
+                        <div className="text-sm text-gray-900">{trip.userId?.phone}</div>
+                      
+              
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                          ${trip.tripStatus === 'Confirmed' ? 'bg-green-100 text-green-800' : 
-                          trip.tripStatus === 'Cancelled' ? 'bg-red-100 text-red-800' : 
-                          'bg-blue-100 text-blue-800'}`}>
-                          {trip.tripStatus}
-                        </span>
+                        <div className="text-sm text-gray-900">{trip.tripType}</div>
+                   
                       </td>
+             
 
-                      <td className="py-3 px-4 text-sm text-blue-900 underline cursor-pointer">
-                      <a href={`/userTrip/${trip?._id}`} target="_blank" rel="noopener noreferrer">View</a>
-                    </td>
+             
                     </tr>
                   ))}
                 </tbody>
@@ -173,4 +170,4 @@ const ShowTripByStatus = () => {
   );
 };
 
-export default ShowTripByStatus;
+export default AlertTrip;

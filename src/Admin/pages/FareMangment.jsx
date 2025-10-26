@@ -31,14 +31,6 @@ const FareManagementScreen = () => {
       // error,
       refetch: refetchCategory,
     } = useGetAllVehicleCategoryQuery();
-
-
-    
-
-
-
-
-
   const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
@@ -825,6 +817,7 @@ const FareManagementScreen = () => {
       advanceTimeAfter5hours: timeVoice,
       package: selectedPackage,
       Rentalpkg: selectedRentalPkg,
+      settings:settings
     };
     try {
       const { data: dataInAdmin, error: errorInAdmin } =

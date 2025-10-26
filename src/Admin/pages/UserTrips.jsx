@@ -175,6 +175,7 @@ const AdminTrips = () => {
                   <th className="text-left py-2 px-3 font-semibold text-xs w-24">Pickup</th>
                   <th className="text-left py-2 px-3 font-semibold text-xs w-36">Location</th>
                   <th className="text-left py-2 px-3 font-semibold text-xs w-24">Created</th>
+                  <th className="text-left py-2 px-3 font-semibold text-xs w-24">Partner/Passenger</th>
                   <th className="text-center py-2 px-3 font-semibold text-xs w-20">Status</th>
                   <th className="text-left py-2 px-3 font-semibold text-xs w-16">Action</th>
                 </tr>
@@ -206,12 +207,21 @@ const AdminTrips = () => {
                         {trip.vehicleType ? trip.vehicleType : (trip?.numberofpassengers ? trip?.numberofpassengers + " Passenger" : "Maruti Dzire UP32KT4567")}
                       </td>
                       <td className="py-2 px-3 text-xs">
-                        {trip?.totalFare > 0 ? trip?.totalFare : "5000"}
+                        {trip?.totalFare > 0 ? trip?.totalFare : "N/A"}
                       </td>
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
-                          <span className="font-medium">Rahul Kumar</span>
-                          <span className="text-gray-500">7676755676</span>
+                          {
+                            trip?.offerUserId ? (
+                              <>
+                              <span className="font-medium">{trip?.offerUserId?.firstName} {trip?.offerUserId?.lastName}</span>
+                              <span className="text-gray-500">{trip?.offerUserId?.phone}</span>
+                              </>
+                            ) : (
+                              <span className="font-medium">{"Not Assign"}</span>
+                            )
+                          }
+                       
                         </div>
                       </td>
                       <td className="py-2 px-3 text-xs">
@@ -264,6 +274,14 @@ const AdminTrips = () => {
                               hour12: true
                             }) : '11:55 AM'}
                           </span>
+                        </div>
+                      </td>                    
+                      <td className="py-2 px-3 text-xs">
+                        <div className="flex flex-col">
+                          <span>
+                            {trip?.tripByPassenger ? "Passenger":"Partner"}
+                          </span>
+             
                         </div>
                       </td>                    
                       <td className="py-2 px-3">

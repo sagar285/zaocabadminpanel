@@ -5,53 +5,77 @@ import Input from "../Component/Input";
 import { Select, Option } from "../Component/Select";
 import {
   useAddTripDetailInAdminMutation,
-  useAddTripDetailMutation,
-  useGetCategoriesQuery,
+  useGetAllVehicleCategoryQuery,
+  useGetPackagesQuery,
   useGetStateAndCitiesQuery,
   useGetTripDetailsByIdFromAdminModelQuery,
-  useGetTripDetailsByIdQuery,
+  useEditTripDetailMutation,
+  useGetCategoryAllVehicleQuery,
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
 import MultiSelectSubCategory from "../Component/MultipleSelectSubCategory";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
-const EditFareManagementScree2 = () => {
+const EditFareManagement = () => {
   const { id } = useParams();
-
-  console.log(id, "dskfkjdskfdjf");
-  const [perKmFare, setPerKmFare] = useState(false);
-
-  const {
-    data: getsingletripData,
-    error: singletriperror,
-    isLoading: singletripLoading,
-    isFetching: singleTripFetching,
-  } = useGetTripDetailsByIdFromAdminModelQuery(id);
-  console.log(
-    getsingletripData,
-    "dfiheiufgfiguyewfghudsfbhufjgididsgfiudsiaghfsdhjkshnvoidfhjiuhasiuvghjk"
-  );
+  const navigate = useNavigate();
+  const isEditMode = !!id;
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isCarpool, setIsCarpool] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
-  const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
+  
+  const {
+    data: categoryData,
+    isError,
+    refetch: refetchCategory,
+  } = useGetAllVehicleCategoryQuery();
 
-  console.log(categoryData, categoryError, "Select");
+  const { data: packages, isLoading } = useGetPackagesQuery();
 
+  // Fetch trip data for editing
+  const { data: editTripData, isLoading: isLoadingTrip } = 
+    useGetTripDetailsByIdFromAdminModelQuery(id, {
+      skip: !isEditMode,
+    });
+
+  const [UpdateTripApi] = useEditTripDetailMutation();
+
+  // Basic Information States
+  const [selectedRentalPkg, setselectedRentalPkg] = useState(null);
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subscategories, setSubscategories] = useState([]);
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-
   const [tripType, setTripType] = useState("");
+  const [tripFor, settripFor] = useState("");
+
+  // Per KM Fare States
+  const [baseFare, setBaseFare] = useState("");
+  const [Extratobepaid, setExtratobepaid] = useState("");
+  const [fareInclude, setfareInclude] = useState("");
+  const [baseFareForKm, setBaseFareForKm] = useState("");
+  const [baseFareForTime, setBaseFareForTime] = useState("");
+  const [waitingTimeMinutes, setWaitingTimeMinutes] = useState("");
+  const [extraPerKmCharges, setExtraPerKmCharges] = useState("");
+  const [extraTimeCharges, setExtraTimeCharges] = useState("");
+  const [waitingTimeCharges, setWaitingTimeCharges] = useState("");
+  const [chargeType, setChargeType] = useState("perHour");
+  const [nightTimeCharge, setNightTimeCharge] = useState("");
+  const [nightTimeFrom, setNightTimeFrom] = useState("");
+  const [nightTimeTo, setNightTimeTo] = useState("");
+  const [surcharges, setSurcharges] = useState("");
+  const [surchargesFrom, setSurchargesFrom] = useState("");
+  const [surchargesTo, setSurchargesTo] = useState("");
+
+  // Fixed Fare States
   const [recommendedFare, setRecommendedFare] = useState("");
   const [minFare, setMinFare] = useState("");
   const [maxFare, setMaxFare] = useState("");
+
+  // Common States
   const [tax, setTax] = useState("");
   const [driverRadius, setDriverRadius] = useState("");
   const [driverMinWallet, setDriverMinWallet] = useState("");
@@ -59,38 +83,22 @@ const EditFareManagementScree2 = () => {
   const [urgentTimeLimit, setUrgentTimeLimit] = useState("");
   const [perHours, setPerHours] = useState("");
 
-  ///////////////////////////////////////////////////
-
+  // Platform Fee States
   const [platformFeeDriverType, setPlatformFeeDriverType] = useState("Fixed");
   const [platformFeeDriverAmount, setPlatformFeeDriverAmount] = useState("");
   const [platformFeeUserType, setPlatformFeeUserType] = useState("Fixed");
   const [platformFeeUserAmount, setPlatformFeeUserAmount] = useState("");
-  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] =
-    useState("Fixed");
-  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] =
-    useState("");
-  const [
-    advanceDriverCommissionWalletType,
-    setAdvanceDriverCommissionWalletType,
-  ] = useState("Fixed");
-  const [
-    advanceDriverCommissionWalletAmount,
-    setAdvanceDriverCommissionWalletAmount,
-  ] = useState("");
-  const [advanceUserCommissionType, setAdvanceUserCommissionType] =
-    useState("Fixed");
-  const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] =
-    useState("");
-  const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] =
-    useState("Fixed");
-  const [
-    advanceUserCommissionWalletAmount,
-    setAdvanceUserCommissionWalletAmount,
-  ] = useState("");
 
-  useEffect(() => {}, []);
+  // Advance Commission States
+  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] = useState("Fixed");
+  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] = useState("");
+  const [advanceDriverCommissionWalletType, setAdvanceDriverCommissionWalletType] = useState("Fixed");
+  const [advanceDriverCommissionWalletAmount, setAdvanceDriverCommissionWalletAmount] = useState("");
+  const [advanceUserCommissionType, setAdvanceUserCommissionType] = useState("Fixed");
+  const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] = useState("");
+  const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] = useState("Fixed");
+  const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] = useState("");
 
-  // Booking Fee Rows State
   const [bookingFeeRows, setBookingFeeRows] = useState([
     {
       bookingFeeType: "PerKm",
@@ -100,55 +108,10 @@ const EditFareManagementScree2 = () => {
     },
   ]);
 
-  const [FareDate, setFareDate] = useState({
-    startDate: "",
-    endDate: "",
-  });
-
-  const [FromToTime, setFromToTime] = useState({
-    fromTime: "",
-    toTime: "",
-  });
-  const [AddTripApiInAdmin] = useAddTripDetailInAdminMutation();
-
-  const [AdvanceFare, setAdvanceFare] = useState({
-    FareType: "Fixed",
-    price: 0,
-  });
-
-  const [FareStatus, setFareStatus] = useState("Active");
-  const [DriverPickupTime, setDriverPickupTime] = useState("");
-
-  // Package State
-  const [selectedPackage, setSelectedPackage] = useState("");
-  const [packageName, setPackageName] = useState("");
-  const [showPackageForm, setShowPackageForm] = useState(false);
-
-  // Package form fields
-  const [packageDetails, setPackageDetails] = useState({
-    packageName: "",
-    description: "",
-    validity: "",
-    features: "",
-    price: "",
-    discountPercentage: "",
-    maxTrips: "",
-    packageType: "Basic",
-  });
-
-  // Package options
-  const packageOptions = [
-    { value: "basic", label: "Basic Package" },
-    { value: "premium", label: "Premium Package" },
-    { value: "enterprise", label: "Enterprise Package" },
-    { value: "custom", label: "Custom Package" },
-    { value: "new", label: "Create New Package" },
-  ];
-
-  // Additional state for missing sections
   const [commissionRows, setCommissionRows] = useState([
-    { fromKm: "", toKm: "", amount: "" },
+    { fromKm: "", toKm: "", amount: "", driverComissionType: "Fixed" },
   ]);
+
   const [distanceVoice, setDistanceVoice] = useState("");
   const [timeVoice, setTimeVoice] = useState("");
   const [platformFeeU, setPlatformFeeU] = useState("");
@@ -163,96 +126,45 @@ const EditFareManagementScree2 = () => {
   const [termsConditions, setTermsConditions] = useState("");
   const [fareRules, setFareRules] = useState("");
 
-  // Tables State - NEW ADDITION
-  const [carpoolFares, setCarpoolFares] = useState([
-    {
-      id: 1,
-      state: "Uttar Pradesh",
-      city: "Lucknow",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 2,
-      state: "Uttar Pradesh",
-      city: "Ayodhya",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 3,
-      state: "Uttar Pradesh",
-      city: "Varanasi",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 4,
-      state: "Bihar",
-      city: "Patna",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-  ]);
+  const [AdvanceFare, setAdvanceFare] = useState({
+    FareType: "Fixed",
+    price: 0,
+  });
 
-  const [otherFares, setOtherFares] = useState([
-    {
-      id: 1,
-      state: "Uttar Pradesh",
-      city: "Lucknow",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 2,
-      state: "Uttar Pradesh",
-      city: "Ayodhya",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 3,
-      state: "Uttar Pradesh",
-      city: "Varanasi",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-    {
-      id: 4,
-      state: "Bihar",
-      city: "Patna",
-      category: "Sedan",
-      subCategory: "Zest",
-      tripType: "Outstation, One-way",
-      action: "Active",
-    },
-  ]);
+  const [FareStatus, setFareStatus] = useState("Active");
+  const [DriverPickupTime, setDriverPickupTime] = useState("");
 
-  const [showCarpoolForm, setShowCarpoolForm] = useState(false);
-  const [showOtherForm, setShowOtherForm] = useState(false);
-  const [editingCarpool, setEditingCarpool] = useState(null);
-  const [editingOther, setEditingOther] = useState(null);
-  const [newCarpoolFare, setNewCarpoolFare] = useState({
-    state: "",
-    city: "",
-    category: "",
-    subCategory: "",
-    tripType: "",
-    action: "Active",
+  const [selectedPackage, setSelectedPackage] = useState("");
+  const [packageName, setPackageName] = useState("");
+  const [showPackageForm, setShowPackageForm] = useState(false);
+
+  const [packageDetails, setPackageDetails] = useState({
+    packageName: "",
+    description: "",
+    validity: "",
+    features: "",
+    price: "",
+    discountPercentage: "",
+    maxTrips: "",
+    packageType: "Basic",
+  });
+
+  const packageOptions = [
+    { value: "basic", label: "Basic Package" },
+    { value: "premium", label: "Premium Package" },
+    { value: "enterprise", label: "Enterprise Package" },
+    { value: "custom", label: "Custom Package" },
+    { value: "new", label: "Create New Package" },
+  ];
+
+  const [FareDate, setFareDate] = useState({
+    startDate: "",
+    endDate: "",
+  });
+
+  const [FromToTime, setFromToTime] = useState({
+    fromTime: "",
+    toTime: "",
   });
 
   const [settings, setSettings] = useState({
@@ -261,6 +173,138 @@ const EditFareManagementScree2 = () => {
     hideNumber: false,
   });
 
+  console.log(editTripData, "editTripData loaded");
+
+  // Populate form when editing
+  useEffect(() => {
+    if (isEditMode && editTripData?.trip) {
+      const trip = editTripData.trip;
+      
+      settripFor(trip.tripFor || '');
+      setTripType(trip.tripType || '');
+      setSelectedCategory(trip.vehicleCategory || '');
+      setSelectedSubCategories(trip.vehicleSubCategory || []);
+      
+      // Check if it's Per KM fare or Fixed fare
+      if (trip.perKmFare) {
+        // Per KM Fare fields
+        setBaseFare(trip.baseFare || '');
+        setExtratobepaid(trip.Extratobepaid || '');
+        setfareInclude(trip.fareInclude || '');
+        setBaseFareForKm(trip.baseFareForKm || '');
+        setBaseFareForTime(trip.baseFareForTime || '');
+        setWaitingTimeMinutes(trip.waitingTimeMinutes || '');
+        setExtraPerKmCharges(trip.extraPerKmCharges || '');
+        setExtraTimeCharges(trip.extraTimeCharges || '');
+        setWaitingTimeCharges(trip.waitingTimeCharges || '');
+        
+        setNightTimeCharge(trip.nightTimeCharge || '');
+        setNightTimeFrom(trip.nightTimeFrom || '');
+        setNightTimeTo(trip.nightTimeTo || '');
+        
+        setSurcharges(trip.surcharges || '');
+        setSurchargesFrom(trip.surchargesFrom || '');
+        setSurchargesTo(trip.surchargesTo || '');
+      } else {
+        // Fixed Fare fields
+        setRecommendedFare(trip.RecommndedFareKm || '');
+        setMaxFare(trip.maxFareKm || '');
+        setMinFare(trip.minFareKm || '');
+      }
+      
+      // Common fields
+      setTax(trip.GsTtaxinPercentage || '');
+      setDriverRadius(trip.DriverRadius || '');
+      setDriverMinWallet(trip.DriverMinWalletAmount || '');
+      setMinTripDiffTime(trip.minTripDifferenceTime || '');
+      setUrgentTimeLimit(trip.urgentTimeValue || '');
+      setPerHours(trip.Perhours || '');
+      
+      // Booking Fee Rows
+      if (trip.bookingFeeConfiguration?.length > 0) {
+        setBookingFeeRows(trip.bookingFeeConfiguration.map(row => ({
+          bookingFeeType: row.bookingFeeType || 'PerKm',
+          beeokingfeeFromKm: row.beeokingfeeFromKm || 0,
+          beeokingfeeToKm: row.beeokingfeeToKm || 0,
+          bookingFee: row.bookingFee || 0,
+        })));
+      } else if (trip.bookingFeeRows?.length > 0) {
+        setBookingFeeRows(trip.bookingFeeRows);
+      }
+      
+      // Commission Rows
+      if (trip.AdminComissionConfiguration?.length > 0) {
+        setCommissionRows(trip.AdminComissionConfiguration.map(row => ({
+          driverComissionType: row.driverComissionType || 'Fixed',
+          fromKm: row.driverComissionFromkm || '',
+          toKm: row.drivercomissionTokm || '',
+          amount: row.driverComissionValue || '',
+        })));
+      } else if (trip.commissionRows?.length > 0) {
+        setCommissionRows(trip.commissionRows);
+      }
+      
+      setAdvanceFare({
+        FareType: trip.advanceFareType || 'Fixed',
+        price: trip.advanceFee || 0,
+      });
+      
+      setDistanceVoice(trip.distanceVoice || trip.advanceFareDistance || '');
+      setTimeVoice(trip.timeVoice || trip.advanceTimeAfter5hours || '');
+      
+      // Platform Fees
+      setPlatformFeeDriverType(trip.platformFeeDriver || 'Fixed');
+      setPlatformFeeDriverAmount(trip.paltformFeeDriverAmount || '');
+      setPlatformFeeUserType(trip.PlatformFeeUser || 'Fixed');
+      setPlatformFeeUserAmount(trip.PlatformFeeUserAmount || '');
+      
+      // Advance Commissions
+      setAdvanceDriverCommissionType(trip.AdvanceDriverComission || 'Fixed');
+      setAdvanceDriverCommissionAmount(trip.AdvanceDriverComissionAmount || '');
+      setAdvanceDriverCommissionWalletType(trip.AdvancedrivercomissionWallet || 'Fixed');
+      setAdvanceDriverCommissionWalletAmount(trip.AdvancedrivercomissionWalletAmount || '');
+      setAdvanceUserCommissionType(trip.AdvanceUserComission || 'Fixed');
+      setAdvanceUserCommissionAmount(trip.AdvanceUserComissionAmount || '');
+      setAdvanceUserCommissionWalletType(trip.AdvanceUsercomissionWallet || 'Fixed');
+      setAdvanceUserCommissionWalletAmount(trip.AdvancedUsercomissionWalletAmount || '');
+      
+      if (trip.FareStartDate) {
+        const startDate = new Date(trip.FareStartDate).toISOString().slice(0, 16);
+        setFareDate(prev => ({ ...prev, startDate }));
+      }
+      if (trip.FareEndDate) {
+        const endDate = new Date(trip.FareEndDate).toISOString().slice(0, 16);
+        setFareDate(prev => ({ ...prev, endDate }));
+      }
+      
+      setFareStatus(trip.FareStatus || 'Active');
+      setDriverPickupTime(trip.DriverPickupTime || '');
+      
+      if (trip.FromDriverPickupTime) {
+        setFromToTime(prev => ({ ...prev, fromTime: trip.FromDriverPickupTime }));
+      }
+      if (trip.ToDriverPickupTime) {
+        setFromToTime(prev => ({ ...prev, toTime: trip.ToDriverPickupTime }));
+      }
+      
+      setSelectedPackage(trip.selectedPackage || trip.package || '');
+      setPackageName(trip.packageName || '');
+      
+      if (trip.packageDetails) {
+        setPackageDetails(trip.packageDetails);
+      }
+      
+      setTermsConditions(trip.termsConditions || trip.TermsCond || '');
+      setFareRules(trip.fareRules || trip.FareRules || '');
+      
+      if (trip.settings) {
+        setSettings(trip.settings);
+      }
+      
+      setselectedRentalPkg(trip.Rentalpkg || null);
+    }
+  }, [isEditMode, editTripData]);
+
   const toggleSetting = (settingKey) => {
     setSettings((prev) => ({
       ...prev,
@@ -268,29 +312,45 @@ const EditFareManagementScree2 = () => {
     }));
   };
 
-  const [newOtherFare, setNewOtherFare] = useState({
-    state: "",
-    city: "",
-    category: "",
-    subCategory: "",
-    tripType: "",
-    action: "Active",
-  });
+  const addBookingFeeRow = () => {
+    setBookingFeeRows([
+      ...bookingFeeRows,
+      {
+        bookingFeeType: "PerKm",
+        beeokingfeeFromKm: 0,
+        beeokingfeeToKm: 0,
+        bookingFee: 0,
+      },
+    ]);
+  };
 
-  console.log(tripType);
+  const handleRentalPackageChange = (e) => {
+    setselectedRentalPkg(e.target.value);
+  };
 
-  // Package handlers
+  const updateBookingFeeRow = (index, field, value) => {
+    const updatedRows = bookingFeeRows.map((row, i) =>
+      i === index ? { ...row, [field]: value } : row
+    );
+    setBookingFeeRows(updatedRows);
+  };
+
+  const removeBookingFeeRow = (index) => {
+    if (bookingFeeRows.length > 1) {
+      const updatedRows = bookingFeeRows.filter((_, i) => i !== index);
+      setBookingFeeRows(updatedRows);
+    }
+  };
+
   const handlePackageChange = (e) => {
     const packageValue = e.target.value;
     setSelectedPackage(packageValue);
 
-    // Load existing package data if not new
     if (packageValue && packageValue !== "new") {
       const selectedPkg = packageOptions.find(
         (pkg) => pkg.value === packageValue
       );
       if (selectedPkg) {
-        // Pre-populate form with existing package data
         setPackageDetails({
           packageName: selectedPkg.label,
           description: `${selectedPkg.label} package with premium features`,
@@ -333,7 +393,6 @@ const EditFareManagementScree2 = () => {
         });
       }
     } else if (packageValue === "new") {
-      // Reset form for new package
       setPackageDetails({
         packageName: "",
         description: "",
@@ -347,22 +406,6 @@ const EditFareManagementScree2 = () => {
     }
   };
 
-  const ToggleButton = ({ label, isSelected, onClick }) => (
-    <button
-      onClick={onClick}
-      className={`ml-10 px-4 py-2 rounded-lg   border-blue-500 transition-all duration-200 min-w-[140px] ${
-        isSelected
-          ? "border-blue-500 bg-blue-50 text-blue-700"
-          : "border-gray-300 bg-gray-100 text-gray-600 hover:border-gray-400"
-      }`}
-    >
-      <div className="flex items-center justify-between ">
-        <span className="text-sm font-medium">{label}</span>
-        {isSelected && <Check size={16} className="text-blue-600 ml-2" />}
-      </div>
-    </button>
-  );
-
   const handlePackageDetailsChange = (field, value) => {
     setPackageDetails((prev) => ({
       ...prev,
@@ -370,77 +413,10 @@ const EditFareManagementScree2 = () => {
     }));
   };
 
-  // Booking Fee handlers
-  const addBookingFeeRow = () => {
-    setBookingFeeRows([
-      ...bookingFeeRows,
-      {
-        bookingFeeType: "PerKm",
-        beeokingfeeFromKm: 0,
-        beeokingfeeToKm: 0,
-        bookingFee: 0,
-      },
-    ]);
-  };
-
-  const updateBookingFeeRow = (index, field, value) => {
-    const updatedRows = bookingFeeRows.map((row, i) =>
-      i === index ? { ...row, [field]: value } : row
-    );
-    setBookingFeeRows(updatedRows);
-  };
-
-  const removeBookingFeeRow = (index) => {
-    if (bookingFeeRows.length > 1) {
-      const updatedRows = bookingFeeRows.filter((_, i) => i !== index);
-      setBookingFeeRows(updatedRows);
-    }
-  };
-
-  const handleCategoryChange = (e) => {
-    const categoryName = e.target.value;
-    setSelectedCategory(categoryName);
-    const selectedCategoryObj = categoryData?.categories.find(
-      (category) => category.categoryName === categoryName
-    );
-    if (selectedCategoryObj) {
-      setSubscategories(selectedCategoryObj.subcategory);
-      setSelectedSubCategories([]);
-    } else {
-      setSubscategories([]);
-    }
-  };
-
-  const handleStateChange = (e) => {
-    const stateName = e.target.value;
-    setSelectedState(stateName);
-
-    const selectedStateObj = data?.state.find(
-      (state) => state.name === stateName
-    );
-    console.log(selectedStateObj, "selected state object");
-    if (selectedStateObj) {
-      setCities(selectedStateObj.cities);
-    } else {
-      setCities([]);
-    }
-  };
-
-  const handleCityChange = (e) => {
-    const city = e.target.value;
-    setSelectedCity(city);
-    if (onCityChange) onCityChange(city);
-  };
-
-  const handleSubcategoryChange = (e) => {
-    const subcategoryName = e.target.value;
-    setSelectedSubCategory(subcategoryName);
-  };
-
   const addCommissionRow = () => {
     setCommissionRows([
       ...commissionRows,
-      { fromKm: "", toKm: "", amount: "" },
+      { fromKm: "", toKm: "", amount: "", driverComissionType: "Fixed" },
     ]);
   };
 
@@ -451,429 +427,245 @@ const EditFareManagementScree2 = () => {
     setCommissionRows(updatedRows);
   };
 
-  // Table Management Functions - NEW ADDITION
-  const handleAddCarpoolFare = () => {
-    if (
-      newCarpoolFare.state &&
-      newCarpoolFare.city &&
-      newCarpoolFare.category
-    ) {
-      const newFare = {
-        ...newCarpoolFare,
-        id: Date.now(),
-      };
-      setCarpoolFares([...carpoolFares, newFare]);
-      setNewCarpoolFare({
-        state: "",
-        city: "",
-        category: "",
-        subCategory: "",
-        tripType: "",
-        action: "Active",
-      });
-      setShowCarpoolForm(false);
-      toast.success("Carpool fare added successfully!");
-    } else {
-      toast.error("Please fill all required fields!");
+  const getPlaceholder = () => {
+    if (chargeType === "perHour") {
+      return "120/hour";
     }
-  };
-
-  const handleAddOtherFare = () => {
-    if (newOtherFare.state && newOtherFare.city && newOtherFare.category) {
-      const newFare = {
-        ...newOtherFare,
-        id: Date.now(),
-      };
-      setOtherFares([...otherFares, newFare]);
-      setNewOtherFare({
-        state: "",
-        city: "",
-        category: "",
-        subCategory: "",
-        tripType: "",
-        action: "Active",
-      });
-      setShowOtherForm(false);
-      toast.success("Other fare added successfully!");
-    } else {
-      toast.error("Please fill all required fields!");
+    if (chargeType === "perMin") {
+      return "2/min";
     }
+    return "Enter amount";
   };
 
-  const handleDeleteCarpoolFare = (id) => {
-    setCarpoolFares(carpoolFares.filter((fare) => fare.id !== id));
-    toast.success("Carpool fare deleted successfully!");
-  };
+  const ToggleButton = ({ label, isSelected, onClick }) => (
+    <button
+      onClick={onClick}
+      type="button"
+      className={`ml-10 px-4 py-2 rounded-lg border-blue-500 transition-all duration-200 min-w-[140px] ${
+        isSelected
+          ? "border-blue-500 bg-blue-50 text-blue-700"
+          : "border-gray-300 bg-gray-100 text-gray-600 hover:border-gray-400"
+      }`}
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-sm font-medium">{label}</span>
+        {isSelected && <Check size={16} className="text-blue-600 ml-2" />}
+      </div>
+    </button>
+  );
 
-  const handleDeleteOtherFare = (id) => {
-    setOtherFares(otherFares.filter((fare) => fare.id !== id));
-    toast.success("Other fare deleted successfully!");
-  };
+  const shouldFetchCategories = !!selectedCategory;
 
-  const handleEditCarpoolFare = (fare) => {
-    setEditingCarpool(fare);
-    setNewCarpoolFare(fare);
-    setShowCarpoolForm(true);
-  };
+  const {
+    data: categoriesDataa,
+    error: fetchErro,
+    isLoading: isFetchingCategorie,
+    refetch: refetchCategorie,
+  } = useGetCategoryAllVehicleQuery(selectedCategory);
 
-  const handleEditOtherFare = (fare) => {
-    setEditingOther(fare);
-    setNewOtherFare(fare);
-    setShowOtherForm(true);
-  };
-
-  const handleUpdateCarpoolFare = () => {
-    if (editingCarpool) {
-      setCarpoolFares(
-        carpoolFares.map((fare) =>
-          fare.id === editingCarpool.id
-            ? { ...newCarpoolFare, id: editingCarpool.id }
-            : fare
-        )
-      );
-      setEditingCarpool(null);
-      setNewCarpoolFare({
-        state: "",
-        city: "",
-        category: "",
-        subCategory: "",
-        tripType: "",
-        action: "Active",
-      });
-      setShowCarpoolForm(false);
-      toast.success("Carpool fare updated successfully!");
+  useEffect(() => {
+    if (categoriesDataa && shouldFetchCategories) {
+      setSubscategories(categoriesDataa);
     }
+  }, [categoriesDataa, shouldFetchCategories]);
+
+  const handleCategoryChange = (e) => {
+    const categoryName = e.target.value;
+    setSelectedCategory(categoryName);
   };
 
-  const handleUpdateOtherFare = () => {
-    if (editingOther) {
-      setOtherFares(
-        otherFares.map((fare) =>
-          fare.id === editingOther.id
-            ? { ...newOtherFare, id: editingOther.id }
-            : fare
-        )
-      );
-      setEditingOther(null);
-      setNewOtherFare({
-        state: "",
-        city: "",
-        category: "",
-        subCategory: "",
-        tripType: "",
-        action: "Active",
-      });
-      setShowOtherForm(false);
-      toast.success("Other fare updated successfully!");
-    }
-  };
+  const handleStateChange = (e) => {
+    const stateName = e.target.value;
+    setSelectedState(stateName);
 
-  const toggleCarpoolStatus = (id) => {
-    setCarpoolFares(
-      carpoolFares.map((fare) =>
-        fare.id === id
-          ? {
-              ...fare,
-              action: fare.action === "Active" ? "De-active" : "Active",
-            }
-          : fare
-      )
+    const selectedStateObj = data?.state.find(
+      (state) => state.name === stateName
     );
+    if (selectedStateObj) {
+      setCities(selectedStateObj.cities);
+    } else {
+      setCities([]);
+    }
   };
-
-  const toggleOtherStatus = (id) => {
-    setOtherFares(
-      otherFares.map((fare) =>
-        fare.id === id
-          ? {
-              ...fare,
-              action: fare.action === "Active" ? "De-active" : "Active",
-            }
-          : fare
-      )
-    );
-  };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (
-  //     parseInt(maxFare) < parseInt(recommendedFare) ||
-  //     parseInt(minFare) > parseInt(recommendedFare) ||
-  //     parseInt(maxFare) < parseInt(minFare)
-  //   ) {
-  //     toast.error(
-  //       "Max fare should be greater than recommended fare and min fare should be less than recommended fare"
-  //     );
-  //     return;
-  //   }
-  //   const postdata = {
-  //     advanceFee: AdvanceFare?.price,
-  //     advanceFareType: AdvanceFare?.FareType,
-  //     vehicleCategory: selectedCategory,
-  //     vehicleSubCategory: selectedSubCategories,
-  //     tripType: tripType,
-  //     RecommndedFareKm: recommendedFare,
-  //     minFareKm: minFare,
-  //     maxFareKm: maxFare,
-  //     GsTtaxinPercentage: tax,
-  //     bookingFeeRows: bookingFeeRows,
-  //     advanceFareType: AdvanceFare?.FareType,
-  //     advanceFee: AdvanceFare?.price,
-  //     FareEndDate: FareDate?.endDate,
-  //     FareStatus: FareStatus,
-  //     FareStartDate: FareDate?.startDate,
-  //     FromDriverPickupTime: FromToTime?.fromTime,
-  //     ToDriverPickupTime: FromToTime?.toTime,
-  //     DriverPickupTime: DriverPickupTime,
-  //     Perhours: perHours,
-  //     DriverRadius: driverRadius,
-  //     minTripDifferenceTime: minTripDiffTime,
-  //     DriverMinWalletAmount: driverMinWallet,
-  //     urgentTimeValue: urgentTimeLimit,
-  //     // Package data
-  //     selectedPackage: selectedPackage,
-  //     packageName: packageName,
-  //     packageDetails: showPackageForm ? packageDetails : null,
-  //     // Additional fields for new sections
-  //     commissionRows: commissionRows,
-  //     distanceVoice: distanceVoice,
-  //     timeVoice: timeVoice,
-  //     platformFeeU: platformFeeU,
-  //     platformFeeD: platformFeeD,
-  //     platformFeePercentage: platformFeePercentage,
-  //     acConfiguration: {
-  //       acFixed: acFixed,
-  //       advanceAcD: advanceAcD,
-  //       fixedPercentage: fixedPercentage,
-  //       addWalletAcD: addWalletAcD,
-  //       acAmount: acAmount,
-  //       acAdminCommission: acAdminCommission,
-  //     },
-  //     termsConditions: termsConditions,
-  //     fareRules: fareRules,
-  //     // Tables data
-  //     carpoolFares: carpoolFares,
-  //     otherFares: otherFares,
-  //   };
-
-  //   console.log(postdata)
-
-  //   const { data: dataInAdmin, error: errorInAdmin } = await AddTripApiInAdmin(
-  //     postdata
-  //   );
-  //   if (dataInAdmin) {
-  //     toast.success("Trip added successfully!");
-  //     // Reset all fields
-  //     setSelectedSubCategories([]);
-  //     setSelectedState("");
-  //     setSelectedCity("");
-  //     setSelectedCategory("");
-  //     setSelectedSubCategory("");
-  //     setTripType("");
-  //     setRecommendedFare("");
-  //     setMinFare("");
-  //     setMaxFare("");
-  //     setTax("");
-  //     setDriverRadius("");
-  //     setDriverMinWallet("");
-  //     setMinTripDiffTime("");
-  //     setUrgentTimeLimit("");
-  //     setPerHours("");
-  //     setBookingFeeRows([
-  //       {
-  //         bookingFeeType: "PerKm",
-  //         beeokingfeeFromKm: 0,
-  //         beeokingfeeToKm: 0,
-  //         bookingFee: 0,
-  //       },
-  //     ]);
-  //     setAdvanceFare({
-  //       FareType: "",
-  //       price: 0,
-  //     });
-  //     setSelectedPackage("");
-  //     setPackageName("");
-  //     setShowPackageForm(false);
-  //     setPackageDetails({
-  //       packageName: "",
-  //       description: "",
-  //       validity: "",
-  //       features: "",
-  //       price: "",
-  //       discountPercentage: "",
-  //       maxTrips: "",
-  //       packageType: "Basic",
-  //     });
-  //     // Reset new fields
-  //     setCommissionRows([{ fromKm: "", toKm: "", amount: "" }]);
-  //     setDistanceVoice("");
-  //     setTimeVoice("");
-  //     setPlatformFeeU("");
-  //     setPlatformFeeD("");
-  //     setPlatformFeePercentage("");
-  //     setAcFixed("");
-  //     setAdvanceAcD("");
-  //     setFixedPercentage("");
-  //     setAddWalletAcD("");
-  //     setAcAmount("");
-  //     setAcAdminCommission("");
-  //     setTermsConditions("");
-  //     setFareRules("");
-  //   } else {
-  //     toast.error("Failed to add trip!");
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const trip = editTripData?.trip;
+    const isPerKmFare = trip?.perKmFare;
 
-    if (
-      parseInt(maxFare) < parseInt(recommendedFare) ||
-      parseInt(minFare) > parseInt(recommendedFare) ||
-      parseInt(maxFare) < parseInt(minFare)
-    ) {
-      toast.error(
-        "Max fare should be greater than recommended fare and min fare should be less than recommended fare"
-      );
-      return;
+    // Validation for Fixed Fare
+    if (!isPerKmFare) {
+      if (
+        parseInt(maxFare) < parseInt(recommendedFare) ||
+        parseInt(minFare) > parseInt(recommendedFare) ||
+        parseInt(maxFare) < parseInt(minFare)
+      ) {
+        toast.error(
+          "Max fare should be greater than recommended fare and min fare should be less than recommended fare"
+        );
+        return;
+      }
     }
 
-    // Map booking fee rows to the required format
-    const bookingFeeConfiguration = bookingFeeRows.map((row) => ({
-      bookingFeeType: row.bookingFeeType,
-      beeokingfeeFromKm: parseInt(row.beeokingfeeFromKm) || 0,
-      beeokingfeeToKm: parseInt(row.beeokingfeeToKm) || 0,
-      bookingFee: parseInt(row.bookingFee) || 0,
-    }));
+    let postdata;
 
-    // Map commission rows to the required format
-    const AdminComissionConfiguration = commissionRows.map((row) => ({
-      driverComissionType: row.driverComissionType || "Fixed",
-      driverComissionFromkm: parseInt(row.fromKm) || 0,
-      drivercomissionTokm: parseInt(row.toKm) || 0,
-      driverComissionValue: parseInt(row.amount) || 0,
-    }));
+    if (isPerKmFare) {
+      // Per KM Fare Update
+      postdata = {
+        tripId: trip._id,
+        Extratobepaid,
+        fareInclude,
+        tripFor: tripFor,
+        perKmFare: true,
+        vehicleCategory: selectedCategory,
+        vehicleSubCategory: selectedSubCategories,
+        tripType: tripType,
+        baseFare: baseFare,
+        baseFareForKm: parseInt(baseFareForKm) || 0,
+        baseFareForTime: baseFareForTime,
+        waitingTimeMinutes: waitingTimeMinutes,
+        extraPerKmCharges: extraPerKmCharges,
+        extraTimeCharges: extraTimeCharges,
+        waitingTimeCharges: waitingTimeCharges,
+        nightTimeCharge: nightTimeCharge,
+        nightTimeFrom: nightTimeFrom,
+        nightTimeTo: nightTimeTo,
+        surcharges: surcharges,
+        surchargesFrom: surchargesFrom,
+        surchargesTo: surchargesTo,
+        GsTtaxinPercentage: tax,
+        bookingFeeRows: bookingFeeRows,
+        advanceFareType: AdvanceFare?.FareType,
+        advanceFee: AdvanceFare?.price,
+        FareEndDate: FareDate?.endDate,
+        FareStatus: FareStatus,
+        FareStartDate: FareDate?.startDate,
+        FromDriverPickupTime: FromToTime?.fromTime,
+        ToDriverPickupTime: FromToTime?.toTime,
+        DriverPickupTime: DriverPickupTime,
+        Perhours: perHours,
+        DriverRadius: driverRadius,
+        minTripDifferenceTime: minTripDiffTime,
+        DriverMinWalletAmount: driverMinWallet,
+        urgentTimeValue: urgentTimeLimit,
+        selectedPackage: selectedPackage,
+        packageName: packageName,
+        packageDetails: showPackageForm ? packageDetails : null,
+        commissionRows: commissionRows,
+        distanceVoice: distanceVoice,
+        timeVoice: timeVoice,
+        platformFeeU: platformFeeU,
+        platformFeeD: platformFeeD,
+        platformFeePercentage: platformFeePercentage,
+        acConfiguration: {
+          acFixed: acFixed,
+          advanceAcD: advanceAcD,
+          fixedPercentage: fixedPercentage,
+          addWalletAcD: addWalletAcD,
+          acAmount: acAmount,
+          acAdminCommission: acAdminCommission,
+        },
+        termsConditions: termsConditions,
+        fareRules: fareRules,
+        settings: settings,
+        Rentalpkg: selectedRentalPkg,
+      };
+    } else {
+      // Fixed Fare Update
+      const bookingFeeConfiguration = bookingFeeRows.map((row) => ({
+        bookingFeeType: row.bookingFeeType,
+        beeokingfeeFromKm: parseInt(row.beeokingfeeFromKm) || 0,
+        beeokingfeeToKm: parseInt(row.beeokingfeeToKm) || 0,
+        bookingFee: parseInt(row.bookingFee) || 0,
+      }));
 
-    // Create the API payload according to required structure
-    const postdata = {
-      tripType: tripType,
-      vehicleCategory: selectedCategory,
-      vehicleSubCategory: selectedSubCategories.join(","), // Convert array to string
-      RecommndedFareKm: parseInt(recommendedFare) || 0,
-      minFareKm: parseInt(minFare) || 0,
-      maxFareKm: parseInt(maxFare) || 0,
-      GsTtaxinPercentage: parseInt(tax) || 0,
-      bookingFeeConfiguration: bookingFeeConfiguration,
-      AdminComissionConfiguration: AdminComissionConfiguration,
-      advanceFareType: AdvanceFare?.FareType || "Fixed",
-      advanceFee: parseInt(AdvanceFare?.price) || 0,
-      DriverRadius: parseInt(driverRadius) || 0,
-      DriverMinWalletAmount: parseInt(driverMinWallet) || 0,
-      urgentTimeValue: parseInt(urgentTimeLimit) || 0,
-      minTripDifferenceTime: parseInt(minTripDiffTime) || 0,
-      Perhours: parseInt(perHours) || 0,
-      platformFeeDriver: platformFeeDriverType,
-      paltformFeeDriverAmount: parseInt(platformFeeDriverAmount) || 0,
-      PlatformFeeUser: platformFeeUserType,
-      PlatformFeeUserAmount: parseInt(platformFeeUserAmount) || 0,
-      FareStartDate: FareDate?.startDate
-        ? new Date(FareDate.startDate).toISOString()
-        : null,
-      FareEndDate: FareDate?.endDate
-        ? new Date(FareDate.endDate).toISOString()
-        : null,
-      AdvanceDriverComission: advanceDriverCommissionType,
-      AdvanceDriverComissionAmount:
-        parseInt(advanceDriverCommissionAmount) || 0,
-      AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
-      AdvancedrivercomissionWalletAmount:
-        parseInt(advanceDriverCommissionWalletAmount) || 0,
-      AdvanceUserComission: advanceUserCommissionType,
-      AdvanceUserComissionAmount: parseInt(advanceUserCommissionAmount) || 0,
-      AdvanceUsercomissionWallet: advanceUserCommissionWalletType,
-      AdvancedUsercomissionWalletAmount:
-        parseInt(advanceUserCommissionWalletAmount) || 0,
-      TermsCond: termsConditions,
-      FareRules: fareRules,
-      advanceFareDistance: parseInt(distanceVoice) || 0,
-      advanceTimeAfter5hours: timeVoice,
-      package: selectedPackage,
-    };
+      const AdminComissionConfiguration = commissionRows.map((row) => ({
+        driverComissionType: row.driverComissionType || "Fixed",
+        driverComissionFromkm: parseInt(row.fromKm) || 0,
+        drivercomissionTokm: parseInt(row.toKm) || 0,
+        driverComissionValue: parseInt(row.amount) || 0,
+      }));
+
+      postdata = {
+        tripId: trip._id,
+        tripFor: tripFor,
+        perKmFare: false,
+        tripType: tripType,
+        vehicleCategory: selectedCategory,
+        vehicleSubCategory: selectedSubCategories.join(","),
+        RecommndedFareKm: parseInt(recommendedFare) || 0,
+        minFareKm: parseInt(minFare) || 0,
+        maxFareKm: parseInt(maxFare) || 0,
+        GsTtaxinPercentage: parseInt(tax) || 0,
+        bookingFeeConfiguration: bookingFeeConfiguration,
+        AdminComissionConfiguration: AdminComissionConfiguration,
+        advanceFareType: AdvanceFare?.FareType || "Fixed",
+        advanceFee: parseInt(AdvanceFare?.price) || 0,
+        DriverRadius: parseInt(driverRadius) || 0,
+        DriverMinWalletAmount: parseInt(driverMinWallet) || 0,
+        urgentTimeValue: parseInt(urgentTimeLimit) || 0,
+        minTripDifferenceTime: parseInt(minTripDiffTime) || 0,
+        Perhours: parseInt(perHours) || 0,
+        platformFeeDriver: platformFeeDriverType,
+        paltformFeeDriverAmount: parseInt(platformFeeDriverAmount) || 0,
+        PlatformFeeUser: platformFeeUserType,
+        PlatformFeeUserAmount: parseInt(platformFeeUserAmount) || 0,
+        FareStartDate: FareDate?.startDate
+          ? new Date(FareDate.startDate).toISOString()
+          : null,
+        FareEndDate: FareDate?.endDate
+          ? new Date(FareDate.endDate).toISOString()
+          : null,
+        FareStatus: FareStatus,
+        DriverPickupTime: DriverPickupTime,
+        FromDriverPickupTime: FromToTime?.fromTime,
+        ToDriverPickupTime: FromToTime?.toTime,
+        AdvanceDriverComission: advanceDriverCommissionType,
+        AdvanceDriverComissionAmount:
+          parseInt(advanceDriverCommissionAmount) || 0,
+        AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
+        AdvancedrivercomissionWalletAmount:
+          parseInt(advanceDriverCommissionWalletAmount) || 0,
+        AdvanceUserComission: advanceUserCommissionType,
+        AdvanceUserComissionAmount: parseInt(advanceUserCommissionAmount) || 0,
+        AdvanceUsercomissionWallet: advanceUserCommissionWalletType,
+        AdvancedUsercomissionWalletAmount:
+          parseInt(advanceUserCommissionWalletAmount) || 0,
+        TermsCond: termsConditions,
+        FareRules: fareRules,
+        advanceFareDistance: parseInt(distanceVoice) || 0,
+        advanceTimeAfter5hours: timeVoice,
+        package: selectedPackage,
+        Rentalpkg: selectedRentalPkg,
+        settings: settings,
+      };
+    }
 
     try {
-      const { data: dataInAdmin, error: errorInAdmin } =
-        await AddTripApiInAdmin(postdata);
-
-      if (dataInAdmin) {
-        toast.success("Trip added successfully!");
-        // Reset all fields (keep your existing reset logic)
-        setSelectedSubCategories([]);
-        setSelectedState("");
-        setSelectedCity("");
-        setSelectedCategory("");
-        setSelectedSubCategory("");
-        setTripType("");
-        setRecommendedFare("");
-        setMinFare("");
-        setMaxFare("");
-        setTax("");
-        setDriverRadius("");
-        setDriverMinWallet("");
-        setMinTripDiffTime("");
-        setUrgentTimeLimit("");
-        setPerHours("");
-        setBookingFeeRows([
-          {
-            bookingFeeType: "PerKm",
-            beeokingfeeFromKm: 0,
-            beeokingfeeToKm: 0,
-            bookingFee: 0,
-          },
-        ]);
-        setAdvanceFare({
-          FareType: "",
-          price: 0,
-        });
-        setSelectedPackage("");
-        setPackageName("");
-        setShowPackageForm(false);
-        setPackageDetails({
-          packageName: "",
-          description: "",
-          validity: "",
-          features: "",
-          price: "",
-          discountPercentage: "",
-          maxTrips: "",
-          packageType: "Basic",
-        });
-        // Reset new fields
-        setCommissionRows([{ fromKm: "", toKm: "", amount: "" }]);
-        setDistanceVoice("");
-        setTimeVoice("");
-        setPlatformFeeDriverType("Fixed");
-        setPlatformFeeDriverAmount("");
-        setPlatformFeeUserType("Fixed");
-        setPlatformFeeUserAmount("");
-        setAdvanceDriverCommissionType("Fixed");
-        setAdvanceDriverCommissionAmount("");
-        setAdvanceDriverCommissionWalletType("Fixed");
-        setAdvanceDriverCommissionWalletAmount("");
-        setAdvanceUserCommissionType("Fixed");
-        setAdvanceUserCommissionAmount("");
-        setAdvanceUserCommissionWalletType("Fixed");
-        setAdvanceUserCommissionWalletAmount("");
-        setTermsConditions("");
-        setFareRules("");
+      const { data: responseData, error: responseError } = await UpdateTripApi(postdata);
+      
+      if (responseData) {
+        toast.success("Fare updated successfully!");
+        setTimeout(() => navigate(-1), 1500);
       } else {
-        toast.error(errorInAdmin?.message || "Failed to add trip!");
+        toast.error(responseError?.message || "Failed to update fare!");
       }
     } catch (error) {
       console.error("API Error:", error);
-      toast.error("An error occurred while adding trip!");
+      toast.error("Error occurred while updating!");
     }
   };
+
+  if (isLoadingTrip) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-green-500 text-lg">Loading fare details...</p>
+      </div>
+    );
+  }
+
+  const isPerKmFare = editTripData?.trip?.perKmFare;
 
   return (
     <div className="flex min-h-screen items-center bg-gray-50">
@@ -888,12 +680,13 @@ const EditFareManagementScree2 = () => {
         } transition-all duration-300`}
       >
         <div className="max-w-10xl bg-white rounded-lg shadow-lg">
-          {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
-            <h1 className="text-2xl font-bold">Add Fare Configuration</h1>
+            <h1 className="text-2xl font-bold">
+              Edit {isPerKmFare ? 'Per/KM' : 'Fixed'} Fare Configuration
+            </h1>
           </div>
 
-          <div className="mb-2 mt-4 ">
+          <div className="mb-2 mt-4">
             <div className="flex flex-wrap gap-4">
               {tripType !== "CarPool" && (
                 <ToggleButton
@@ -914,6 +707,7 @@ const EditFareManagementScree2 = () => {
               />
             </div>
           </div>
+
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Basic Information Section */}
@@ -921,7 +715,21 @@ const EditFareManagementScree2 = () => {
                 <h3 className="text-lg font-semibold text-blue-700 mb-4">
                   Basic Information
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Trip For
+                    </label>
+                    <Select
+                      className="w-full"
+                      value={tripFor}
+                      onChange={(e) => settripFor(e.target.value)}
+                    >
+                      <Option value="Passenger">Passenger</Option>
+                      <Option value="Driver">Driver</Option>
+                    </Select>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip Type
@@ -951,19 +759,39 @@ const EditFareManagementScree2 = () => {
                       onChange={handleCategoryChange}
                     >
                       <Option value="">Select</Option>
-                      {categoryData?.categories.map((category) => (
+                      {categoryData?.map((category) => (
                         <Option
-                          key={category.categoryName}
-                          value={category.categoryName}
+                          key={category.brandName}
+                          value={category.brandName}
                         >
-                          {category.categoryName}
+                          {category.brandName}
                         </Option>
                       ))}
                     </Select>
                   </div>
+
+                  {tripType === "Rental" && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Package
+                      </label>
+                      <Select
+                        className="w-full"
+                        value={selectedRentalPkg}
+                        onChange={handleRentalPackageChange}
+                      >
+                        <Option value="">Select</Option>
+                        {packages?.map((pkg) => (
+                          <Option key={pkg.name} value={pkg.name}>
+                            {pkg.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                  )}
                 </div>
                 <div className="pt-4">
-                  <label className="block  text-sm font-medium text-black mb-2">
+                  <label className="block text-sm font-medium text-black mb-2">
                     Sub-Category
                   </label>
                   <MultiSelectSubCategory
@@ -976,57 +804,299 @@ const EditFareManagementScree2 = () => {
                 </div>
               </div>
 
-              {/* Fare Configuration Section */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
-                <h3 className="text-lg font-semibold text-green-700 mb-4">
-                  Fare Configuration
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Minimum fare per KM
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="Min fare/KM"
-                      className="w-full"
-                      value={minFare}
-                      min={0}
-                      onChange={(e) => setMinFare(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Maximum fare per KM
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="Max fare/KM"
-                      className="w-full"
-                      value={maxFare}
-                      min={0}
-                      onChange={(e) => setMaxFare(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Recommended fare per KM
-                    </label>
-                    <Input
-                      type="number"
-                      placeholder="Recommended fare/KM"
-                      className="w-full"
-                      value={recommendedFare}
-                      min={0}
-                      onChange={(e) => setRecommendedFare(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
+              {/* Conditional Rendering Based on Fare Type */}
+              {isPerKmFare ? (
+                <>
+                  {/* Per KM Fare Configuration */}
+                  <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
+                    <h3 className="text-lg font-semibold text-green-700 mb-4">
+                      Fare Configuration
+                    </h3>
 
-              {/* Driver & System Settings */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-purple-50">
-                <h3 className="text-lg font-semibold text-purple-700 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Base Fare
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Base Fare"
+                          className="w-full"
+                          value={baseFare}
+                          min={0}
+                          onChange={(e) => setBaseFare(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Base fare for km
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Base fare for km"
+                          className="w-full"
+                          value={baseFareForKm}
+                          min={0}
+                          onChange={(e) => setBaseFareForKm(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Base fare for time
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Base fare for time"
+                          className="w-full"
+                          value={baseFareForTime}
+                          min={0}
+                          onChange={(e) => setBaseFareForTime(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Waiting time minutes
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Waiting time minutes"
+                          className="w-full"
+                          value={waitingTimeMinutes}
+                          min={0}
+                          onChange={(e) => setWaitingTimeMinutes(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Extra per km charges
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Extra per km charges"
+                          className="w-full"
+                          value={extraPerKmCharges}
+                          min={0}
+                          onChange={(e) => setExtraPerKmCharges(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Extra time charges
+                        </label>
+                        <Select
+                          value={chargeType}
+                          onChange={(e) => setChargeType(e.target.value)}
+                          className="w-full"
+                        >
+                          <Option value="perHour">per/hour</Option>
+                          <Option value="perMin">per/min</Option>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Amount
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder={getPlaceholder()}
+                          className="w-full"
+                          value={extraTimeCharges}
+                          min={0}
+                          onChange={(e) => setExtraTimeCharges(e.target.value)}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Waiting time charges
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Waiting time charges"
+                          className="w-full"
+                          value={waitingTimeCharges}
+                          min={0}
+                          onChange={(e) => setWaitingTimeCharges(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Admin Lines */}
+                  <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
+                    <h3 className="text-lg font-semibold text-green-700 mb-4">
+                      Admin Lines
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Bold Line
+                        </label>
+                        <Input
+                          type="text"
+                          placeholder="Extra to be paid by you to driver"
+                          className="w-full"
+                          value={Extratobepaid}
+                          onChange={(e) => setExtratobepaid(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Lighter Line
+                        </label>
+                        <Input
+                          type="text"
+                          placeholder="your fare does not include"
+                          className="w-full"
+                          value={fareInclude}
+                          onChange={(e) => setfareInclude(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Night Configuration */}
+                  <div className="border border-gray-200 rounded-lg p-6 bg-purple-50">
+                    <h3 className="text-lg font-semibold text-green-700 mb-4">
+                      Night Configuration
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Night time charge
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Night time charge"
+                          className="w-full"
+                          value={nightTimeCharge}
+                          min={0}
+                          onChange={(e) => setNightTimeCharge(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Night time from
+                        </label>
+                        <Input
+                          type="time"
+                          className="w-full"
+                          value={nightTimeFrom}
+                          onChange={(e) => setNightTimeFrom(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Night time to
+                        </label>
+                        <Input
+                          type="time"
+                          className="w-full"
+                          value={nightTimeTo}
+                          onChange={(e) => setNightTimeTo(e.target.value)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Surcharges
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Surcharges amount"
+                          className="w-full"
+                          value={surcharges}
+                          min={0}
+                          onChange={(e) => setSurcharges(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Surcharges from
+                        </label>
+                        <Input
+                          type="time"
+                          className="w-full"
+                          value={surchargesFrom}
+                          onChange={(e) => setSurchargesFrom(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Surcharges to
+                        </label>
+                        <Input
+                          type="time"
+                          className="w-full"
+                          value={surchargesTo}
+                          onChange={(e) => setSurchargesTo(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Fixed Fare Configuration */}
+                  <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
+                    <h3 className="text-lg font-semibold text-green-700 mb-4">
+                      Fare Configuration
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Minimum fare per KM
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Min fare/KM"
+                          className="w-full"
+                          value={minFare}
+                          min={0}
+                          onChange={(e) => setMinFare(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Maximum fare per KM
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Max fare/KM"
+                          className="w-full"
+                          value={maxFare}
+                          min={0}
+                          onChange={(e) => setMaxFare(e.target.value)}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Recommended fare per KM
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Recommended fare/KM"
+                          className="w-full"
+                          value={recommendedFare}
+                          min={0}
+                          onChange={(e) => setRecommendedFare(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+{/* Driver & System Settings */}
+<div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
+                <h3 className="text-lg font-semibold text-teal-700 mb-4">
                   Driver & System Settings
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -1058,7 +1128,7 @@ const EditFareManagementScree2 = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Minimum time different
+                      Min time different
                     </label>
                     <Input
                       type="number"
@@ -1113,16 +1183,16 @@ const EditFareManagementScree2 = () => {
                 </div>
               </div>
 
-              {/* Booking Fee Section - Updated with Corrected Structure */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
+              {/* Booking Fee Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-indigo-50">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-teal-700">
+                  <h3 className="text-lg font-semibold text-indigo-700">
                     Booking Fee Configuration
                   </h3>
                   <button
                     type="button"
                     onClick={addBookingFeeRow}
-                    className="flex items-center gap-1 px-3 py-1 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
                   >
                     <Plus size={16} />
                     Add Row
@@ -1131,10 +1201,10 @@ const EditFareManagementScree2 = () => {
                 {bookingFeeRows.map((row, index) => (
                   <div
                     key={index}
-                    className="border border-teal-200 rounded-lg p-4 mb-4 bg-white"
+                    className="border border-indigo-200 rounded-lg p-4 mb-4 bg-white"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-teal-700">
+                      <span className="text-sm font-medium text-indigo-700">
                         Booking Fee Row {index + 1}
                       </span>
                       {bookingFeeRows.length > 1 && (
@@ -1147,10 +1217,10 @@ const EditFareManagementScree2 = () => {
                         </button>
                       )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          User Booking fees
+                          Booking Fee Type
                         </label>
                         <Select
                           value={row.bookingFeeType}
@@ -1170,7 +1240,7 @@ const EditFareManagementScree2 = () => {
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          From/km
+                          From KM
                         </label>
                         <Input
                           type="number"
@@ -1183,13 +1253,13 @@ const EditFareManagementScree2 = () => {
                               e.target.value
                             )
                           }
-                          placeholder={`From km / ${index + 1}`}
+                          placeholder="From KM"
                           className="w-full"
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          To/Km
+                          To KM
                         </label>
                         <Input
                           type="number"
@@ -1202,7 +1272,7 @@ const EditFareManagementScree2 = () => {
                               e.target.value
                             )
                           }
-                          placeholder={`To km / ${index + 10}`}
+                          placeholder="To KM"
                           className="w-full"
                         />
                       </div>
@@ -1221,7 +1291,7 @@ const EditFareManagementScree2 = () => {
                               e.target.value
                             )
                           }
-                          placeholder={`Amount / ${(index + 1) * 100}`}
+                          placeholder="Amount"
                           className="w-full"
                         />
                       </div>
@@ -1230,16 +1300,16 @@ const EditFareManagementScree2 = () => {
                 ))}
               </div>
 
-              {/* Commission Section - Updated with Corrected Structure */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-indigo-50">
+              {/* Admin Commission Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-orange-50">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-indigo-700">
+                  <h3 className="text-lg font-semibold text-orange-700">
                     Admin Commission Configuration
                   </h3>
                   <button
                     type="button"
                     onClick={addCommissionRow}
-                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                    className="flex items-center gap-1 px-3 py-1 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
                   >
                     <Plus size={16} />
                     Add Row
@@ -1248,11 +1318,11 @@ const EditFareManagementScree2 = () => {
                 {commissionRows.map((row, index) => (
                   <div
                     key={index}
-                    className="border border-indigo-200 rounded-lg p-4 mb-4 bg-white"
+                    className="border border-orange-200 rounded-lg p-4 mb-4 bg-white"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-indigo-700">
-                        Platform fees Driver{" "}
+                      <span className="text-sm font-medium text-orange-700">
+                        Commission Row {index + 1}
                       </span>
                       {commissionRows.length > 1 && (
                         <button
@@ -1271,10 +1341,10 @@ const EditFareManagementScree2 = () => {
                         </button>
                       )}
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Driver Commision{" "}
+                          Commission Type
                         </label>
                         <Select
                           className="w-full"
@@ -1287,44 +1357,18 @@ const EditFareManagementScree2 = () => {
                             )
                           }
                         >
-                          <Option value="">All</Option>
-                          <Option value="CityRide">Fixed</Option>
-                          <Option value="Rental">Percentage</Option>
+                          <Option value="Fixed">Fixed</Option>
+                          <Option value="Percentage">Percentage</Option>
                         </Select>
                       </div>
-
-                      {tripType === "CarPool" ? (
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Carpool Commission
-                          </label>
-                          <Select
-                            className="w-full"
-                            value={row.carpoolCommissionType || "PerTrip"}
-                            onChange={(e) =>
-                              updateCommissionRow(
-                                index,
-                                "carpoolCommissionType",
-                                e.target.value
-                              )
-                            }
-                          >
-                            <Option value="PerTrip">Per/trip</Option>
-                            <Option value="PerSeat">Per/seat</Option>
-                          </Select>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          From/km
+                          From KM
                         </label>
                         <Input
                           type="number"
                           min={0}
-                          placeholder="0"
+                          placeholder="From KM"
                           className="w-full"
                           value={row.fromKm}
                           onChange={(e) =>
@@ -1332,15 +1376,14 @@ const EditFareManagementScree2 = () => {
                           }
                         />
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          To/km{" "}
+                          To KM
                         </label>
                         <Input
                           type="number"
                           min={0}
-                          placeholder="0"
+                          placeholder="To KM"
                           className="w-full"
                           value={row.toKm}
                           onChange={(e) =>
@@ -1348,14 +1391,13 @@ const EditFareManagementScree2 = () => {
                           }
                         />
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Amount
                         </label>
                         <Input
                           type="number"
-                          placeholder="00"
+                          placeholder="Amount"
                           className="w-full"
                           value={row.amount}
                           onChange={(e) =>
@@ -1368,15 +1410,15 @@ const EditFareManagementScree2 = () => {
                 ))}
               </div>
 
-              {/* Advance Fare Section */}
+              {/* Advance Fare Configuration */}
               <div className="border border-gray-200 rounded-lg p-6 bg-yellow-50">
                 <h3 className="text-lg font-semibold text-yellow-700 mb-4">
                   Advance Fare Configuration
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Advance fare (User){" "}
+                      Advance Fare Type
                     </label>
                     <Select
                       value={AdvanceFare.FareType}
@@ -1395,7 +1437,7 @@ const EditFareManagementScree2 = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Distance voice / 18 km above
+                      Distance Voice
                     </label>
                     <Input
                       type="text"
@@ -1407,7 +1449,7 @@ const EditFareManagementScree2 = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Time voice / After 5 hours
+                      Time Voice
                     </label>
                     <Input
                       type="text"
@@ -1418,7 +1460,7 @@ const EditFareManagementScree2 = () => {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-1 gap-4 mt-4">
+                <div className="grid grid-cols-1 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
@@ -1440,16 +1482,404 @@ const EditFareManagementScree2 = () => {
                 </div>
               </div>
 
-              {/* Platform Fee Section */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-orange-50">
-                <h3 className="text-lg font-semibold text-orange-700 mb-4">
-                  Platform Fee Configuration
+              {/* Platform Fee Configuration */}
+{/* Driver & System Settings */}
+<div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
+                <h3 className="text-lg font-semibold text-teal-700 mb-4">
+                  Driver & System Settings
                 </h3>
-
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Driver radius
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Radius in km"
+                      className="w-full"
+                      value={driverRadius}
+                      min={0}
+                      onChange={(e) => setDriverRadius(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Driver Min wallet
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Min wallet amount"
+                      className="w-full"
+                      min={0}
+                      value={driverMinWallet}
+                      onChange={(e) => setDriverMinWallet(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Min time different
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Time in minutes"
+                      className="w-full"
+                      min={0}
+                      value={minTripDiffTime}
+                      onChange={(e) => setMinTripDiffTime(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      GST %
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="GST percentage"
+                      className="w-full"
+                      value={tax}
+                      min={0}
+                      onChange={(e) => setTax(e.target.value)}
+                    />
+                  </div>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Urgent time limit (minutes)
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Urgent time in minutes"
+                      min={0}
+                      className="w-full"
+                      value={urgentTimeLimit}
+                      onChange={(e) => setUrgentTimeLimit(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Per hours
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Per hours"
+                      className="w-full"
+                      min={0}
+                      value={perHours}
+                      onChange={(e) => setPerHours(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Booking Fee Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-indigo-50">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-indigo-700">
+                    Booking Fee Configuration
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={addBookingFeeRow}
+                    className="flex items-center gap-1 px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+                  >
+                    <Plus size={16} />
+                    Add Row
+                  </button>
+                </div>
+                {bookingFeeRows.map((row, index) => (
+                  <div
+                    key={index}
+                    className="border border-indigo-200 rounded-lg p-4 mb-4 bg-white"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-indigo-700">
+                        Booking Fee Row {index + 1}
+                      </span>
+                      {bookingFeeRows.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeBookingFeeRow(index)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Booking Fee Type
+                        </label>
+                        <Select
+                          value={row.bookingFeeType}
+                          onChange={(e) =>
+                            updateBookingFeeRow(
+                              index,
+                              "bookingFeeType",
+                              e.target.value
+                            )
+                          }
+                          className="w-full"
+                        >
+                          <Option value="Fixed">Fixed</Option>
+                          <Option value="PerKm">Per KM</Option>
+                          <Option value="Percentage">Percentage</Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          From KM
+                        </label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={row.beeokingfeeFromKm}
+                          onChange={(e) =>
+                            updateBookingFeeRow(
+                              index,
+                              "beeokingfeeFromKm",
+                              e.target.value
+                            )
+                          }
+                          placeholder="From KM"
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          To KM
+                        </label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={row.beeokingfeeToKm}
+                          onChange={(e) =>
+                            updateBookingFeeRow(
+                              index,
+                              "beeokingfeeToKm",
+                              e.target.value
+                            )
+                          }
+                          placeholder="To KM"
+                          className="w-full"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Amount
+                        </label>
+                        <Input
+                          type="number"
+                          min={0}
+                          value={row.bookingFee}
+                          onChange={(e) =>
+                            updateBookingFeeRow(
+                              index,
+                              "bookingFee",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Amount"
+                          className="w-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Admin Commission Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-orange-50">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-orange-700">
+                    Admin Commission Configuration
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={addCommissionRow}
+                    className="flex items-center gap-1 px-3 py-1 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
+                  >
+                    <Plus size={16} />
+                    Add Row
+                  </button>
+                </div>
+                {commissionRows.map((row, index) => (
+                  <div
+                    key={index}
+                    className="border border-orange-200 rounded-lg p-4 mb-4 bg-white"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-orange-700">
+                        Commission Row {index + 1}
+                      </span>
+                      {commissionRows.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (commissionRows.length > 1) {
+                              const updatedRows = commissionRows.filter(
+                                (_, i) => i !== index
+                              );
+                              setCommissionRows(updatedRows);
+                            }
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Commission Type
+                        </label>
+                        <Select
+                          className="w-full"
+                          value={row.driverComissionType || "Fixed"}
+                          onChange={(e) =>
+                            updateCommissionRow(
+                              index,
+                              "driverComissionType",
+                              e.target.value
+                            )
+                          }
+                        >
+                          <Option value="Fixed">Fixed</Option>
+                          <Option value="Percentage">Percentage</Option>
+                        </Select>
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          From KM
+                        </label>
+                        <Input
+                          type="number"
+                          min={0}
+                          placeholder="From KM"
+                          className="w-full"
+                          value={row.fromKm}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "fromKm", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          To KM
+                        </label>
+                        <Input
+                          type="number"
+                          min={0}
+                          placeholder="To KM"
+                          className="w-full"
+                          value={row.toKm}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "toKm", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Amount
+                        </label>
+                        <Input
+                          type="number"
+                          placeholder="Amount"
+                          className="w-full"
+                          value={row.amount}
+                          onChange={(e) =>
+                            updateCommissionRow(index, "amount", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Advance Fare Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-yellow-50">
+                <h3 className="text-lg font-semibold text-yellow-700 mb-4">
+                  Advance Fare Configuration
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Platform fee Driver
+                      Advance Fare Type
+                    </label>
+                    <Select
+                      value={AdvanceFare.FareType}
+                      onChange={(e) =>
+                        setAdvanceFare((prev) => ({
+                          ...prev,
+                          FareType: e.target.value,
+                        }))
+                      }
+                      className="w-full"
+                    >
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="PerKm">Per KM</Option>
+                      <Option value="Percentage">Percentage</Option>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Distance Voice
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Distance voice"
+                      className="w-full"
+                      value={distanceVoice}
+                      onChange={(e) => setDistanceVoice(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Time Voice
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Time voice"
+                      className="w-full"
+                      value={timeVoice}
+                      onChange={(e) => setTimeVoice(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 mt-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Amount
+                    </label>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={AdvanceFare?.price}
+                      placeholder="Enter Advance Fare price"
+                      onChange={(e) =>
+                        setAdvanceFare((prev) => ({
+                          ...prev,
+                          price: e.target.value,
+                        }))
+                      }
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Platform Fee Configuration */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-pink-50">
+                <h3 className="text-lg font-semibold text-pink-700 mb-4">
+                  Platform Fee Configuration
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Platform Fee Driver Type
                     </label>
                     <Select
                       className="w-full"
@@ -1463,24 +1893,21 @@ const EditFareManagementScree2 = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount
+                      Driver Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="00"
+                      placeholder="Driver amount"
                       className="w-full"
                       value={platformFeeDriverAmount}
-                      onChange={(e) =>
-                        setPlatformFeeDriverAmount(e.target.value)
-                      }
+                      onChange={(e) => setPlatformFeeDriverAmount(e.target.value)}
                     />
                   </div>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Platform fee User
+                      Platform Fee User Type
                     </label>
                     <Select
                       className="w-full"
@@ -1494,11 +1921,11 @@ const EditFareManagementScree2 = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount
+                      User Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="00"
+                      placeholder="User amount"
                       className="w-full"
                       value={platformFeeUserAmount}
                       onChange={(e) => setPlatformFeeUserAmount(e.target.value)}
@@ -1508,14 +1935,14 @@ const EditFareManagementScree2 = () => {
               </div>
 
               {/* Trip Pickup Time Configuration */}
-              <div className="border border-gray-200 rounded-lg p-6 bg-pink-50">
-                <h3 className="text-lg font-semibold text-pink-700 mb-4">
+              <div className="border border-gray-200 rounded-lg p-6 bg-cyan-50">
+                <h3 className="text-lg font-semibold text-cyan-700 mb-4">
                   Trip Pickup Time Configuration
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Pickup time
+                      Pickup Time
                     </label>
                     <Select
                       value={DriverPickupTime}
@@ -1572,20 +1999,20 @@ const EditFareManagementScree2 = () => {
                 </div>
               </div>
 
-              {/* Fare Period & Package Section - Updated */}
+              {/* Fare Period & Status */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="border border-gray-200 rounded-lg p-4 bg-cyan-50">
-                  <h3 className="text-lg font-semibold text-cyan-700 mb-4">
+                <div className="border border-gray-200 rounded-lg p-4 bg-emerald-50">
+                  <h3 className="text-lg font-semibold text-emerald-700 mb-4">
                     Fare Period
                   </h3>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Fare start date & time
+                        Fare Start Date & Time
                       </label>
                       <Input
                         type="datetime-local"
-                        className="w-full "
+                        className="w-full"
                         value={FareDate?.startDate}
                         onChange={(e) =>
                           setFareDate((prev) => ({
@@ -1597,7 +2024,7 @@ const EditFareManagementScree2 = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Fare end date & time
+                        Fare End Date & Time
                       </label>
                       <Input
                         type="datetime-local"
@@ -1614,14 +2041,14 @@ const EditFareManagementScree2 = () => {
                   </div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg p-4 bg-emerald-50">
-                  <h3 className="text-lg font-semibold text-emerald-700 mb-4">
+                <div className="border border-gray-200 rounded-lg p-4 bg-purple-50">
+                  <h3 className="text-lg font-semibold text-purple-700 mb-4">
                     Package & Status
                   </h3>
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Active & De-active
+                        Status
                       </label>
                       <Select
                         value={FareStatus}
@@ -1634,7 +2061,7 @@ const EditFareManagementScree2 = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Package name
+                        Package Name
                       </label>
                       <Select
                         value={selectedPackage}
@@ -1653,7 +2080,7 @@ const EditFareManagementScree2 = () => {
                 </div>
               </div>
 
-              {/* Package Form - Shows when any package is selected */}
+              {/* Package Details Form */}
               {selectedPackage && (
                 <div className="border border-gray-200 rounded-lg p-6 bg-blue-50">
                   <div className="flex items-center justify-between mb-4">
@@ -1661,9 +2088,8 @@ const EditFareManagementScree2 = () => {
                       {selectedPackage === "new"
                         ? "Create New Package"
                         : `Update ${
-                            packageOptions.find(
-                              (p) => p.value === selectedPackage
-                            )?.label
+                            packageOptions.find((p) => p.value === selectedPackage)
+                              ?.label
                           }`}
                     </h3>
                     <button
@@ -1697,10 +2123,7 @@ const EditFareManagementScree2 = () => {
                         className="w-full"
                         value={packageDetails.packageName}
                         onChange={(e) =>
-                          handlePackageDetailsChange(
-                            "packageName",
-                            e.target.value
-                          )
+                          handlePackageDetailsChange("packageName", e.target.value)
                         }
                       />
                     </div>
@@ -1711,10 +2134,7 @@ const EditFareManagementScree2 = () => {
                       <Select
                         value={packageDetails.packageType}
                         onChange={(e) =>
-                          handlePackageDetailsChange(
-                            "packageType",
-                            e.target.value
-                          )
+                          handlePackageDetailsChange("packageType", e.target.value)
                         }
                         className="w-full"
                       >
@@ -1793,10 +2213,7 @@ const EditFareManagementScree2 = () => {
                         placeholder="Package description..."
                         value={packageDetails.description}
                         onChange={(e) =>
-                          handlePackageDetailsChange(
-                            "description",
-                            e.target.value
-                          )
+                          handlePackageDetailsChange("description", e.target.value)
                         }
                       ></textarea>
                     </div>
@@ -1807,67 +2224,46 @@ const EditFareManagementScree2 = () => {
                       <textarea
                         rows="3"
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Package features (separate with commas)..."
+                        placeholder="Package features..."
                         value={packageDetails.features}
                         onChange={(e) =>
                           handlePackageDetailsChange("features", e.target.value)
                         }
                       ></textarea>
                     </div>
-                    <div className="md:col-span-2 flex justify-end mt-4">
-                      <button
-                        type="button"
-                        className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                        onClick={() => {
-                          // Handle package update/creation
-                          toast.success(
-                            `Package ${
-                              selectedPackage === "new" ? "created" : "updated"
-                            } successfully!`
-                          );
-                        }}
-                      >
-                        {selectedPackage === "new"
-                          ? "Create Package"
-                          : "Update Package"}
-                      </button>
-                    </div>
                   </div>
                 </div>
               )}
 
-              {/* AC Configuration Section */}
+              {/* Advance Admin Commission */}
               <div className="border border-gray-200 rounded-lg p-6 bg-slate-50">
                 <h3 className="text-lg font-semibold text-slate-700 mb-4">
                   Advance Admin Commission
                 </h3>
-
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <h5 className="text-md font-semibold text-slate-600 mb-3">
+                  Driver Commission
+                </h5>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {" "}
-                      Advance Driver Commission
+                      Commission Type
                     </label>
                     <Select
                       className="w-full"
                       value={advanceDriverCommissionType}
-                      onChange={(e) =>
-                        setAdvanceDriverCommissionType(e.target.value)
-                      }
+                      onChange={(e) => setAdvanceDriverCommissionType(e.target.value)}
                     >
-                      <Option value="">All</Option>
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="00"
+                      placeholder="Amount"
                       className="w-full"
                       value={advanceDriverCommissionAmount}
                       onChange={(e) =>
@@ -1875,10 +2271,9 @@ const EditFareManagementScree2 = () => {
                       }
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      wallet
+                      Wallet Type
                     </label>
                     <Select
                       className="w-full"
@@ -1887,18 +2282,17 @@ const EditFareManagementScree2 = () => {
                         setAdvanceDriverCommissionWalletType(e.target.value)
                       }
                     >
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount
+                      Wallet Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="00"
+                      placeholder="Wallet amount"
                       className="w-full"
                       value={advanceDriverCommissionWalletAmount}
                       onChange={(e) =>
@@ -1908,47 +2302,38 @@ const EditFareManagementScree2 = () => {
                   </div>
                 </div>
 
-                {/* User's Admin Commission Section */}
-                <h5 className="text-lg font-semibold text-slate-700 mb-4 mt-8">
-                  Advance fare (Users)
+                <h5 className="text-md font-semibold text-slate-600 mb-3 mt-6">
+                  User Commission
                 </h5>
-
-                <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Advance User commission
+                      Commission Type
                     </label>
                     <Select
                       className="w-full"
                       value={advanceUserCommissionType}
-                      onChange={(e) =>
-                        setAdvanceUserCommissionType(e.target.value)
-                      }
+                      onChange={(e) => setAdvanceUserCommissionType(e.target.value)}
                     >
-                      <Option value="">All</Option>
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="00"
+                      placeholder="Amount"
                       className="w-full"
                       value={advanceUserCommissionAmount}
-                      onChange={(e) =>
-                        setAdvanceUserCommissionAmount(e.target.value)
-                      }
+                      onChange={(e) => setAdvanceUserCommissionAmount(e.target.value)}
                     />
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      wallet
+                      Wallet Type
                     </label>
                     <Select
                       className="w-full"
@@ -1957,18 +2342,17 @@ const EditFareManagementScree2 = () => {
                         setAdvanceUserCommissionWalletType(e.target.value)
                       }
                     >
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
-
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Amount
+                      Wallet Amount
                     </label>
                     <Input
                       type="number"
-                      placeholder="Amount"
+                      placeholder="Wallet amount"
                       className="w-full"
                       value={advanceUserCommissionWalletAmount}
                       onChange={(e) =>
@@ -1978,11 +2362,12 @@ const EditFareManagementScree2 = () => {
                   </div>
                 </div>
               </div>
+
               {/* Terms & Conditions and Fare Rules */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                   <h3 className="text-lg font-semibold text-gray-700 mb-4">
-                    Term & Condition
+                    Terms & Conditions
                   </h3>
                   <textarea
                     rows="6"
@@ -1994,11 +2379,10 @@ const EditFareManagementScree2 = () => {
                 </div>
                 <div className="border border-gray-200 rounded-lg p-4 bg-red-50">
                   <h3 className="text-lg font-semibold text-red-700 mb-4">
-                    Fare rules
+                    Fare Rules
                   </h3>
-
                   <textarea
-                    rows="4"
+                    rows="6"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
                     placeholder="Enter fare rules..."
                     value={fareRules}
@@ -2013,557 +2397,10 @@ const EditFareManagementScree2 = () => {
                   type="submit"
                   className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-12 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg"
                 >
-                  Save Fare Configuration
+                  Update Fare Configuration
                 </button>
               </div>
             </form>
-
-            {/* TABLES SECTION - NEW ADDITION */}
-            <div className="mt-12 space-y-8">
-              {/* Carpool Fare Table - Green */}
-              <div className="border border-gray-200 rounded-lg bg-white shadow-lg">
-                <div className="bg-green-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button
-                      className="bg-green-700 px-4 py-2 rounded-md hover:bg-green-800 transition-colors"
-                      onClick={() => {
-                        /* Handle Connected */
-                      }}
-                    >
-                      Connected
-                    </button>
-                    <button
-                      className="bg-green-500 px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-                      onClick={() => {
-                        /* Handle City List */
-                      }}
-                    >
-                      CITY LIST
-                    </button>
-                    <button
-                      className="bg-green-400 px-4 py-2 rounded-md hover:bg-green-500 transition-colors text-green-900"
-                      onClick={() => setShowCarpoolForm(true)}
-                    >
-                      <Plus size={16} className="inline mr-1" />
-                      ADD CITY
-                    </button>
-                  </div>
-                  <h3 className="text-lg font-semibold">Carpool Fare</h3>
-                </div>
-
-                {/* Add/Edit Carpool Form */}
-                {showCarpoolForm && (
-                  <div className="bg-green-50 border-b border-green-200 p-4">
-                    <h4 className="text-md font-semibold text-green-700 mb-3">
-                      {editingCarpool
-                        ? "Edit Carpool Fare"
-                        : "Add New Carpool Fare"}
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          State
-                        </label>
-                        <Select
-                          value={newCarpoolFare.state}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              state: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="">Select State</Option>
-                          <Option value="Uttar Pradesh">Uttar Pradesh</Option>
-                          <Option value="Bihar">Bihar</Option>
-                          <Option value="Maharashtra">Maharashtra</Option>
-                          <Option value="Delhi">Delhi</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          City
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter city"
-                          className="w-full"
-                          value={newCarpoolFare.city}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              city: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Category
-                        </label>
-                        <Select
-                          value={newCarpoolFare.category}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              category: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="">Select Category</Option>
-                          <Option value="Sedan">Sedan</Option>
-                          <Option value="SUV">SUV</Option>
-                          <Option value="Hatchback">Hatchback</Option>
-                        </Select>
-                      </div>
-                      <div className="">
-                        <label className="block-1 text-sm font-medium text-gray-700 mb-1">
-                          Sub-category
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter sub-category"
-                          className="w-full"
-                          value={newCarpoolFare.subCategory}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              subCategory: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Trip type
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter trip type"
-                          className="w-full"
-                          value={newCarpoolFare.tripType}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              tripType: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Action
-                        </label>
-                        <Select
-                          value={newCarpoolFare.action}
-                          onChange={(e) =>
-                            setNewCarpoolFare({
-                              ...newCarpoolFare,
-                              action: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="Active">Active</Option>
-                          <Option value="De-active">De-active</Option>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                      <button
-                        type="button"
-                        onClick={
-                          editingCarpool
-                            ? handleUpdateCarpoolFare
-                            : handleAddCarpoolFare
-                        }
-                        className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                      >
-                        {editingCarpool ? "Update" : "Add"} Carpool Fare
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowCarpoolForm(false);
-                          setEditingCarpool(null);
-                          setNewCarpoolFare({
-                            state: "",
-                            city: "",
-                            category: "",
-                            subCategory: "",
-                            tripType: "",
-                            action: "Active",
-                          });
-                        }}
-                        className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Carpool Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-green-100">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          S. No.
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          State
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          City
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          Category
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          Sub-category
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800 border-r border-green-200">
-                          Trip type
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-green-800">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {carpoolFares.map((fare, index) => (
-                        <tr
-                          key={fare.id}
-                          className={
-                            index % 2 === 0 ? "bg-green-25" : "bg-white"
-                          }
-                        >
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {String(index + 1).padStart(2, "0")}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {fare.state}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {fare.city}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {fare.category}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {fare.subCategory}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-green-100">
-                            {fare.tripType}
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => toggleCarpoolStatus(fare.id)}
-                                className={`px-2 py-1 rounded text-xs font-medium ${
-                                  fare.action === "Active"
-                                    ? "bg-green-100 text-green-800 hover:bg-green-200"
-                                    : "bg-red-100 text-red-800 hover:bg-red-200"
-                                }`}
-                              >
-                                {fare.action}
-                              </button>
-                              <button
-                                onClick={() => handleEditCarpoolFare(fare)}
-                                className="text-blue-600 hover:text-blue-800 p-1"
-                                title="Edit"
-                              >
-                                <Edit size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteCarpoolFare(fare.id)}
-                                className="text-red-600 hover:text-red-800 p-1"
-                                title="Delete"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Other Fare Table - Red */}
-              <div className="border border-gray-200 rounded-lg bg-white shadow-lg">
-                <div className="bg-red-600 text-white p-4 rounded-t-lg flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <button
-                      className="bg-red-700 px-4 py-2 rounded-md hover:bg-red-800 transition-colors"
-                      onClick={() => {
-                        /* Handle Connected */
-                      }}
-                    >
-                      Connected
-                    </button>
-                    <button
-                      className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 transition-colors"
-                      onClick={() => {
-                        /* Handle City List */
-                      }}
-                    >
-                      CITY LIST
-                    </button>
-                    <button
-                      className="bg-red-400 px-4 py-2 rounded-md hover:bg-red-500 transition-colors text-red-900"
-                      onClick={() => setShowOtherForm(true)}
-                    >
-                      <Plus size={16} className="inline mr-1" />
-                      ADD CITY
-                    </button>
-                  </div>
-                  <h3 className="text-lg font-semibold">Other Fare</h3>
-                </div>
-
-                {/* Add/Edit Other Form */}
-                {showOtherForm && (
-                  <div className="bg-red-50 border-b border-red-200 p-4">
-                    <h4 className="text-md font-semibold text-red-700 mb-3">
-                      {editingOther ? "Edit Other Fare" : "Add New Other Fare"}
-                    </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          State
-                        </label>
-                        <Select
-                          value={newOtherFare.state}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              state: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="">Select State</Option>
-                          <Option value="Uttar Pradesh">Uttar Pradesh</Option>
-                          <Option value="Bihar">Bihar</Option>
-                          <Option value="Maharashtra">Maharashtra</Option>
-                          <Option value="Delhi">Delhi</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          City
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter city"
-                          className="w-full"
-                          value={newOtherFare.city}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              city: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Category
-                        </label>
-                        <Select
-                          value={newOtherFare.category}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              category: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="">Select Category</Option>
-                          <Option value="Sedan">Sedan</Option>
-                          <Option value="SUV">SUV</Option>
-                          <Option value="Hatchback">Hatchback</Option>
-                        </Select>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Sub-category
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter sub-category"
-                          className="w-full"
-                          value={newOtherFare.subCategory}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              subCategory: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Trip type
-                        </label>
-                        <Input
-                          type="text"
-                          placeholder="Enter trip type"
-                          className="w-full"
-                          value={newOtherFare.tripType}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              tripType: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Action
-                        </label>
-                        <Select
-                          value={newOtherFare.action}
-                          onChange={(e) =>
-                            setNewOtherFare({
-                              ...newOtherFare,
-                              action: e.target.value,
-                            })
-                          }
-                          className="w-full"
-                        >
-                          <Option value="Active">Active</Option>
-                          <Option value="De-active">De-active</Option>
-                        </Select>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 mt-3">
-                      <button
-                        type="button"
-                        onClick={
-                          editingOther
-                            ? handleUpdateOtherFare
-                            : handleAddOtherFare
-                        }
-                        className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
-                      >
-                        {editingOther ? "Update" : "Add"} Other Fare
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setShowOtherForm(false);
-                          setEditingOther(null);
-                          setNewOtherFare({
-                            state: "",
-                            city: "",
-                            category: "",
-                            subCategory: "",
-                            tripType: "",
-                            action: "Active",
-                          });
-                        }}
-                        className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Other Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-red-100">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          S. No.
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          State
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          City
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          Category
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          Sub-category
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800 border-r border-red-200">
-                          Trip type
-                        </th>
-                        <th className="px-4 py-3 text-left text-sm font-semibold text-red-800">
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {otherFares.map((fare, index) => (
-                        <tr
-                          key={fare.id}
-                          className={index % 2 === 0 ? "bg-red-25" : "bg-white"}
-                        >
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {String(index + 1).padStart(2, "0")}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {fare.state}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {fare.city}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {fare.category}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {fare.subCategory}
-                          </td>
-                          <td className="px-4 py-3 text-sm border-r border-red-100">
-                            {fare.tripType}
-                          </td>
-                          <td className="px-4 py-3 text-sm">
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => toggleOtherStatus(fare.id)}
-                                className={`px-2 py-1 rounded text-xs font-medium ${
-                                  fare.action === "Active"
-                                    ? "bg-green-100 text-green-800 hover:bg-green-200"
-                                    : "bg-red-100 text-red-800 hover:bg-red-200"
-                                }`}
-                              >
-                                {fare.action}
-                              </button>
-                              <button
-                                onClick={() => handleEditOtherFare(fare)}
-                                className="text-blue-600 hover:text-blue-800 p-1"
-                                title="Edit"
-                              >
-                                <Edit size={14} />
-                              </button>
-                              <button
-                                onClick={() => handleDeleteOtherFare(fare.id)}
-                                className="text-red-600 hover:text-red-800 p-1"
-                                title="Delete"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -2573,4 +2410,4 @@ const EditFareManagementScree2 = () => {
   );
 };
 
-export default EditFareManagementScree2;
+export default EditFareManagement;

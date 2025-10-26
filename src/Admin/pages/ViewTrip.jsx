@@ -55,7 +55,7 @@ const ViewTrip = () => {
     if (trip?.perKmFare === true) {
       navigate(`/faretrip/perkm/${trip?._id}`);
     } else {
-      navigate(`/editFareManagment/${trip?._id}`);
+      navigate(`/faretrip/${trip?._id}`);
     }
   };
 

@@ -76,14 +76,16 @@ import ViewUserCarpoolTrip from "./Admin/pages/ViewuserCarpoolTrip.jsx";
 import Packages from "./Admin/pages/Packages.jsx";
 import SubscriptionPackages from "./Admin/pages/SubscriptionPackages.jsx";
 import PerKmFareManagementScreen from "./Admin/pages/EditPerkmFareManagmentScreen.jsx";
+import AlertTrip from "./Admin/pages/AlertTrip.jsx";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/trips/:status" element={<ShowTripByStatus />} />
+      <Route path="/trips/AlertTrip" element={<AlertTrip />} />
       <Route path="/addFare" element={<FareManagementScreen />} />
-      <Route path="/editFareManagment/:id" element={<FareManagementScreen />} />
+      <Route path="/editFareManagment/:id" element={<EditFareManagementScree2 />} />
       <Route path="/addFare/perkm" element={<PerKmFareManagement />} />
       <Route path="/faretrip/perkm/:id" element={<PerKmFareManagementScreen />} />
       <Route path="/subcription-packages" element={<SubscriptionPackages />} />

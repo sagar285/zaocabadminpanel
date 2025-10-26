@@ -256,8 +256,9 @@ const AdminTrips = () => {
                     Order NO
                   </th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-700 border">
-                    Package Type
+                    Perkm/fixed
                   </th>
+
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-700 border">
                     Trip Type
                   </th>
@@ -300,7 +301,9 @@ const AdminTrips = () => {
                     <td className="px-3 py-3 border text-xs">
                       {String(filteredData.length - index).padStart(2, "0")}
                     </td>
-                    <td className="px-3 py-3 border text-xs"></td>
+                    <td className="px-3 py-3 border text-xs">
+                      {trip?.perKmFare ? "Perkm":"Fixed"}
+                    </td>
                     <td className="px-3 py-3 border text-xs">
                       {trip.tripType || "-"}
                     </td>
@@ -329,12 +332,35 @@ const AdminTrips = () => {
 
                     <td className="px-3 py-3 border text-xs">
                       <div className="space-y-1">
-                        <div>Type: {trip.bookingFeeType || "-"}</div>
-                        <div>Fee: ₹{trip.bookingFee || 0}</div>
-                        <div>
-                          Range: {trip.beeokingfeeFromKm || 0}-
-                          {trip.beeokingfeeToKm || 0}km
-                        </div>
+                        {!trip?.perKmFare ? (
+                          <>
+                            <div>Reco: {trip.RecommndedFareKm || "0"}</div>
+                            <div>Min: ₹{trip.minFareKm || 0}</div>
+                            <div>
+                              Max: {trip.maxFareKm || 0}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                          <div>Reco: {trip.baseFare || "0"}</div>
+                          <div>Min: ₹{trip.baseFareForKm || 0}</div>
+                          <div>
+                            Max: {trip.baseFareForTime || 0}
+                          </div>
+                          <div>
+                            Max: {trip.waitingTimeMinutes || 0}
+                          </div>
+                          <div>
+                            Max: {trip.extraPerKmCharges || 0}
+                          </div>
+                          <div>
+                            Max: {trip.extraTimeCharges || 0}
+                          </div>
+                          <div>
+                            Max: {trip.waitingTimeCharges || 0}
+                          </div>
+                        </>
+                        )}
                       </div>
                     </td>
                     <td className="px-3 py-3 border text-xs">

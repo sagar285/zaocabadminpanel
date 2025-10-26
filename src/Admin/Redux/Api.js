@@ -1159,6 +1159,12 @@ export const apiSlice = createApi({
       }),
     }),
 
+    getAllAlerts: builder.query({
+      query: () => ({
+        url: "/AlertTrip/get",
+      }),
+    }),
+
     /// Categoryaaaadvechile
 
     createCategoryAddVechile: builder.mutation({
@@ -1253,6 +1259,7 @@ export const apiSlice = createApi({
 });
 
 export const {
+  useGetAllAlertsQuery,
   useCreateSubscriptionMutation,
   useGetSubscriptionsQuery,
   useGetSubscriptionByIdQuery,
