@@ -483,9 +483,10 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
                       value={role}
                       onChange={(e) => { setRole(e.target.value); userRoleChangeApi(e, travel); }}
                     >
-                      <option value="travelOwner">Role</option>
-                      <option value="driver">Driver</option>
-                      <option value="travelOwner">Travel</option>
+                             <option value="driver">Role</option>
+                        <option value="driver">Driver</option>
+                        <option value="travelOwner">Travel</option>
+                        <option value="Passenger">Passenger</option>
                     </select>
                   </div>
                 </td>

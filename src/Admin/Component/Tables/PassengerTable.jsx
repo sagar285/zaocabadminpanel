@@ -3,207 +3,9 @@ import { Link } from "react-router-dom";
 import { Edit, PlusIcon, BellIcon, Eye, Users, MapPin, Phone, Calendar, Ban, UserCheck, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
+import { useChangeUserRoleMutation } from "../../Redux/Api";
 
-// Mock data for passengers with driver-like structure
-const mockPassengerData = [
-  {
-    _id: "1",
-    user: {
-      _id: "user1",
-      profileImage: null,
-      city: "Mumbai",
-      state: "Maharashtra"
-    },
-    firstName: "Rajesh",
-    lastName: "Sharma",
-    phoneNumber: "9876543210",
-    tripsCompleted: 45,
-    verified: true,
-    createdAt: "2024-01-15T10:30:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet1",
-      balance: 2500
-    },
-    vehicle: {
-      vehicleNumber: "3"
-    },
-    noOfDriver: 1,
-    preferredVehicle: "Sedan"
-  },
-  {
-    _id: "2",
-    user: {
-      _id: "user2",
-      profileImage: null,
-      city: "Delhi",
-      state: "Delhi"
-    },
-    firstName: "Priya",
-    lastName: "Singh",
-    phoneNumber: "9123456789",
-    tripsCompleted: 120,
-    verified: true,
-    createdAt: "2023-11-22T14:15:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet2",
-      balance: 5600
-    },
-    vehicle: {
-      vehicleNumber: "1"
-    },
-    noOfDriver: 2,
-    preferredVehicle: "SUV"
-  },
-  {
-    _id: "3",
-    user: {
-      _id: "user3",
-      profileImage: null,
-      city: "Bangalore",
-      state: "Karnataka"
-    },
-    firstName: "Amit",
-    lastName: "Patel",
-    phoneNumber: "9555666777",
-    tripsCompleted: 78,
-    verified: false,
-    createdAt: "2024-02-08T09:45:00Z",
-    status: "Pending",
-    wallet: {
-      _id: "wallet3",
-      balance: 1200
-    },
-    vehicle: {
-      vehicleNumber: "2"
-    },
-    noOfDriver: 1,
-    preferredVehicle: "Hatchback"
-  },
-  {
-    _id: "4",
-    user: {
-      _id: "user4",
-      profileImage: null,
-      city: "Chennai",
-      state: "Tamil Nadu"
-    },
-    firstName: "Sneha",
-    lastName: "Reddy",
-    phoneNumber: "9888777666",
-    tripsCompleted: 200,
-    verified: true,
-    createdAt: "2023-08-14T16:20:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet4",
-      balance: 8900
-    },
-    vehicle: {
-      vehicleNumber: "8"
-    },
-    noOfDriver: 3,
-    preferredVehicle: "Sedan"
-  },
-  {
-    _id: "5",
-    user: {
-      _id: "user5",
-      profileImage: null,
-      city: "Kolkata",
-      state: "West Bengal"
-    },
-    firstName: "Rohit",
-    lastName: "Kumar",
-    phoneNumber: "9444333222",
-    tripsCompleted: 15,
-    verified: false,
-    createdAt: "2024-06-10T11:00:00Z",
-    status: "Suspended",
-    wallet: undefined, // No wallet
-    vehicle: {
-      vehicleNumber: "6"
-    },
-    noOfDriver: 1,
-    preferredVehicle: "Auto"
-  },
-  {
-    _id: "6",
-    user: {
-      _id: "user6",
-      profileImage: null,
-      city: "Pune",
-      state: "Maharashtra"
-    },
-    firstName: "Kavya",
-    lastName: "Nair",
-    phoneNumber: "9111222333",
-    tripsCompleted: 95,
-    verified: true,
-    createdAt: "2023-12-05T13:30:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet6",
-      balance: 4300
-    },
-    vehicle: {
-      vehicleNumber: "2"
-    },
-    noOfDriver: 2,
-    preferredVehicle: "SUV"
-  },
-  {
-    _id: "7",
-    user: {
-      _id: "user7",
-      profileImage: null,
-      city: "Hyderabad",
-      state: "Telangana"
-    },
-    firstName: "Vikram",
-    lastName: "Gupta",
-    phoneNumber: "9777888999",
-    tripsCompleted: 300,
-    verified: true,
-    createdAt: "2023-05-20T08:15:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet7",
-      balance: 12500
-    },
-    vehicle: {
-      vehicleNumber: "3"
-    },
-    noOfDriver: 4,
-    preferredVehicle: "Sedan"
-  },
-  {
-    _id: "8",
-    user: {
-      _id: "user8",
-      profileImage: null,
-      city: "Jaipur",
-      state: "Rajasthan"
-    },
-    firstName: "Anita",
-    lastName: "Agarwal",
-    phoneNumber: "9666555444",
-    tripsCompleted: 60,
-    verified: true,
-    createdAt: "2024-03-12T15:45:00Z",
-    status: "Active",
-    wallet: {
-      _id: "wallet8",
-      balance: 3200
-    },
-    vehicle: {
-      vehicleNumber: "10"
-    },
-    noOfDriver: 1,
-    preferredVehicle: "Hatchback"
-  }
-];
+
 
 // Status styling function - same as driver table
 const getStatusStyles = (status) => {
@@ -464,9 +266,6 @@ const PassengerTable = ({
   searchTerm = "", 
   onSearchResults 
 }) => {
-
-
-  console.log(PassengersData,"paaassojojojfjkfsdkfjsdfjksdfjksdfdsfdsfsfdsfdf")
   // Pagination state
   const [page, setPage] = useState(1);
   const limit = limitpage;
@@ -474,6 +273,7 @@ const PassengerTable = ({
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [role, setRole] = useState("passenger");
+   const [changeUserRole] = useChangeUserRoleMutation();
 
   // Filter passengers based on search term
   // const filteredPassengers = useMemo(() => {
@@ -567,12 +367,29 @@ const PassengerTable = ({
     toast.info(`Add wallet for ${passenger.firstName}`);
   };
 
-  const userRoleChangeApi = (e, passenger) => {
-    const newRole = e.target.value;
-    toast.success(`${passenger.firstName}'s role changed to ${newRole}!`);
-    setRole("passenger");
-    console.log('Role change:', { passenger: passenger._id, newRole });
+  const userRoleChangeApi = async (e, driver) => {
+    console.log(e.target.value,driver,"ooooooooooo")
+    try {
+      const postdata = {
+        userId: driver._id,
+        role:  e.target.value
+      };
+      const { data, error } = await changeUserRole(postdata);
+console.log("api callll")
+  
+    console.log("kkkkkkkkkkhhhhhhhh")
+    console.log(data,error)
+  console.log("uuuuuuuu")
+  //  console.log(data,error,"kkkkkkkkkkkk")
+  //   toast.success("Role changed successfully!");
+    // setRole("driver");
+    // refetch();
+    // window.location.reload();
+  } catch (error) {
+      console.log(error)
+  }
   };
+
 
   // Empty state when no search results
   if (searchTerm && PassengersData.length === 0) {
@@ -729,9 +546,10 @@ const PassengerTable = ({
                         value={role}
                         onChange={(e) => { setRole(e.target.value); userRoleChangeApi(e, passenger); }}
                       >
-                        <option value="passenger">Role</option>
-                        <option value="passenger">Passenger</option>
-                        <option value="premium">Premium</option>
+                                 <option value="driver">Role</option>
+                        <option value="driver">Driver</option>
+                        <option value="travelOwner">Travel</option>
+                        <option value="Passenger">Passenger</option>
                       </select>
                     </div>
                   </div>

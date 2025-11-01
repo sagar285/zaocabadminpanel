@@ -536,7 +536,12 @@ export const apiSlice = createApi({
         params: { search: searchTern },
       }),
     }),
-
+    PassengerSearch: builder.query({
+      query: (searchTern) => ({
+        url: "admin/SearchPassenger/search",
+        params: { search: searchTern },
+      }),
+    }),  
     CreateNotification: builder.mutation({
       query: (data) => ({
         url: "/notification/createNotification",
@@ -1259,6 +1264,7 @@ export const apiSlice = createApi({
 });
 
 export const {
+  useLazyPassengerSearchQuery,
   useGetAllAlertsQuery,
   useCreateSubscriptionMutation,
   useGetSubscriptionsQuery,

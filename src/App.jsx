@@ -77,6 +77,8 @@ import Packages from "./Admin/pages/Packages.jsx";
 import SubscriptionPackages from "./Admin/pages/SubscriptionPackages.jsx";
 import PerKmFareManagementScreen from "./Admin/pages/EditPerkmFareManagmentScreen.jsx";
 import AlertTrip from "./Admin/pages/AlertTrip.jsx";
+import Travels from "./Admin/pages/Travels.jsx";
+
 
 const App = () => {
   return (
@@ -91,10 +93,18 @@ const App = () => {
       <Route path="/subcription-packages" element={<SubscriptionPackages />} />
 
       <Route
-        path="/driver-travels"
+        path="/drivers"
         element={
           <Provider>
-            <DriverTravels /> 
+            <DriverTravels />
+          </Provider>
+        }
+      />
+      <Route
+        path="/travels"
+        element={
+          <Provider>
+            <Travels  />
           </Provider>
         }
       />

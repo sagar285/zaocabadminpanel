@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search, Plus, Users, Bell } from "lucide-react";
 import Sidebar from "../Sidebar";
 import PassengerTable from "../Tables/PassengerTable"; // Import the PassengerTable component
-import { useGetAllPassengersyAdminQuery, useLazyGetAllPassengersyAdminQuery } from "../../Redux/Api";
+import { useGetAllPassengersyAdminQuery, useLazyPassengerSearchQuery } from "../../Redux/Api";
 
 const Passenger = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -12,12 +12,12 @@ const Passenger = () => {
   const [notificationModal, setNotificationModal] = useState(false);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
 
-  const [triggerSearch, { data: searchData }] = useLazyGetAllPassengersyAdminQuery();
+  const [travelSearch, { data: searchTravelData }] = useLazyPassengerSearchQuery();
  const {data,error} = useGetAllPassengersyAdminQuery()
 
   const handleSearch = (e) => {
-    triggerSearch(e.target.value);
     setSearchTerm(e.target.value);
+    travelSearch(e.target.value);
   };
 
   const handleLimitChange = (e) => {
@@ -25,7 +25,7 @@ const Passenger = () => {
   };
 
 
-  const DriversData = searchTerm.length > 0 && searchData?.drivers.length > 0 ? searchData?.drivers :data?.drivers;
+  const travelsData = searchTerm.length > 0 && searchTravelData?.travels.length > 0 ? searchTravelData?.travels : data?.drivers; 
   const limitOptions = [10, 25, 50, 100];
 
   // Global notification handler
@@ -160,7 +160,7 @@ const Passenger = () => {
                 {/* Pass search props to PassengerTable */}
                 <PassengerTable 
                   setlength={setLength}
-                  PassengersData={DriversData || []} // Keep empty for using mock data
+                  PassengersData={travelsData || []} // Keep empty for using mock data
                   limitpage={limit}
                   searchTerm={searchTerm} // Pass search term
                   onSearchResults={(count) => setLength(count)} // Callback for result count
