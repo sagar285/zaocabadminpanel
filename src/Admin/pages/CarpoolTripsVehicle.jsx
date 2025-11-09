@@ -275,14 +275,14 @@ const CarpoolTripsVehicle = () => {
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
                           <span className="font-medium">{ mergePassengersAdvanced(trip?.passengers).length}</span>
-                          {console.log( mergePassengersAdvanced(trip?.passengers).length)}
+                          {/* {console.log( mergePassengersAdvanced(trip?.passengers).length)} */}
                         
                         </div>
                       </td>
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
                           <span>
-                            {trip.createdAt ? new Date(trip.createdAt).toLocaleDateString('en-GB', {
+                            {trip.createdAt ? new Date(trip.whenAreYouGoing).toLocaleDateString('en-GB', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric'
