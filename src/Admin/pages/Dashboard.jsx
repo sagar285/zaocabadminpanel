@@ -42,14 +42,15 @@ const StatCard = ({
   weeklyGrowth,
   monthlyGrowth,
   isCarpool,
+  navigateUrl,
   onClick
 }) => {
   const navigate = useNavigate();
   const getGrowthColor = (growth) =>
     growth > 0 ? "text-green-500" : "text-red-500";
-
   const goToTrips = () => {
-    navigate(`/trips/AlertTrip`);
+    // navigate(`/trips/AlertTrip`);
+    navigate(`${navigateUrl}`);
     return;
     const words = title
       .toLowerCase()
@@ -796,7 +797,6 @@ const Dashboard = () => {
   const { data: verifiedDriver } = useGetVerifiedDriversQuery();
   const { data: verifiedTravels } = useGetVerifiedTravelsQuery();
   const { data: AlertsData } = useGetAllAlertsQuery();
-  console.log(AlertsData, "AlertsData AlertsData AlertsData AlertsData");
 
   // Top Summary Cards Data
   const topSummaryData = [
@@ -808,30 +808,34 @@ const Dashboard = () => {
     { title: "Total Trip Kms", value: "5437", bgColor: "bg-indigo-50" },
   ];
 
-  console.log(data?.data?.trips, "yehhhhhhhh kya chal rha hai");
+
 
   // Define all stat cards with their properties
   const statCards = [
-    { title: "Passengers", dataSource: data?.data?.users, isCarpool: false },
+    { title: "Passengers", dataSource: data?.data?.users, isCarpool: false,navigateUrl :"/passenger-travels" },
     {
       title: "Travels",
       dataSource: data?.data?.travelOwners,
       isCarpool: false,
+      navigateUrl:"/travels"
     },
-    { title: "Driver", dataSource: data?.data?.drivers, isCarpool: false },
+    { title: "Driver", dataSource: data?.data?.drivers, isCarpool: false ,navigateUrl:"/drivers"},
+    { title: "Trip Alert", dataSource: AlertsData?.Trips?.length, isCarpool: false ,navigateUrl:"/trips/AlertTrip",total:AlertsData?.Trips?.length},
+
     {
       title: "Pickup Today",
       dataSource: data?.data?.drivers,
       isCarpool: false,
+      
     },
     {
-      title: "Verified Passengers",
-      dataSource: data?.data?.travelOwners,
+      title: "Verified Drivers",
+      dataSource: data?.data?.drivers?.verified,
       isCarpool: false,
     },
     {
       title: "Verified Travels",
-      dataSource: data?.data?.trips,
+      dataSource: data?.data?.travelOwners?.verified,
       isCarpool: false,
     },
     // { title: "Trip Alert", dataSource: AlertsData?.Trips[0], isCarpool: false },
@@ -934,6 +938,7 @@ const Dashboard = () => {
       title: "Carpool Trip Alert",
       dataSource: data?.data?.tripsByStatus?.pending,
       isCarpool: false,
+     
     },
   ];
 
@@ -1398,16 +1403,18 @@ const Dashboard = () => {
               key={`${card.title}-${index}`}
               title={card.title}
               isCarpool={card.isCarpool}
+              navigateUrl={card.navigateUrl}
               {...card.dataSource}
             />
           ))}
-
+{/* 
           <StatCard
             title={"Trip Alert"}
             isCarpool={false}
             total={AlertsData?.Trips?.length}
             onClick={()=>navigate(`/trips/AlertTrip`)}
-          />
+            navigateUrl={"/trips/AlertTrip"}
+          /> */}
         </div>
 
         {/* Analytics Dashboard - Pie Charts Section */}
