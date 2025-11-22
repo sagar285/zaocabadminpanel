@@ -369,6 +369,7 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
             <th className="py-2 px-3 bg-gray-200">Img</th>
             <th className="py-2 px-3 bg-gray-200">Name</th>
             <th className="py-2 px-3 bg-gray-200">Vehicle</th>
+              <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Drivers</th>
             <th className="py-2 px-3 bg-gray-200">Trips</th>
             <th className="py-2 px-3 bg-gray-200">Location</th>
             <th className="py-2 px-3 bg-gray-200">Balance</th>
@@ -382,7 +383,7 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
           {displaytravels.map((travel, index) => {
             // Determine the status for styling
             const status = travel?.verified ? "Verified" : "Not Verified";
-            
+            console.log(travel,"travel");
             return (
               <tr key={travel._id}>
                 <td className="py-2 px-3 border-b">
@@ -414,10 +415,13 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
                   <span className="text-blue-600">{travel?.phoneNumber || "7676755676"}</span>
                 </td>
                 <td className="py-2 px-3 border-b text-center">
-                  {travel?.vehicleNumber || (index % 2 === 0 ? "08" : "07")}
+                  {travel?.vehicleIds?.length }
                 </td>
                 <td className="py-2 px-3 border-b text-center">
-                  {travel?.tripsCompleted || [50, 500, 0, 342, 9][index % 5]}
+                  {travel?.driverCount}
+                </td>
+                <td className="py-2 px-3 border-b text-center">
+                  {travel?.TripsCount}
                 </td>
                 <td className="py-2 px-3 border-b">
                   {travel?.city || (index % 2 === 0 ? "Lucknow" : "Ayodhya")}<br/>{travel?.state || "UP"}

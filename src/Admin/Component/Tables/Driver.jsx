@@ -397,7 +397,7 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Img</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Name</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Vehicle</th>
-           <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Drivers</th>
+         
 
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Trips</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Location</th>
@@ -444,7 +444,10 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
                   <span className="text-blue-600">{driver?.phoneNumber || "7676755676"}</span>
                 </td>
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
-                  {driver?.vehicle?.vehicleNumber || (index % 2 === 0 ? "08" : "07")}
+                  {driver?.vehicle?.vehicleNumber} {"\n"}
+                  {driver?.vehicle?.vehicleName}{"\n"}
+                  {driver?.vehicle?.vehicleCategory}
+
                 </td>
 
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
