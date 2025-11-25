@@ -397,8 +397,6 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Img</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Name</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Vehicle</th>
-         
-
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Trips</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Location</th>
             <th className="py-2 px-3 border-r-2 border-gray-300 bg-gray-200">Balance</th>
@@ -450,9 +448,9 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
 
                 </td>
 
-                <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
+                {/* <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                {driver.noOfDriver}
-                </td>
+                </td> */}
                 <td className="py-2 px-3 border-b-2 border-r-2 border-gray-300 text-center">
                   {driver?.tripsCompleted || [50, 500, 0, 342, 9][index % 5]}
                 </td>

@@ -422,6 +422,8 @@ const FareManagementScreen = () => {
     // }
   };
 
+  console.log(selectedSubCategories,"selectedSubCategories")
+
   const handleRentalPackageChange = (e) => {
     setselectedRentalPkg(e.target.value);
   };
@@ -775,7 +777,7 @@ const FareManagementScreen = () => {
       perKmFare: false,
       tripType: tripType,
       vehicleCategory: selectedCategory,
-      vehicleSubCategory: selectedSubCategories.join(","), // Convert array to string
+      vehicleSubCategory: selectedSubCategories, // Convert array to string
       RecommndedFareKm: parseInt(recommendedFare) || 0,
       minFareKm: parseInt(minFare) || 0,
       maxFareKm: parseInt(maxFare) || 0,

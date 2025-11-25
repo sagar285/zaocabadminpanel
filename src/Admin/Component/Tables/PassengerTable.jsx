@@ -264,10 +264,14 @@ const PassengerTable = ({
   PassengersData = [], 
   limitpage = 10, 
   searchTerm = "", 
-  onSearchResults 
+  onSearchResults ,
+  page,
+   setPage,
+   length,
+   data,
 }) => {
   // Pagination state
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const limit = limitpage;
   const [selectedPassenger, setSelectedPassenger] = useState(null);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
@@ -304,26 +308,27 @@ const PassengerTable = ({
   // }, [PassengersData, searchTerm]);
 
   // Pagination for filtered results
-  const totalPassengers = PassengersData?.length;
-  const totalPages = Math.ceil(totalPassengers / limit);
+  const totalPassengers = data?.meta?.total;
+  const totalPages = length;
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const currentPassengers = PassengersData?.slice(startIndex, endIndex);
 
   // Update length when filtered data changes
   useEffect(() => {
-    if (setlength) {
-      setlength(totalPassengers);
-    }
+    // if (setlength) {
+    //   setlength(100);
+    // }
     if (onSearchResults) {
-      onSearchResults(totalPassengers);
-    }
+
+      onSearchResults(totalPages);
+    } 
   }, [totalPassengers, setlength, onSearchResults]);
 
   // Reset to page 1 when search term changes
-  useEffect(() => {
-    setPage(1);
-  }, [searchTerm]);
+  // useEffect(() => {
+  //   setPage(1);
+  // }, [searchTerm]);
 
   // Format serial number with padStart - same as driver table
   const formatSerialNumber = (index) => {

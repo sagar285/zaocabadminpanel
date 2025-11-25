@@ -593,7 +593,7 @@ const EditFareManagement = () => {
         perKmFare: false,
         tripType: tripType,
         vehicleCategory: selectedCategory,
-        vehicleSubCategory: selectedSubCategories.join(","),
+        vehicleSubCategory: selectedSubCategories,
         RecommndedFareKm: parseInt(recommendedFare) || 0,
         minFareKm: parseInt(minFare) || 0,
         maxFareKm: parseInt(maxFare) || 0,

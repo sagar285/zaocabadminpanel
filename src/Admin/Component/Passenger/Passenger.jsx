@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Search, Plus, Users, Bell } from "lucide-react";
 import Sidebar from "../Sidebar";
 import PassengerTable from "../Tables/PassengerTable"; // Import the PassengerTable component
@@ -11,14 +11,25 @@ const Passenger = () => {
   const [limit, setLimit] = useState(10);
   const [notificationModal, setNotificationModal] = useState(false);
   const [selectedPassengerId, setSelectedPassengerId] = useState(null);
-
+  const [page, setPage] = useState(1);
   const [travelSearch, { data: searchTravelData }] = useLazyPassengerSearchQuery();
- const {data,error} = useGetAllPassengersyAdminQuery()
+ const {data,error} = useGetAllPassengersyAdminQuery({ 
+  page, 
+  limit: limit 
+});
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     travelSearch(e.target.value);
   };
+
+  console.log(data?.meta,length)
+
+    useEffect(() => {
+      if (data?.drivers?.length > 0 && data?.meta?.total) {
+        setLength(data.meta.totalPages);
+      } 
+    }, [data?.meta?.total]);
 
   const handleLimitChange = (e) => {
     setLimit(Number(e.target.value));
@@ -159,6 +170,10 @@ const Passenger = () => {
               <div className="p-6">
                 {/* Pass search props to PassengerTable */}
                 <PassengerTable 
+                page={page}
+                data={data}
+                 setPage={setPage}
+                 length={length}
                   setlength={setLength}
                   PassengersData={travelsData || []} // Keep empty for using mock data
                   limitpage={limit}
