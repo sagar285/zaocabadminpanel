@@ -184,6 +184,7 @@ const AdminTrips = () => {
                 {displayData?.map((trip, index) => {
                   const status = trip.tripStatus || getStatusText(index);
                   const statusStyle = getStatusStyles(status);
+                  const date = trip?.tripType == "Carpool" ? trip?.whenAreYouGoing : trip?.tripDate
                   
                   return (
                     <tr key={trip._id || index} className="border-b hover:bg-gray-50">
@@ -227,14 +228,14 @@ const AdminTrips = () => {
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
                           <span>
-                            {trip.createdAt ? new Date(trip.createdAt).toLocaleDateString('en-GB', {
+                            {trip.createdAt ? new Date(date).toLocaleDateString('en-GB', {
                               day: 'numeric',
                               month: 'short',
                               year: 'numeric'
                             }) : '12 Feb, 02:00 PM'}
                           </span>
                           <span className="text-gray-500">
-                            {trip.createdAt ? new Date(trip.createdAt).toLocaleTimeString('en-US', {
+                            {trip.createdAt ? new Date(date).toLocaleTimeString('en-US', {
                               hour: 'numeric',
                               minute: 'numeric',
                               hour12: true
