@@ -436,7 +436,7 @@ const ViewUserTrip = () => {
             </div>
 
             {/* Driver/Offered Trips Table */}
-            {(offeredTrips.length > 0 || confirmedTrip) && (
+            {(offeredTrips?.length > 0 || confirmedTrip) && (
               <div className="bg-white rounded-lg shadow-sm mb-4">
                 <div className="p-4 border-b">
                   <h3 className="font-semibold text-lg">Driver Information</h3>
@@ -1316,7 +1316,7 @@ const ViewUserTrip = () => {
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
                   <h1 className="text-xl font-bold text-gray-800">Trip ID {trip.tripId}</h1>
-                  <p className="text-gray-600 text-sm">Trip Type <span className="font-medium">{trip.tripType}, {trip.tripType === 'one-way' ? 'One-way' : 'Round Trip'}</span></p>
+                  <p className="text-gray-600 text-sm">Trip Type <span className="font-medium">{trip.tripType}</span></p>
                   <p className="text-gray-600 text-sm">Category / Number of passenger <span className="font-medium">{trip.vehicleType} / {trip.numberofpassengers || 'N/A'} Passenger</span></p>
                   <p className="text-gray-600 text-sm">
                     Pickup Date & Time <span className="font-medium">{formatDateTime(trip.tripDate)}</span>
@@ -1398,7 +1398,7 @@ const ViewUserTrip = () => {
                     </div>
                   </div>
 
-                  {trip.makeOffer.length >= 1 && (
+                  {trip?.makeOffer?.length >= 1 && (
                     <div className="bg-blue-200 rounded-lg p-4 h-48">
                       <h4 className="font-semibold text-gray-800 mb-2">Fare offered by driver</h4>
                       <div className="text-center text-gray-600 text-sm mt-8">
