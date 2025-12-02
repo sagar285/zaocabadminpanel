@@ -203,15 +203,15 @@ const OneWayTripsVehicle = () => {
                       </td>
                       <td className="py-2 px-3 text-xs">{trip.tripType || "Outstation One-way"}</td>
                       <td className="py-2 px-3 text-xs truncate">
-                        {trip.vehicleType ? trip.vehicleType : (trip?.numberofpassengers ? trip?.numberofpassengers + " Passenger" : "Maruti Dzire UP32KT4567")}
+                        {trip.vehicleId ? trip.vehicleId?.vehicleName : (trip?.numberofpassengers  + " Passenger")}
                       </td>
                       <td className="py-2 px-3 text-xs">
                         {trip?.totalFare > 0 ? trip?.totalFare : "5000"}
                       </td>
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
-                          <span className="font-medium">Rahul Kumar</span>
-                          <span className="text-gray-500">7676755676</span>
+                          <span className="font-medium">{trip?.DriverId?.firstName} {trip?.DriverId?.lastName}</span>
+                          <span className="text-gray-500">{trip?.DriverId?.phoneNumber}</span>
                         </div>
                       </td>
                       <td className="py-2 px-3 text-xs">
