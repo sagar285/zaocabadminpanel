@@ -280,7 +280,7 @@ const AdminTrips = () => {
                       <td className="py-2 px-3 text-xs">
                         <div className="flex flex-col">
                           <span>
-                            {trip?.tripByPassenger ? "Passenger":"Partner"}
+                            {trip?.userId?.role}
                           </span>
              
                         </div>
