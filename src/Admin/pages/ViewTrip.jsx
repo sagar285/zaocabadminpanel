@@ -4,23 +4,33 @@ import {
   useDeleteTripByAdminInAdminTripMutation,
   useGetTripDetailsByIdFromAdminModelQuery,
   useGetTripDetailsByIdQuery,
+  useUpdateTripwithstateandCityForDropInAdminModelMutation,
   useUpdateTripwithStateCitiesInAdminModelMutation,
   useUpdateTripwithStateCitiesMutation,
 } from "../Redux/Api";
 import AddCityModal from "../Component/Modal/AddCityModal";
 import toast, { Toaster } from "react-hot-toast";
+import AddDropCityModal from "../Component/Modal/AddDropCityModal";
 
 const ViewTrip = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, error, isLoading, isFetching } = useGetTripDetailsByIdQuery(id);
-  const { data : dataFromAdminModel, error : errorFromAdminModel, isLoading : isLoadingFromAdminModel, isFetching : isFetchingFromAdminModel } = useGetTripDetailsByIdFromAdminModelQuery(id);
-  const [DeleteTrip] =useDeleteTripByAdminInAdminTripMutation()
-
+  const {
+    data: dataFromAdminModel,
+    error: errorFromAdminModel,
+    isLoading: isLoadingFromAdminModel,
+    isFetching: isFetchingFromAdminModel,
+  } = useGetTripDetailsByIdFromAdminModelQuery(id);
+  const [DeleteTrip] = useDeleteTripByAdminInAdminTripMutation();
 
   const [showAddCityModal, setShowAddCityModal] = useState(false);
+  const [showAddDropCityModal, setShowAddDropCityModal] = useState(false);
   const [updateTrip] = useUpdateTripwithStateCitiesMutation();
-  const [updateTripAdminModel] = useUpdateTripwithStateCitiesInAdminModelMutation();
+  const [updateTripAdminModel] =
+    useUpdateTripwithStateCitiesInAdminModelMutation();
+  const [updateTripForDropAdminModel] =
+    useUpdateTripwithstateandCityForDropInAdminModelMutation();
   const [showAllStates, setShowAllStates] = useState(false);
 
   if (isLoadingFromAdminModel || isFetchingFromAdminModel) {
@@ -29,6 +39,9 @@ const ViewTrip = () => {
 
   const onClose = () => {
     setShowAddCityModal(false);
+  };
+  const onCloseDrop = () => {
+    setShowAddDropCityModal(false);
   };
 
   const onSubmit = async (state, cities) => {
@@ -39,9 +52,32 @@ const ViewTrip = () => {
     };
     try {
       // const { data, error } = await updateTrip(putdata);
-      const { data:updateData, error :updateError } = await updateTripAdminModel(putdata);
-      if (updateData ) {
+      const { data: updateData, error: updateError } =
+        await updateTripAdminModel(putdata);
+      if (updateData) {
         toast.success("Trip updated successfully");
+      }
+      if (updateError) {
+        toast.error("Error updating trip");
+      }
+    } catch (error) {
+      toast.error("Error updating trip");
+    }
+  };
+
+  const onDropSubmit = async (state, cities) => {
+    const putdata = {
+      id: id,
+      stateName: state,
+      cities: cities,
+    };
+    try {
+      // const { data, error } = await updateTrip(putdata);
+      const { data: updateData, error: updateError } =
+        await updateTripForDropAdminModel(putdata);
+      if (updateData) {
+        toast.success("Trip Drop location updated successfully");
+        onCloseDrop()
       }
       if (updateError) {
         toast.error("Error updating trip");
@@ -61,32 +97,39 @@ const ViewTrip = () => {
 
   const handleDelete = async (id) => {
     try {
-      const {data,error} = await DeleteTrip(id)
-      if(data){
+      const { data, error } = await DeleteTrip(id);
+      if (data) {
         toast.success("Trip deleted successfully");
-        navigate('/trips')
+        navigate("/trips");
       }
-      if(error){
-        toast.error("Error deleting trip")
+      if (error) {
+        toast.error("Error deleting trip");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-
-  }
+  };
 
   const UserCard = ({ value }) => (
     <div className="absolute z-20 bg-white border border-gray-200 shadow-lg rounded-lg p-4 w-64 -translate-y-full -translate-x-1/2 top-0 left-1/2">
       <div className="relative">
-        {console.log(value,"translate")}
+        {console.log(value, "translate")}
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-gray-800">User Details</h3>
         </div>
         <div className="space-y-2">
-          <p className="text-sm"><span className="font-medium">Name:</span> {value.name || 'N/A'}</p>
-          <p className="text-sm"><span className="font-medium">Email:</span> {value.email || 'N/A'}</p>
-          <p className="text-sm"><span className="font-medium">Phone:</span> {value.phone || 'N/A'}</p>
-          <p className="text-sm"><span className="font-medium">Role:</span> {value.role || 'N/A'}</p>
+          <p className="text-sm">
+            <span className="font-medium">Name:</span> {value.name || "N/A"}
+          </p>
+          <p className="text-sm">
+            <span className="font-medium">Email:</span> {value.email || "N/A"}
+          </p>
+          <p className="text-sm">
+            <span className="font-medium">Phone:</span> {value.phone || "N/A"}
+          </p>
+          <p className="text-sm">
+            <span className="font-medium">Role:</span> {value.role || "N/A"}
+          </p>
         </div>
         <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
           <div className="border-8 border-transparent border-t-white drop-shadow-lg"></div>
@@ -96,7 +139,7 @@ const ViewTrip = () => {
   );
 
   const renderValue = (key, value) => {
-    console.log(key, value,"render value is");
+    console.log(key, value, "render value is");
     if (key === "userId" && typeof value === "object") {
       return (
         <div className="group relative flex items-center">
@@ -113,7 +156,9 @@ const ViewTrip = () => {
     if (key === "activeStates") {
       if (Array.isArray(value) && value.length > 0) {
         const initialStatesToShow = 6;
-        const displayedStates = showAllStates ? value : value.slice(0, initialStatesToShow);
+        const displayedStates = showAllStates
+          ? value
+          : value.slice(0, initialStatesToShow);
         const hasMoreStates = value.length > initialStatesToShow;
 
         return (
@@ -134,7 +179,9 @@ const ViewTrip = () => {
                 onClick={() => setShowAllStates(!showAllStates)}
                 className="text-gray-600 hover:text-gray-800 text-sm font-medium"
               >
-                {showAllStates ? 'Show Less' : `Show ${value.length - initialStatesToShow} More States`}
+                {showAllStates
+                  ? "Show Less"
+                  : `Show ${value.length - initialStatesToShow} More States`}
               </button>
             )}
           </div>
@@ -143,6 +190,51 @@ const ViewTrip = () => {
         return (
           <button
             onClick={() => setShowAddCityModal(true)}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            Add State
+          </button>
+        );
+      }
+    }
+
+    if (key === "activeStatesForDrop") {
+      if (Array.isArray(value) && value.length > 0) {
+        const initialStatesToShow = 6;
+        const displayedStates = showAllStates
+          ? value
+          : value.slice(0, initialStatesToShow);
+        const hasMoreStates = value.length > initialStatesToShow;
+
+        return (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {displayedStates.map((state, index) => (
+                <button
+                  key={index}
+                  onClick={() => navigate(`/trip/${id}/${state.name}`)}
+                  className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md text-sm text-left transition-colors"
+                >
+                  {state.name}
+                </button>
+              ))}
+            </div>
+            {hasMoreStates && (
+              <button
+                onClick={() => setShowAllStates(!showAllStates)}
+                className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+              >
+                {showAllStates
+                  ? "Show Less"
+                  : `Show ${value.length - initialStatesToShow} More States`}
+              </button>
+            )}
+          </div>
+        );
+      } else {
+        return (
+          <button
+            onClick={() => setShowAddDropCityModal(true)}
             className="text-gray-600 hover:text-gray-800"
           >
             Add State
@@ -201,24 +293,44 @@ const ViewTrip = () => {
         )}
 
         <div className="flex gap-4 mt-6">
-           <button onClick={()=>handleEditTrip()} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+          <button
+            onClick={() => handleEditTrip()}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors"
+          >
             Edit
           </button>
-          <button onClick={()=>handleDelete(trip?._id)} className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors">
+          <button
+            onClick={() => handleDelete(trip?._id)}
+            className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors"
+          >
             Delete
-          </button> 
+          </button>
           <button
             onClick={() => setShowAddCityModal(true)}
             className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors"
           >
             Add City
           </button>
+          {trip?.tripType == "One-Way" && (
+            <button
+              onClick={() => setShowAddDropCityModal(true)}
+              className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors"
+            >
+              Add Drop City
+            </button>
+          )}
         </div>
       </div>
       <AddCityModal
         isOpen={showAddCityModal}
         onClose={onClose}
         onSubmit={onSubmit}
+      />
+
+      <AddDropCityModal
+        isOpen={showAddDropCityModal}
+        onClose={onCloseDrop}
+        onSubmit={onDropSubmit}
       />
       <Toaster />
     </>

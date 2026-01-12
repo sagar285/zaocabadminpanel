@@ -7,7 +7,7 @@ import { data } from "autoprefixer";
 // https://api.zaocabs.in/api'
 export const apiSlice = createApi({
   reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "https://api.zaocabs.in/api" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:3000/api" }),
   tagTypes: [
     "user",
     "state",
@@ -241,6 +241,15 @@ export const apiSlice = createApi({
       invalidatesTags: ["trip"],
     }),
 
+    updateTripwithstateandCityForDropInAdminModel: builder.mutation({
+      query: (data) => ({
+        url: `/trip/updateTripwithstateandCityForDropInAdminModel/${data.id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["trip"],
+    }),
+
     addUserInfo: builder.mutation({
       query: (data) => ({
         url: "/user/adduserInfoByAdmin",
@@ -329,6 +338,15 @@ export const apiSlice = createApi({
     updateCityofStateFromAdminModel: builder.mutation({
       query: (data) => ({
         url: `/trip/update-city-active-state-admin-model`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["state", "trip"],
+    }),
+
+    updateCityofActiveStateForDropFromAdminModel: builder.mutation({
+      query: (data) => ({
+        url: `/trip/update-city-active-state-for-drop-admin-model`,
         method: "PUT",
         body: data,
       }),
@@ -1360,8 +1378,10 @@ export const {
   useUploadDriverLicenseMutation,
   useUploadAadharCardMutation,
   useUpdateCityofStateFromAdminModelMutation,
+  useUpdateCityofActiveStateForDropFromAdminModelMutation,
   useGetCityofActiveStateFromAdminModelQuery,
   useUpdateTripwithStateCitiesInAdminModelMutation,
+  useUpdateTripwithstateandCityForDropInAdminModelMutation,
   useGetTripDetailsByIdFromAdminModelQuery,
   useGetTripsAdminModelQuery,
   useAddTripDetailInAdminMutation,
