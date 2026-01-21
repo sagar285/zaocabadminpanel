@@ -98,6 +98,12 @@ const PerKmFareManagementScreen = () => {
   const [termsConditions, setTermsConditions] = useState("");
   const [fareRules, setFareRules] = useState("");
 
+  // admin comission values 
+
+  const [AdminBaseFarecomission,setAdminBaseFarecommission] = useState(null);
+  const [AdminExtraperkmchargescomission,setadminExtraperkmchargescomission] = useState(null)
+  const [AdminExtratimechargescomission,setAdminExtratimechargescomission] = useState(null)
+
   const [AddTripApiInAdmin] = useAddTripDetailInAdminMutation();
 
   const [AdvanceFare, setAdvanceFare] = useState({
@@ -320,7 +326,7 @@ const PerKmFareManagementScreen = () => {
     }
   }, [categoriesDataa, shouldFetchCategories]);
 
-  console.log(subscategories, "subscategories subscategories subscategories");
+
 
   const handleCategoryChange = (e) => {
     const categoryName = e.target.value;
@@ -413,12 +419,12 @@ const PerKmFareManagementScreen = () => {
       fareRules: fareRules,
       settings: settings,
       Rentalpkg: selectedRentalPkg,
+      AdminBaseFarecomission:AdminBaseFarecomission,
+      AdminExtraperkmchargescomission:AdminExtraperkmchargescomission,
+      AdminExtratimechargescomission:AdminExtratimechargescomission
     };
 
-    console.log(
-      postdata?.FareStatus,
-      "baseFareForKm baseFareForKm baseFareForKm"
-    );
+  
 
     try {
       const { data: dataInAdmin, error: errorInAdmin } =
@@ -733,9 +739,9 @@ const PerKmFareManagementScreen = () => {
                       type="number"
                       placeholder={getPlaceholder()}
                       className="w-full"
-                      value={waitingTimeCharges}
+                      value={extraTimeCharges}
                       min={0}
-                      onChange={(e) => setWaitingTimeCharges(e.target.value)}
+                      onChange={(e) => setExtraTimeCharges(e.target.value)}
                     />
                   </div>
 
@@ -832,6 +838,83 @@ const PerKmFareManagementScreen = () => {
                   </div>
                 </div> */}
               </div>
+
+
+
+              <div className="border border-gray-200 rounded-lg p-6 bg-purple-50">
+                <h3 className="text-lg font-semibold text-green-700 mb-4">
+                  Admin Commission
+                </h3>
+
+                {/* Night Time Row */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Admin Base Fare co.
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Admin Base Fare co."
+                      className="w-full"
+                      value={AdminBaseFarecomission}
+                      min={0}
+                      onChange={(e) => setAdminBaseFarecommission(e.target.value)}
+                    />
+                  </div>
+                
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Admin Extra/km charges co.
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Admin Extra/km charges co."
+                      className="w-full"
+                      value={AdminExtraperkmchargescomission}
+                      min={0}
+                      onChange={(e) => setadminExtraperkmchargescomission(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Admin Extra time charges co.
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Admin Extra time charges co."
+                      className="w-full"
+                      value={AdminExtratimechargescomission}
+                      min={0}
+                      onChange={(e) => setAdminExtratimechargescomission(e.target.value)}
+                    />
+                  </div>
+            
+                </div>
+
+            
+              </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
                 <h3 className="text-lg font-semibold text-green-700 mb-4">
                   Admin Lines
