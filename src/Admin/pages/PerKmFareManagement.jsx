@@ -35,6 +35,7 @@ const PerKmFareManagementScreen = () => {
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
+  const [farename,setfarename] = useState(null);
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subscategories, setSubscategories] = useState([]);
@@ -421,7 +422,8 @@ const PerKmFareManagementScreen = () => {
       Rentalpkg: selectedRentalPkg,
       AdminBaseFarecomission:AdminBaseFarecomission,
       AdminExtraperkmchargescomission:AdminExtraperkmchargescomission,
-      AdminExtratimechargescomission:AdminExtratimechargescomission
+      AdminExtratimechargescomission:AdminExtratimechargescomission,
+      farename:farename
     };
 
   
@@ -551,6 +553,20 @@ const PerKmFareManagementScreen = () => {
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fare name
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Passenger Fare / Testing fare"
+                      className="w-full"
+                      value={farename}
+                 
+                      onChange={(e) => setfarename(e.target.value)}
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip For

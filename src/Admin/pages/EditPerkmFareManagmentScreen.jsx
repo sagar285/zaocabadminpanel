@@ -13,7 +13,7 @@ import {
   useGetPackagesQuery,
   useGetStateAndCitiesQuery,
   useGetTripDetailsByIdFromAdminModelQuery,
-  useEditTripDetailMutation
+  useEditTripDetailMutation,
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
 import MultiSelectSubCategory from "../Component/MultipleSelectSubCategory";
@@ -39,7 +39,7 @@ const PerKmFareManagementScreen = () => {
   const { data: packages, isLoading } = useGetPackagesQuery();
 
   // Fetch trip data for editing
-  const { data: editTripData, isLoading: isLoadingTrip } = 
+  const { data: editTripData, isLoading: isLoadingTrip } =
     useGetTripDetailsByIdFromAdminModelQuery(id, {
       skip: !isEditMode,
     });
@@ -120,6 +120,7 @@ const PerKmFareManagementScreen = () => {
   const [selectedPackage, setSelectedPackage] = useState("");
   const [packageName, setPackageName] = useState("");
   const [showPackageForm, setShowPackageForm] = useState(false);
+  const [farename, setfarename] = useState(null);
 
   const [packageDetails, setPackageDetails] = useState({
     packageName: "",
@@ -156,105 +157,110 @@ const PerKmFareManagementScreen = () => {
     hideNumber: false,
   });
 
-  console.log(editTripData,"dddddddddddddddddddddd")
+  console.log(editTripData, "dddddddddddddddddddddd");
 
   // Populate form when editing
   useEffect(() => {
     if (isEditMode && editTripData?.trip) {
       const trip = editTripData.trip;
-      
-      settripFor(trip.tripFor || '');
-      setTripType(trip.tripType || '');
-      setSelectedCategory(trip.vehicleCategory || '');
+
+      settripFor(trip.tripFor || "");
+      setTripType(trip.tripType || "");
+      setSelectedCategory(trip.vehicleCategory || "");
       setSelectedSubCategories(trip.vehicleSubCategory || []);
-      
-      setBaseFare(trip.baseFare || '');
-      setExtratobepaid(trip.Extratobepaid || '');
-      setfareInclude(trip.fareInclude || '');
-      setBaseFareForKm(trip.baseFareForKm || '');
-      setBaseFareForTime(trip.baseFareForTime || '');
-      setWaitingTimeMinutes(trip.waitingTimeMinutes || '');
-      setExtraPerKmCharges(trip.extraPerKmCharges || '');
-      setExtraTimeCharges(trip.extraTimeCharges || '');
-      setWaitingTimeCharges(trip.waitingTimeCharges || '');
-      
-      setNightTimeCharge(trip.nightTimeCharge || '');
-      setNightTimeFrom(trip.nightTimeFrom || '');
-      setNightTimeTo(trip.nightTimeTo || '');
-      
-      setSurcharges(trip.surcharges || '');
-      setSurchargesFrom(trip.surchargesFrom || '');
-      setSurchargesTo(trip.surchargesTo || '');
-      
-      setTax(trip.GsTtaxinPercentage || '');
-      setDriverRadius(trip.DriverRadius || '');
-      setDriverMinWallet(trip.DriverMinWalletAmount || '');
-      setMinTripDiffTime(trip.minTripDifferenceTime || '');
-      setUrgentTimeLimit(trip.urgentTimeValue || '');
-      setPerHours(trip.Perhours || '');
-      
+      setfarename(trip?.farename);
+      setBaseFare(trip.baseFare || "");
+      setExtratobepaid(trip.Extratobepaid || "");
+      setfareInclude(trip.fareInclude || "");
+      setBaseFareForKm(trip.baseFareForKm || "");
+      setBaseFareForTime(trip.baseFareForTime || "");
+      setWaitingTimeMinutes(trip.waitingTimeMinutes || "");
+      setExtraPerKmCharges(trip.extraPerKmCharges || "");
+      setExtraTimeCharges(trip.extraTimeCharges || "");
+      setWaitingTimeCharges(trip.waitingTimeCharges || "");
+
+      setNightTimeCharge(trip.nightTimeCharge || "");
+      setNightTimeFrom(trip.nightTimeFrom || "");
+      setNightTimeTo(trip.nightTimeTo || "");
+
+      setSurcharges(trip.surcharges || "");
+      setSurchargesFrom(trip.surchargesFrom || "");
+      setSurchargesTo(trip.surchargesTo || "");
+
+      setTax(trip.GsTtaxinPercentage || "");
+      setDriverRadius(trip.DriverRadius || "");
+      setDriverMinWallet(trip.DriverMinWalletAmount || "");
+      setMinTripDiffTime(trip.minTripDifferenceTime || "");
+      setUrgentTimeLimit(trip.urgentTimeValue || "");
+      setPerHours(trip.Perhours || "");
+
       if (trip.bookingFeeRows?.length > 0) {
         setBookingFeeRows(trip.bookingFeeRows);
       }
-      
+
       if (trip.commissionRows?.length > 0) {
         setCommissionRows(trip.commissionRows);
       }
-      
+
       setAdvanceFare({
-        FareType: trip.advanceFareType || 'Fixed',
+        FareType: trip.advanceFareType || "Fixed",
         price: trip.advanceFee || 0,
       });
-      
-      setDistanceVoice(trip.distanceVoice || '');
-      setTimeVoice(trip.timeVoice || '');
-      
+
+      setDistanceVoice(trip.distanceVoice || "");
+      setTimeVoice(trip.timeVoice || "");
+
       if (trip.FareStartDate) {
-        const startDate = new Date(trip.FareStartDate).toISOString().slice(0, 16);
-        setFareDate(prev => ({ ...prev, startDate }));
+        const startDate = new Date(trip.FareStartDate)
+          .toISOString()
+          .slice(0, 16);
+        setFareDate((prev) => ({ ...prev, startDate }));
       }
       if (trip.FareEndDate) {
         const endDate = new Date(trip.FareEndDate).toISOString().slice(0, 16);
-        setFareDate(prev => ({ ...prev, endDate }));
+        setFareDate((prev) => ({ ...prev, endDate }));
       }
-      
-      setFareStatus(trip.FareStatus || 'Active');
-      setDriverPickupTime(trip.DriverPickupTime || '');
-      
+
+      setFareStatus(trip.FareStatus || "Active");
+      setDriverPickupTime(trip.DriverPickupTime || "");
+
       if (trip.FromDriverPickupTime) {
-        setFromToTime(prev => ({ ...prev, fromTime: trip.FromDriverPickupTime }));
+        setFromToTime((prev) => ({
+          ...prev,
+          fromTime: trip.FromDriverPickupTime,
+        }));
       }
       if (trip.ToDriverPickupTime) {
-        setFromToTime(prev => ({ ...prev, toTime: trip.ToDriverPickupTime }));
+        setFromToTime((prev) => ({ ...prev, toTime: trip.ToDriverPickupTime }));
       }
-      
-      setSelectedPackage(trip.selectedPackage || '');
-      setPackageName(trip.packageName || '');
-      
+
+      setSelectedPackage(trip.selectedPackage || "");
+      setPackageName(trip.packageName || "");
+
       if (trip.packageDetails) {
         setPackageDetails(trip.packageDetails);
       }
-      
-      setPlatformFeeU(trip.platformFeeU || '');
-      setPlatformFeeD(trip.platformFeeD || '');
-      setPlatformFeePercentage(trip.platformFeePercentage || '');
-      
+
+      setPlatformFeeU(trip.platformFeeU || "");
+      setPlatformFeeD(trip.platformFeeD || "");
+      setPlatformFeePercentage(trip.platformFeePercentage || "");
+
       if (trip.acConfiguration) {
-        setAcFixed(trip.acConfiguration.acFixed || '');
-        setAdvanceAcD(trip.acConfiguration.advanceAcD || '');
-        setFixedPercentage(trip.acConfiguration.fixedPercentage || '');
-        setAddWalletAcD(trip.acConfiguration.addWalletAcD || '');
-        setAcAmount(trip.acConfiguration.acAmount || '');
-        setAcAdminCommission(trip.acConfiguration.acAdminCommission || '');
+        setAcFixed(trip.acConfiguration.acFixed || "");
+        setAdvanceAcD(trip.acConfiguration.advanceAcD || "");
+        setFixedPercentage(trip.acConfiguration.fixedPercentage || "");
+        setAddWalletAcD(trip.acConfiguration.addWalletAcD || "");
+        setAcAmount(trip.acConfiguration.acAmount || "");
+        setAcAdminCommission(trip.acConfiguration.acAdminCommission || "");
       }
-      
-      setTermsConditions(trip.termsConditions || '');
-      setFareRules(trip.fareRules || '');
-      
+
+      setTermsConditions(trip.termsConditions || "");
+      setFareRules(trip.fareRules || "");
+
       if (trip.settings) {
         setSettings(trip.settings);
       }
-      
+
       setselectedRentalPkg(trip.Rentalpkg || null);
     }
   }, [isEditMode, editTripData]);
@@ -443,9 +449,9 @@ const PerKmFareManagementScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  console.log(editTripData?.trip?._id,"editTripData?._idffffffffff")
+    console.log(editTripData?.trip?._id, "editTripData?._idffffffffff");
     const postdata = {
-        tripId:editTripData?.trip?._id,
+      tripId: editTripData?.trip?._id,
       Extratobepaid,
       fareInclude,
       tripFor: tripFor,
@@ -505,10 +511,16 @@ const PerKmFareManagementScreen = () => {
     };
 
     try {
-      const { data: responseData, error: responseError } = await UpdateTripApi(postdata)
+      const { data: responseData, error: responseError } = await UpdateTripApi(
+        postdata
+      );
       if (responseData) {
-        toast.success(isEditMode ? "Per/KM Fare updated successfully!" : "Per/KM Fare added successfully!");
-        
+        toast.success(
+          isEditMode
+            ? "Per/KM Fare updated successfully!"
+            : "Per/KM Fare added successfully!"
+        );
+
         if (isEditMode) {
           setTimeout(() => navigate(`/trip/${id}`), 1500);
         } else {
@@ -579,11 +591,16 @@ const PerKmFareManagementScreen = () => {
           setFareRules("");
         }
       } else {
-        toast.error(responseError?.message || `Failed to ${isEditMode ? 'update' : 'add'} per/km fare!`);
+        toast.error(
+          responseError?.message ||
+            `Failed to ${isEditMode ? "update" : "add"} per/km fare!`
+        );
       }
     } catch (error) {
       console.error("API Error:", error);
-      toast.error(`Error occurred while ${isEditMode ? 'updating' : 'saving'}!`);
+      toast.error(
+        `Error occurred while ${isEditMode ? "updating" : "saving"}!`
+      );
     }
   };
 
@@ -610,7 +627,7 @@ const PerKmFareManagementScreen = () => {
         <div className="max-w-10xl bg-white rounded-lg shadow-lg">
           <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 rounded-t-lg">
             <h1 className="text-2xl font-bold">
-              {isEditMode ? 'Edit' : 'Add'} Per/KM Fare Configuration
+              {isEditMode ? "Edit" : "Add"} Per/KM Fare Configuration
             </h1>
           </div>
 
@@ -641,6 +658,19 @@ const PerKmFareManagementScreen = () => {
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fare name
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Passenger Fare / Testing fare"
+                      className="w-full"
+                      value={farename}
+                      onChange={(e) => setfarename(e.target.value)}
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip For
@@ -1851,7 +1881,9 @@ const PerKmFareManagementScreen = () => {
                   type="submit"
                   className="bg-gradient-to-r from-green-600 to-green-700 text-white px-12 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg"
                 >
-                  {isEditMode ? 'Update Per/KM Fare Configuration' : 'Save Per/KM Fare Configuration'}
+                  {isEditMode
+                    ? "Update Per/KM Fare Configuration"
+                    : "Save Per/KM Fare Configuration"}
                 </button>
               </div>
             </form>

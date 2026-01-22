@@ -23,7 +23,7 @@ const EditFareManagement = () => {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
-  
+
   const {
     data: categoryData,
     isError,
@@ -33,7 +33,7 @@ const EditFareManagement = () => {
   const { data: packages, isLoading } = useGetPackagesQuery();
 
   // Fetch trip data for editing
-  const { data: editTripData, isLoading: isLoadingTrip } = 
+  const { data: editTripData, isLoading: isLoadingTrip } =
     useGetTripDetailsByIdFromAdminModelQuery(id, {
       skip: !isEditMode,
     });
@@ -51,6 +51,7 @@ const EditFareManagement = () => {
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [tripType, setTripType] = useState("");
   const [tripFor, settripFor] = useState("");
+  const [farename, setfarename] = useState(null);
 
   // Per KM Fare States
   const [baseFare, setBaseFare] = useState("");
@@ -90,14 +91,28 @@ const EditFareManagement = () => {
   const [platformFeeUserAmount, setPlatformFeeUserAmount] = useState("");
 
   // Advance Commission States
-  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] = useState("Fixed");
-  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] = useState("");
-  const [advanceDriverCommissionWalletType, setAdvanceDriverCommissionWalletType] = useState("Fixed");
-  const [advanceDriverCommissionWalletAmount, setAdvanceDriverCommissionWalletAmount] = useState("");
-  const [advanceUserCommissionType, setAdvanceUserCommissionType] = useState("Fixed");
-  const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] = useState("");
-  const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] = useState("Fixed");
-  const [advanceUserCommissionWalletAmount, setAdvanceUserCommissionWalletAmount] = useState("");
+  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] =
+    useState("Fixed");
+  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] =
+    useState("");
+  const [
+    advanceDriverCommissionWalletType,
+    setAdvanceDriverCommissionWalletType,
+  ] = useState("Fixed");
+  const [
+    advanceDriverCommissionWalletAmount,
+    setAdvanceDriverCommissionWalletAmount,
+  ] = useState("");
+  const [advanceUserCommissionType, setAdvanceUserCommissionType] =
+    useState("Fixed");
+  const [advanceUserCommissionAmount, setAdvanceUserCommissionAmount] =
+    useState("");
+  const [advanceUserCommissionWalletType, setAdvanceUserCommissionWalletType] =
+    useState("Fixed");
+  const [
+    advanceUserCommissionWalletAmount,
+    setAdvanceUserCommissionWalletAmount,
+  ] = useState("");
 
   const [bookingFeeRows, setBookingFeeRows] = useState([
     {
@@ -179,128 +194,146 @@ const EditFareManagement = () => {
   useEffect(() => {
     if (isEditMode && editTripData?.trip) {
       const trip = editTripData.trip;
-      
-      settripFor(trip.tripFor || '');
-      setTripType(trip.tripType || '');
-      setSelectedCategory(trip.vehicleCategory || '');
+
+      settripFor(trip.tripFor || "");
+      setfarename(trip.farename || "");
+      setTripType(trip.tripType || "");
+      setSelectedCategory(trip.vehicleCategory || "");
       setSelectedSubCategories(trip.vehicleSubCategory || []);
-      
+
       // Check if it's Per KM fare or Fixed fare
       if (trip.perKmFare) {
         // Per KM Fare fields
-        setBaseFare(trip.baseFare || '');
-        setExtratobepaid(trip.Extratobepaid || '');
-        setfareInclude(trip.fareInclude || '');
-        setBaseFareForKm(trip.baseFareForKm || '');
-        setBaseFareForTime(trip.baseFareForTime || '');
-        setWaitingTimeMinutes(trip.waitingTimeMinutes || '');
-        setExtraPerKmCharges(trip.extraPerKmCharges || '');
-        setExtraTimeCharges(trip.extraTimeCharges || '');
-        setWaitingTimeCharges(trip.waitingTimeCharges || '');
-        
-        setNightTimeCharge(trip.nightTimeCharge || '');
-        setNightTimeFrom(trip.nightTimeFrom || '');
-        setNightTimeTo(trip.nightTimeTo || '');
-        
-        setSurcharges(trip.surcharges || '');
-        setSurchargesFrom(trip.surchargesFrom || '');
-        setSurchargesTo(trip.surchargesTo || '');
+        setBaseFare(trip.baseFare || "");
+        setExtratobepaid(trip.Extratobepaid || "");
+        setfareInclude(trip.fareInclude || "");
+        setBaseFareForKm(trip.baseFareForKm || "");
+        setBaseFareForTime(trip.baseFareForTime || "");
+        setWaitingTimeMinutes(trip.waitingTimeMinutes || "");
+        setExtraPerKmCharges(trip.extraPerKmCharges || "");
+        setExtraTimeCharges(trip.extraTimeCharges || "");
+        setWaitingTimeCharges(trip.waitingTimeCharges || "");
+
+        setNightTimeCharge(trip.nightTimeCharge || "");
+        setNightTimeFrom(trip.nightTimeFrom || "");
+        setNightTimeTo(trip.nightTimeTo || "");
+
+        setSurcharges(trip.surcharges || "");
+        setSurchargesFrom(trip.surchargesFrom || "");
+        setSurchargesTo(trip.surchargesTo || "");
       } else {
         // Fixed Fare fields
-        setRecommendedFare(trip.RecommndedFareKm || '');
-        setMaxFare(trip.maxFareKm || '');
-        setMinFare(trip.minFareKm || '');
+        setRecommendedFare(trip.RecommndedFareKm || "");
+        setMaxFare(trip.maxFareKm || "");
+        setMinFare(trip.minFareKm || "");
       }
-      
+
       // Common fields
-      setTax(trip.GsTtaxinPercentage || '');
-      setDriverRadius(trip.DriverRadius || '');
-      setDriverMinWallet(trip.DriverMinWalletAmount || '');
-      setMinTripDiffTime(trip.minTripDifferenceTime || '');
-      setUrgentTimeLimit(trip.urgentTimeValue || '');
-      setPerHours(trip.Perhours || '');
-      
+      setTax(trip.GsTtaxinPercentage || "");
+      setDriverRadius(trip.DriverRadius || "");
+      setDriverMinWallet(trip.DriverMinWalletAmount || "");
+      setMinTripDiffTime(trip.minTripDifferenceTime || "");
+      setUrgentTimeLimit(trip.urgentTimeValue || "");
+      setPerHours(trip.Perhours || "");
+
       // Booking Fee Rows
       if (trip.bookingFeeConfiguration?.length > 0) {
-        setBookingFeeRows(trip.bookingFeeConfiguration.map(row => ({
-          bookingFeeType: row.bookingFeeType || 'PerKm',
-          beeokingfeeFromKm: row.beeokingfeeFromKm || 0,
-          beeokingfeeToKm: row.beeokingfeeToKm || 0,
-          bookingFee: row.bookingFee || 0,
-        })));
+        setBookingFeeRows(
+          trip.bookingFeeConfiguration.map((row) => ({
+            bookingFeeType: row.bookingFeeType || "PerKm",
+            beeokingfeeFromKm: row.beeokingfeeFromKm || 0,
+            beeokingfeeToKm: row.beeokingfeeToKm || 0,
+            bookingFee: row.bookingFee || 0,
+          }))
+        );
       } else if (trip.bookingFeeRows?.length > 0) {
         setBookingFeeRows(trip.bookingFeeRows);
       }
-      
+
       // Commission Rows
       if (trip.AdminComissionConfiguration?.length > 0) {
-        setCommissionRows(trip.AdminComissionConfiguration.map(row => ({
-          driverComissionType: row.driverComissionType || 'Fixed',
-          fromKm: row.driverComissionFromkm || '',
-          toKm: row.drivercomissionTokm || '',
-          amount: row.driverComissionValue || '',
-        })));
+        setCommissionRows(
+          trip.AdminComissionConfiguration.map((row) => ({
+            driverComissionType: row.driverComissionType || "Fixed",
+            fromKm: row.driverComissionFromkm || "",
+            toKm: row.drivercomissionTokm || "",
+            amount: row.driverComissionValue || "",
+          }))
+        );
       } else if (trip.commissionRows?.length > 0) {
         setCommissionRows(trip.commissionRows);
       }
-      
+
       setAdvanceFare({
-        FareType: trip.advanceFareType || 'Fixed',
+        FareType: trip.advanceFareType || "Fixed",
         price: trip.advanceFee || 0,
       });
-      
-      setDistanceVoice(trip.distanceVoice || trip.advanceFareDistance || '');
-      setTimeVoice(trip.timeVoice || trip.advanceTimeAfter5hours || '');
-      
+
+      setDistanceVoice(trip.distanceVoice || trip.advanceFareDistance || "");
+      setTimeVoice(trip.timeVoice || trip.advanceTimeAfter5hours || "");
+
       // Platform Fees
-      setPlatformFeeDriverType(trip.platformFeeDriver || 'Fixed');
-      setPlatformFeeDriverAmount(trip.paltformFeeDriverAmount || '');
-      setPlatformFeeUserType(trip.PlatformFeeUser || 'Fixed');
-      setPlatformFeeUserAmount(trip.PlatformFeeUserAmount || '');
-      
+      setPlatformFeeDriverType(trip.platformFeeDriver || "Fixed");
+      setPlatformFeeDriverAmount(trip.paltformFeeDriverAmount || "");
+      setPlatformFeeUserType(trip.PlatformFeeUser || "Fixed");
+      setPlatformFeeUserAmount(trip.PlatformFeeUserAmount || "");
+
       // Advance Commissions
-      setAdvanceDriverCommissionType(trip.AdvanceDriverComission || 'Fixed');
-      setAdvanceDriverCommissionAmount(trip.AdvanceDriverComissionAmount || '');
-      setAdvanceDriverCommissionWalletType(trip.AdvancedrivercomissionWallet || 'Fixed');
-      setAdvanceDriverCommissionWalletAmount(trip.AdvancedrivercomissionWalletAmount || '');
-      setAdvanceUserCommissionType(trip.AdvanceUserComission || 'Fixed');
-      setAdvanceUserCommissionAmount(trip.AdvanceUserComissionAmount || '');
-      setAdvanceUserCommissionWalletType(trip.AdvanceUsercomissionWallet || 'Fixed');
-      setAdvanceUserCommissionWalletAmount(trip.AdvancedUsercomissionWalletAmount || '');
-      
+      setAdvanceDriverCommissionType(trip.AdvanceDriverComission || "Fixed");
+      setAdvanceDriverCommissionAmount(trip.AdvanceDriverComissionAmount || "");
+      setAdvanceDriverCommissionWalletType(
+        trip.AdvancedrivercomissionWallet || "Fixed"
+      );
+      setAdvanceDriverCommissionWalletAmount(
+        trip.AdvancedrivercomissionWalletAmount || ""
+      );
+      setAdvanceUserCommissionType(trip.AdvanceUserComission || "Fixed");
+      setAdvanceUserCommissionAmount(trip.AdvanceUserComissionAmount || "");
+      setAdvanceUserCommissionWalletType(
+        trip.AdvanceUsercomissionWallet || "Fixed"
+      );
+      setAdvanceUserCommissionWalletAmount(
+        trip.AdvancedUsercomissionWalletAmount || ""
+      );
+
       if (trip.FareStartDate) {
-        const startDate = new Date(trip.FareStartDate).toISOString().slice(0, 16);
-        setFareDate(prev => ({ ...prev, startDate }));
+        const startDate = new Date(trip.FareStartDate)
+          .toISOString()
+          .slice(0, 16);
+        setFareDate((prev) => ({ ...prev, startDate }));
       }
       if (trip.FareEndDate) {
         const endDate = new Date(trip.FareEndDate).toISOString().slice(0, 16);
-        setFareDate(prev => ({ ...prev, endDate }));
+        setFareDate((prev) => ({ ...prev, endDate }));
       }
-      
-      setFareStatus(trip.FareStatus || 'Active');
-      setDriverPickupTime(trip.DriverPickupTime || '');
-      
+
+      setFareStatus(trip.FareStatus || "Active");
+      setDriverPickupTime(trip.DriverPickupTime || "");
+
       if (trip.FromDriverPickupTime) {
-        setFromToTime(prev => ({ ...prev, fromTime: trip.FromDriverPickupTime }));
+        setFromToTime((prev) => ({
+          ...prev,
+          fromTime: trip.FromDriverPickupTime,
+        }));
       }
       if (trip.ToDriverPickupTime) {
-        setFromToTime(prev => ({ ...prev, toTime: trip.ToDriverPickupTime }));
+        setFromToTime((prev) => ({ ...prev, toTime: trip.ToDriverPickupTime }));
       }
-      
-      setSelectedPackage(trip.selectedPackage || trip.package || '');
-      setPackageName(trip.packageName || '');
-      
+
+      setSelectedPackage(trip.selectedPackage || trip.package || "");
+      setPackageName(trip.packageName || "");
+
       if (trip.packageDetails) {
         setPackageDetails(trip.packageDetails);
       }
-      
-      setTermsConditions(trip.termsConditions || trip.TermsCond || '');
-      setFareRules(trip.fareRules || trip.FareRules || '');
-      
+
+      setTermsConditions(trip.termsConditions || trip.TermsCond || "");
+      setFareRules(trip.fareRules || trip.FareRules || "");
+
       if (trip.settings) {
         setSettings(trip.settings);
       }
-      
+
       setselectedRentalPkg(trip.Rentalpkg || null);
     }
   }, [isEditMode, editTripData]);
@@ -490,7 +523,7 @@ const EditFareManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const trip = editTripData?.trip;
     const isPerKmFare = trip?.perKmFare;
 
@@ -639,12 +672,15 @@ const EditFareManagement = () => {
         package: selectedPackage,
         Rentalpkg: selectedRentalPkg,
         settings: settings,
+        farename:farename
       };
     }
 
     try {
-      const { data: responseData, error: responseError } = await UpdateTripApi(postdata);
-      
+      const { data: responseData, error: responseError } = await UpdateTripApi(
+        postdata
+      );
+
       if (responseData) {
         toast.success("Fare updated successfully!");
         setTimeout(() => navigate(-1), 1500);
@@ -682,7 +718,7 @@ const EditFareManagement = () => {
         <div className="max-w-10xl bg-white rounded-lg shadow-lg">
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-t-lg">
             <h1 className="text-2xl font-bold">
-              Edit {isPerKmFare ? 'Per/KM' : 'Fixed'} Fare Configuration
+              Edit {isPerKmFare ? "Per/KM" : "Fixed"} Fare Configuration
             </h1>
           </div>
 
@@ -716,6 +752,18 @@ const EditFareManagement = () => {
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fare name
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Passenger Fare / Testing fare"
+                      className="w-full"
+                      value={farename}
+                      onChange={(e) => setfarename(e.target.value)}
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip For
@@ -863,7 +911,9 @@ const EditFareManagement = () => {
                           className="w-full"
                           value={waitingTimeMinutes}
                           min={0}
-                          onChange={(e) => setWaitingTimeMinutes(e.target.value)}
+                          onChange={(e) =>
+                            setWaitingTimeMinutes(e.target.value)
+                          }
                         />
                       </div>
                     </div>
@@ -920,7 +970,9 @@ const EditFareManagement = () => {
                           className="w-full"
                           value={waitingTimeCharges}
                           min={0}
-                          onChange={(e) => setWaitingTimeCharges(e.target.value)}
+                          onChange={(e) =>
+                            setWaitingTimeCharges(e.target.value)
+                          }
                         />
                       </div>
                     </div>
@@ -1094,8 +1146,8 @@ const EditFareManagement = () => {
                   </div>
                 </>
               )}
-{/* Driver & System Settings */}
-<div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
+              {/* Driver & System Settings */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
                 <h3 className="text-lg font-semibold text-teal-700 mb-4">
                   Driver & System Settings
                 </h3>
@@ -1483,8 +1535,8 @@ const EditFareManagement = () => {
               </div>
 
               {/* Platform Fee Configuration */}
-{/* Driver & System Settings */}
-<div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
+              {/* Driver & System Settings */}
+              <div className="border border-gray-200 rounded-lg p-6 bg-teal-50">
                 <h3 className="text-lg font-semibold text-teal-700 mb-4">
                   Driver & System Settings
                 </h3>
@@ -1900,7 +1952,9 @@ const EditFareManagement = () => {
                       placeholder="Driver amount"
                       className="w-full"
                       value={platformFeeDriverAmount}
-                      onChange={(e) => setPlatformFeeDriverAmount(e.target.value)}
+                      onChange={(e) =>
+                        setPlatformFeeDriverAmount(e.target.value)
+                      }
                     />
                   </div>
                 </div>
@@ -2088,8 +2142,9 @@ const EditFareManagement = () => {
                       {selectedPackage === "new"
                         ? "Create New Package"
                         : `Update ${
-                            packageOptions.find((p) => p.value === selectedPackage)
-                              ?.label
+                            packageOptions.find(
+                              (p) => p.value === selectedPackage
+                            )?.label
                           }`}
                     </h3>
                     <button
@@ -2123,7 +2178,10 @@ const EditFareManagement = () => {
                         className="w-full"
                         value={packageDetails.packageName}
                         onChange={(e) =>
-                          handlePackageDetailsChange("packageName", e.target.value)
+                          handlePackageDetailsChange(
+                            "packageName",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
@@ -2134,7 +2192,10 @@ const EditFareManagement = () => {
                       <Select
                         value={packageDetails.packageType}
                         onChange={(e) =>
-                          handlePackageDetailsChange("packageType", e.target.value)
+                          handlePackageDetailsChange(
+                            "packageType",
+                            e.target.value
+                          )
                         }
                         className="w-full"
                       >
@@ -2213,7 +2274,10 @@ const EditFareManagement = () => {
                         placeholder="Package description..."
                         value={packageDetails.description}
                         onChange={(e) =>
-                          handlePackageDetailsChange("description", e.target.value)
+                          handlePackageDetailsChange(
+                            "description",
+                            e.target.value
+                          )
                         }
                       ></textarea>
                     </div>
@@ -2251,7 +2315,9 @@ const EditFareManagement = () => {
                     <Select
                       className="w-full"
                       value={advanceDriverCommissionType}
-                      onChange={(e) => setAdvanceDriverCommissionType(e.target.value)}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionType(e.target.value)
+                      }
                     >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -2313,7 +2379,9 @@ const EditFareManagement = () => {
                     <Select
                       className="w-full"
                       value={advanceUserCommissionType}
-                      onChange={(e) => setAdvanceUserCommissionType(e.target.value)}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionType(e.target.value)
+                      }
                     >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -2328,7 +2396,9 @@ const EditFareManagement = () => {
                       placeholder="Amount"
                       className="w-full"
                       value={advanceUserCommissionAmount}
-                      onChange={(e) => setAdvanceUserCommissionAmount(e.target.value)}
+                      onChange={(e) =>
+                        setAdvanceUserCommissionAmount(e.target.value)
+                      }
                     />
                   </div>
                   <div>

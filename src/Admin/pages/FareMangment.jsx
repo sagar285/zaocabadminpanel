@@ -21,16 +21,16 @@ const FareManagementScreen = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isCarpool, setIsCarpool] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
+  const [farename, setfarename] = useState(null);
   // const { data: categoryData, error: categoryError } = useGetCategoriesQuery();
 
-
-    const {
-      data: categoryData,
-      // isLoading,
-      isError,
-      // error,
-      refetch: refetchCategory,
-    } = useGetAllVehicleCategoryQuery();
+  const {
+    data: categoryData,
+    // isLoading,
+    isError,
+    // error,
+    refetch: refetchCategory,
+  } = useGetAllVehicleCategoryQuery();
   const { data: packages, isLoading } = useGetPackagesQuery();
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
@@ -388,25 +388,21 @@ const FareManagementScreen = () => {
 
   const shouldFetchCategories = !!selectedCategory;
 
-    const {
-      data: categoriesDataa,
-      error: fetchErro,
-      isLoading: isFetchingCategorie,
-      refetch: refetchCategorie,
-    } = useGetCategoryAllVehicleQuery(selectedCategory);
+  const {
+    data: categoriesDataa,
+    error: fetchErro,
+    isLoading: isFetchingCategorie,
+    refetch: refetchCategorie,
+  } = useGetCategoryAllVehicleQuery(selectedCategory);
 
+  useEffect(() => {
+    if (categoriesDataa && shouldFetchCategories) {
+      // Yahan subcategory set karein
+      setSubscategories(categoriesDataa);
+    }
+  }, [categoriesDataa, shouldFetchCategories]);
 
-    useEffect(() => {
-      if (categoriesDataa && shouldFetchCategories) {
-        // Yahan subcategory set karein
-        setSubscategories(categoriesDataa);
-      }
-    }, [categoriesDataa, shouldFetchCategories]);
-
-    console.log(subscategories,"subscategories subscategories subscategories")
-    
-
-
+  console.log(subscategories, "subscategories subscategories subscategories");
 
   const handleCategoryChange = (e) => {
     const categoryName = e.target.value;
@@ -422,7 +418,7 @@ const FareManagementScreen = () => {
     // }
   };
 
-  console.log(selectedSubCategories,"selectedSubCategories")
+  console.log(selectedSubCategories, "selectedSubCategories");
 
   const handleRentalPackageChange = (e) => {
     setselectedRentalPkg(e.target.value);
@@ -773,7 +769,7 @@ const FareManagementScreen = () => {
 
     // Create the API payload according to required structure
     const postdata = {
-      tripFor:tripFor,
+      tripFor: tripFor,
       perKmFare: false,
       tripType: tripType,
       vehicleCategory: selectedCategory,
@@ -804,7 +800,7 @@ const FareManagementScreen = () => {
       AdvanceDriverComission: advanceDriverCommissionType,
       AdvanceDriverComissionAmount:
         parseInt(advanceDriverCommissionAmount) || 0,
-        FareStatus:FareStatus,
+      FareStatus: FareStatus,
       AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
       AdvancedrivercomissionWalletAmount:
         parseInt(advanceDriverCommissionWalletAmount) || 0,
@@ -819,7 +815,8 @@ const FareManagementScreen = () => {
       advanceTimeAfter5hours: timeVoice,
       package: selectedPackage,
       Rentalpkg: selectedRentalPkg,
-      settings:settings
+      settings: settings,
+      farename:farename
     };
     try {
       const { data: dataInAdmin, error: errorInAdmin } =
@@ -943,6 +940,19 @@ const FareManagementScreen = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Fare name
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="Passenger Fare / Testing fare"
+                      className="w-full"
+                      value={farename}
+                      onChange={(e) => setfarename(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                       Trip For
                     </label>
                     <Select
@@ -951,7 +961,7 @@ const FareManagementScreen = () => {
                       onChange={(e) => settripFor(e.target.value)}
                     >
                       <Option value="Passenger">Passenger</Option>
-                     
+
                       <Option value="Driver">Driver</Option>
                     </Select>
                   </div>
@@ -995,8 +1005,6 @@ const FareManagementScreen = () => {
                       ))}
                     </Select>
                   </div>
-
-                
 
                   {tripType == "Rental" && (
                     <div>
