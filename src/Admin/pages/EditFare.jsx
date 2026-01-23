@@ -757,7 +757,7 @@ const EditFareManagement = () => {
                       Fare name
                     </label>
                     <Input
-                      type="number"
+                                 type="text"
                       placeholder="Passenger Fare / Testing fare"
                       className="w-full"
                       value={farename}
