@@ -89,6 +89,8 @@ const PerKmFareManagementScreen = () => {
   const [timeVoice, setTimeVoice] = useState("");
   const [platformFeeU, setPlatformFeeU] = useState("");
   const [platformFeeD, setPlatformFeeD] = useState("");
+ const [PlatformFeeUserAmount,setPlatformFeeUserAmount] =useState(0)
+ const [paltformFeeDriverAmount,setpaltformFeeDriverAmount] =useState(0)
   const [platformFeePercentage, setPlatformFeePercentage] = useState("");
   const [acFixed, setAcFixed] = useState("");
   const [advanceAcD, setAdvanceAcD] = useState("");
@@ -359,7 +361,7 @@ const PerKmFareManagementScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+console.log(farename,"jaa rha hai")
     const postdata = {
       Extratobepaid,
       fareInclude,
@@ -397,6 +399,8 @@ const PerKmFareManagementScreen = () => {
       minTripDifferenceTime: minTripDiffTime,
       DriverMinWalletAmount: driverMinWallet,
       urgentTimeValue: urgentTimeLimit,
+      PlatformFeeUserAmount:PlatformFeeUserAmount,
+      paltformFeeDriverAmount:paltformFeeDriverAmount,
       // Package data
       selectedPackage: selectedPackage,
       packageName: packageName,
@@ -1527,7 +1531,10 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Platform fee Driver
                     </label>
-                    <Select className="w-full">
+                    <Select
+                    value={platformFeeD}
+                    onChange={(e)=>setPlatformFeeD(e.target.value)}
+                    className="w-full">
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -1537,7 +1544,10 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="number" placeholder="00" className="w-full" />
+                    <Input 
+                      value={paltformFeeDriverAmount}
+                      onChange={(e)=>setpaltformFeeDriverAmount(e.target.value)}
+                    type="number" placeholder="00" className="w-full" />
                   </div>
                 </div>
 
@@ -1546,7 +1556,10 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Platform fee User
                     </label>
-                    <Select className="w-full">
+                    <Select
+                    value={platformFeeU}
+                    onChange={(e)=>setPlatformFeeU(e.target.value)}
+                    className="w-full">
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -1556,7 +1569,10 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="number" placeholder="00" className="w-full" />
+                    <Input type="number"
+                    value={PlatformFeeUserAmount}
+                    onChange={(e)=>setPlatformFeeUserAmount(e.target.value)}
+                    placeholder="00" className="w-full" />
                   </div>
                 </div>
               </div>

@@ -319,12 +319,24 @@ export const apiSlice = createApi({
       providesTags: ["state", "trip"],
     }),
 
+    
+
     getCityofActiveStateFromAdminModel: builder.query({
       query: (data) => ({
         url: `/trip/get-city-active-state-admin-model/${data?.id}/${data?.state}`,
       }),
       providesTags: ["state", "trip"],
     }),
+
+
+    getCityofActiveStateForDropFromAdminModel: builder.query({
+      query: (data) => ({
+        url: `/trip/get-city-active-state-drop-admin-model/${data?.id}/${data?.state}`,
+      }),
+      providesTags: ["state", "trip"],
+    }),
+
+
 
     updateCityofState: builder.mutation({
       query: (data) => ({
@@ -338,6 +350,15 @@ export const apiSlice = createApi({
     updateCityofStateFromAdminModel: builder.mutation({
       query: (data) => ({
         url: `/trip/update-city-active-state-admin-model`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["state", "trip"],
+    }),
+
+    updateDropCityofStateFromAdminModel: builder.mutation({
+      query: (data) => ({
+        url: `/trip/update-drop-city-active-state-admin-model`,
         method: "PUT",
         body: data,
       }),
@@ -1282,6 +1303,8 @@ export const apiSlice = createApi({
 });
 
 export const {
+  useUpdateDropCityofStateFromAdminModelMutation,
+  useGetCityofActiveStateForDropFromAdminModelQuery,
   useLazyPassengerSearchQuery,
   useGetAllAlertsQuery,
   useCreateSubscriptionMutation,

@@ -77,7 +77,7 @@ const ViewTrip = () => {
         await updateTripForDropAdminModel(putdata);
       if (updateData) {
         toast.success("Trip Drop location updated successfully");
-        onCloseDrop()
+        onCloseDrop();
       }
       if (updateError) {
         toast.error("Error updating trip");
@@ -212,7 +212,7 @@ const ViewTrip = () => {
               {displayedStates.map((state, index) => (
                 <button
                   key={index}
-                  onClick={() => navigate(`/trip/${id}/${state.name}`)}
+                  onClick={() => navigate(`/trip/dropstate/${id}/${state.name}`)}
                   className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md text-sm text-left transition-colors"
                 >
                   {state.name}
@@ -273,19 +273,29 @@ const ViewTrip = () => {
         {trip ? (
           <div className="bg-white shadow-md rounded-lg p-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {Object.entries(trip).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
-                >
-                  <div className="text-sm font-medium text-gray-500 mb-1 capitalize">
-                    {key.replace(/([A-Z])/g, " $1")}
+              {Object.entries(trip).map(([key, value]) => {
+                // hide activeStatesForDrop when tripType is not "oneWay"
+                if (
+                  key === "activeStatesForDrop" &&
+                  trip.tripType !== "One-Way"
+                ) {
+                  return null;
+                }
+
+                return (
+                  <div
+                    key={key}
+                    className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="text-sm font-medium text-gray-500 mb-1 capitalize">
+                      {key.replace(/([A-Z])/g, " $1")}
+                    </div>
+                    <div className="text-gray-800 break-words">
+                      {renderValue(key, value)}
+                    </div>
                   </div>
-                  <div className="text-gray-800 break-words">
-                    {renderValue(key, value)}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ) : (

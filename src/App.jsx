@@ -78,6 +78,7 @@ import SubscriptionPackages from "./Admin/pages/SubscriptionPackages.jsx";
 import PerKmFareManagementScreen from "./Admin/pages/EditPerkmFareManagmentScreen.jsx";
 import AlertTrip from "./Admin/pages/AlertTrip.jsx";
 import Travels from "./Admin/pages/Travels.jsx";
+import TripDropStates from "./Admin/pages/TripActiveStates/TripDropState.jsx";
 
 
 const App = () => {
@@ -177,6 +178,7 @@ const App = () => {
       <Route path="/fare-list" element={<FareList />} />
 
       <Route path="/trip/:id/:state" element={<TripStates />} />
+      <Route path="/trip/dropstate/:id/:state" element={<TripDropStates />} />
       <Route path="/userTrip/:id" element={<ViewUserTrip />} />
 
       <Route path="/carpoolTrip/:id" element={<ViewUserCarpoolTrip />} />

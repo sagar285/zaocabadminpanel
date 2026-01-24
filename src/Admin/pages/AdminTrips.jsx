@@ -258,6 +258,9 @@ const AdminTrips = () => {
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-700 border">
                     Perkm/fixed
                   </th>
+                  <th className="px-3 py-3 text-left text-xs font-medium text-gray-700 border">
+                    farename
+                  </th>
 
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-700 border">
                     Trip Type
@@ -303,6 +306,9 @@ const AdminTrips = () => {
                     </td>
                     <td className="px-3 py-3 border text-xs">
                       {trip?.perKmFare ? "Perkm":"Fixed"}
+                    </td>
+                    <td className="px-3 py-3 border text-xs">
+                      {trip?.farename}
                     </td>
                     <td className="px-3 py-3 border text-xs">
                       {trip.tripType || "-"}
