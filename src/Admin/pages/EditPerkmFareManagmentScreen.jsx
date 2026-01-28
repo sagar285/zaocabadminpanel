@@ -29,6 +29,9 @@ const PerKmFareManagementScreen = () => {
   const [waitingTimeCharge, setWaitingTimeCharge] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetStateAndCitiesQuery();
+    const [AdminBaseFarecomission,setAdminBaseFarecommission] = useState(null);
+    const [AdminExtraperkmchargescomission,setadminExtraperkmchargescomission] = useState(null)
+    const [AdminExtratimechargescomission,setAdminExtratimechargescomission] = useState(null)
 
   const {
     data: categoryData,
@@ -198,6 +201,12 @@ const PerKmFareManagementScreen = () => {
       setMinTripDiffTime(trip.minTripDifferenceTime || "");
       setUrgentTimeLimit(trip.urgentTimeValue || "");
       setPerHours(trip.Perhours || "");
+
+      setAdminBaseFarecommission(trip?.AdminBaseFarecomission)
+      setadminExtraperkmchargescomission(trip?.AdminExtraperkmchargescomission)
+      setAdminExtratimechargescomission(trip.AdminExtratimechargescomission)
+
+
 
       if (trip.bookingFeeRows?.length > 0) {
         setBookingFeeRows(trip.bookingFeeRows);
@@ -454,11 +463,7 @@ const PerKmFareManagementScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(
-      editTripData?.trip?._id,
-      "editTripData?._idffffffffff",
-      farename
-    );
+
     const postdata = {
       tripId: editTripData?.trip?._id,
       Extratobepaid,
@@ -520,6 +525,9 @@ const PerKmFareManagementScreen = () => {
       settings: settings,
       Rentalpkg: selectedRentalPkg,
       farename: farename,
+      AdminBaseFarecomission:AdminBaseFarecomission,
+      AdminExtraperkmchargescomission:AdminExtraperkmchargescomission,
+      AdminExtratimechargescomission:AdminExtratimechargescomission,
     };
 
     try {
@@ -888,6 +896,64 @@ const PerKmFareManagementScreen = () => {
                   </div>
                 </div>
               </div>
+
+
+
+                 <div className="border border-gray-200 rounded-lg p-6 bg-purple-50">
+                              <h3 className="text-lg font-semibold text-green-700 mb-4">
+                                Admin Commission
+                              </h3>
+              
+                              {/* Night Time Row */}
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Admin Base Fare co.
+                                  </label>
+                                  <Input
+                                    type="number"
+                                    placeholder="Admin Base Fare co."
+                                    className="w-full"
+                                    value={AdminBaseFarecomission}
+                                    min={0}
+                                    onChange={(e) => setAdminBaseFarecommission(e.target.value)}
+                                  />
+                                </div>
+                              
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Admin Extra/km charges co.
+                                  </label>
+                                  <Input
+                                    type="number"
+                                    placeholder="Admin Extra/km charges co."
+                                    className="w-full"
+                                    value={AdminExtraperkmchargescomission}
+                                    min={0}
+                                    onChange={(e) => setadminExtraperkmchargescomission(e.target.value)}
+                                  />
+                                </div>
+              
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Admin Extra time charges co.
+                                  </label>
+                                  <Input
+                                    type="number"
+                                    placeholder="Admin Extra time charges co."
+                                    className="w-full"
+                                    value={AdminExtratimechargescomission}
+                                    min={0}
+                                    onChange={(e) => setAdminExtratimechargescomission(e.target.value)}
+                                  />
+                                </div>
+                          
+                              </div>
+              
+                          
+                            </div>
+
+
 
               <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
                 <h3 className="text-lg font-semibold text-green-700 mb-4">

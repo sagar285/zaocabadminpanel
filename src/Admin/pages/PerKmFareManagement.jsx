@@ -361,7 +361,6 @@ const PerKmFareManagementScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-console.log(farename,"jaa rha hai")
     const postdata = {
       Extratobepaid,
       fareInclude,
@@ -1962,8 +1961,8 @@ console.log(farename,"jaa rha hai")
                     </label>
                     <Select
                       className="w-full"
-                      value={tripType}
-                      onChange={(e) => setTripType(e.target.value)}
+                      value={acFixed}
+                      onChange={(e) => setAcFixed(e.target.value)}
                     >
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
@@ -1988,7 +1987,10 @@ console.log(farename,"jaa rha hai")
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       wallet
                     </label>
-                    <Select className="w-full">
+                    <Select
+                    value={addWalletAcD}
+                    onChange={(e)=>setAddWalletAcD(e.target.value)}
+                    className="w-full">
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>
