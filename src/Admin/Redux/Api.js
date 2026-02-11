@@ -827,7 +827,7 @@ export const apiSlice = createApi({
 
     createCarpoolSeat: builder.mutation({
       query: (data) => ({
-        url: "/carpool//add-seat",
+        url: "/carpool/add-seat",
         method: "POST",
         body: data,
       }),
