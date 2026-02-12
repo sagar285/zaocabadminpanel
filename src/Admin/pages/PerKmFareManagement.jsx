@@ -576,7 +576,7 @@ const PerKmFareManagementScreen = () => {
                     </label>
                     <Select
                       className="w-full"
-                      value={tripType}
+                      value={tripFor}
                       onChange={(e) => settripFor(e.target.value)}
                     >
                       <Option value="Passenger">Passenger</Option>
