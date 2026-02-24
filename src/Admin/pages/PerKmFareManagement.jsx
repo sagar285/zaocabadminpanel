@@ -49,6 +49,10 @@ const PerKmFareManagementScreen = () => {
   const [baseFare, setBaseFare] = useState("");
   const [Extratobepaid, setExtratobepaid] = useState("");
   const [fareInclude, setfareInclude] = useState("");
+  const [adminLineStateTax, setAdminLineStateTax] = useState(false);
+  const [adminLineTollTax, setAdminLineTollTax] = useState(false);
+  const [adminLineParking, setAdminLineParking] = useState(false);
+  const [adminLineLuggageCarrier, setAdminLineLuggageCarrier] = useState(false);
   const [baseFareForKm, setBaseFareForKm] = useState("");
   const [baseFareForTime, setBaseFareForTime] = useState("");
   const [waitingTimeMinutes, setWaitingTimeMinutes] = useState("");
@@ -364,6 +368,10 @@ const PerKmFareManagementScreen = () => {
     const postdata = {
       Extratobepaid,
       fareInclude,
+      adminLineStateTax,
+      adminLineTollTax,
+      adminLineParking,
+      adminLineLuggageCarrier,
       tripFor: tripFor,
       perKmFare: true,
       vehicleCategory: selectedCategory,
@@ -502,6 +510,12 @@ const PerKmFareManagementScreen = () => {
         setAcAdminCommission("");
         setTermsConditions("");
         setFareRules("");
+        setExtratobepaid("");
+        setfareInclude("");
+        setAdminLineStateTax(false);
+        setAdminLineTollTax(false);
+        setAdminLineParking(false);
+        setAdminLineLuggageCarrier(false);
       } else {
         toast.error("Failed to add per/km fare!");
       }
@@ -965,6 +979,46 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setfareInclude(e.target.value)}
                     />
                   </div>
+                </div>
+
+                {/* Admin Line checkboxes - State Tax, Toll Tax, Parking */}
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineStateTax}
+                      onChange={(e) => setAdminLineStateTax(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">State Taxes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineTollTax}
+                      onChange={(e) => setAdminLineTollTax(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Toll Taxes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineParking}
+                      onChange={(e) => setAdminLineParking(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Parking</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineLuggageCarrier}
+                      onChange={(e) => setAdminLineLuggageCarrier(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Luggage Carrier</span>
+                  </label>
                 </div>
 
                 {/* Night Time Row */}

@@ -63,6 +63,10 @@ const PerKmFareManagementScreen = () => {
   const [baseFare, setBaseFare] = useState("");
   const [Extratobepaid, setExtratobepaid] = useState("");
   const [fareInclude, setfareInclude] = useState("");
+  const [adminLineStateTax, setAdminLineStateTax] = useState(false);
+  const [adminLineTollTax, setAdminLineTollTax] = useState(false);
+  const [adminLineParking, setAdminLineParking] = useState(false);
+  const [adminLineLuggageCarrier, setAdminLineLuggageCarrier] = useState(false);
   const [baseFareForKm, setBaseFareForKm] = useState("");
   const [baseFareForTime, setBaseFareForTime] = useState("");
   const [waitingTimeMinutes, setWaitingTimeMinutes] = useState("");
@@ -177,6 +181,10 @@ const PerKmFareManagementScreen = () => {
       setBaseFare(trip.baseFare || "");
       setExtratobepaid(trip.Extratobepaid || "");
       setfareInclude(trip.fareInclude || "");
+      setAdminLineStateTax(!!trip.adminLineStateTax);
+      setAdminLineTollTax(!!trip.adminLineTollTax);
+      setAdminLineParking(!!trip.adminLineParking);
+      setAdminLineLuggageCarrier(!!trip.adminLineLuggageCarrier);
       setBaseFareForKm(trip.baseFareForKm || "");
       setBaseFareForTime(trip.baseFareForTime || "");
       setWaitingTimeMinutes(trip.waitingTimeMinutes || "");
@@ -468,6 +476,10 @@ const PerKmFareManagementScreen = () => {
       tripId: editTripData?.trip?._id,
       Extratobepaid,
       fareInclude,
+      adminLineStateTax,
+      adminLineTollTax,
+      adminLineParking,
+      adminLineLuggageCarrier,
       tripFor: tripFor,
       perKmFare: true,
       vehicleCategory: selectedCategory,
@@ -985,6 +997,46 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setfareInclude(e.target.value)}
                     />
                   </div>
+                </div>
+
+                {/* Admin Line checkboxes - State Tax, Toll Tax, Parking */}
+                <div className="flex flex-wrap gap-3 mt-4">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineStateTax}
+                      onChange={(e) => setAdminLineStateTax(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">State Taxes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineTollTax}
+                      onChange={(e) => setAdminLineTollTax(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Toll Taxes</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineParking}
+                      onChange={(e) => setAdminLineParking(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Parking</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineLuggageCarrier}
+                      onChange={(e) => setAdminLineLuggageCarrier(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Luggage Carrier</span>
+                  </label>
                 </div>
               </div>
 
