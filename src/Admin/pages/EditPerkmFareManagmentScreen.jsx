@@ -63,10 +63,14 @@ const PerKmFareManagementScreen = () => {
   const [baseFare, setBaseFare] = useState("");
   const [Extratobepaid, setExtratobepaid] = useState("");
   const [fareInclude, setfareInclude] = useState("");
+  const [stateTaxLine, setStateTaxLine] = useState("");
+  const [tollTaxLine, setTollTaxLine] = useState("");
+  const [parkingLine, setParkingLine] = useState("");
   const [adminLineStateTax, setAdminLineStateTax] = useState(false);
   const [adminLineTollTax, setAdminLineTollTax] = useState(false);
   const [adminLineParking, setAdminLineParking] = useState(false);
-  const [adminLineLuggageCarrier, setAdminLineLuggageCarrier] = useState(false);
+  const [adminLineDriverAllowance, setAdminLineDriverAllowance] = useState(false);
+  const [adminLineNightCharge, setAdminLineNightCharge] = useState(false);
   const [baseFareForKm, setBaseFareForKm] = useState("");
   const [baseFareForTime, setBaseFareForTime] = useState("");
   const [waitingTimeMinutes, setWaitingTimeMinutes] = useState("");
@@ -181,10 +185,14 @@ const PerKmFareManagementScreen = () => {
       setBaseFare(trip.baseFare || "");
       setExtratobepaid(trip.Extratobepaid || "");
       setfareInclude(trip.fareInclude || "");
+      setStateTaxLine(trip.stateTaxLine || "");
+      setTollTaxLine(trip.tollTaxLine || "");
+      setParkingLine(trip.parkingLine || "");
       setAdminLineStateTax(!!trip.adminLineStateTax);
       setAdminLineTollTax(!!trip.adminLineTollTax);
       setAdminLineParking(!!trip.adminLineParking);
-      setAdminLineLuggageCarrier(!!trip.adminLineLuggageCarrier);
+      setAdminLineDriverAllowance(!!trip.adminLineDriverAllowance);
+      setAdminLineNightCharge(!!trip.adminLineNightCharge);
       setBaseFareForKm(trip.baseFareForKm || "");
       setBaseFareForTime(trip.baseFareForTime || "");
       setWaitingTimeMinutes(trip.waitingTimeMinutes || "");
@@ -476,10 +484,17 @@ const PerKmFareManagementScreen = () => {
       tripId: editTripData?.trip?._id,
       Extratobepaid,
       fareInclude,
+      stateTaxLine,
+      tollTaxLine,
+      parkingLine,
+      stateTaxLine,
+      tollTaxLine,
+      parkingLine,
       adminLineStateTax,
       adminLineTollTax,
       adminLineParking,
-      adminLineLuggageCarrier,
+      adminLineDriverAllowance,
+      adminLineNightCharge,
       tripFor: tripFor,
       perKmFare: true,
       vehicleCategory: selectedCategory,
@@ -999,7 +1014,48 @@ const PerKmFareManagementScreen = () => {
                   </div>
                 </div>
 
-                {/* Admin Line checkboxes - State Tax, Toll Tax, Parking */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      state tax line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Extra to be paid by you to driver"
+                      className="w-full"
+                      value={stateTaxLine}
+                      onChange={(e) => setStateTaxLine(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      toll tax line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="your fare does not include"
+                      className="w-full"
+                      value={tollTaxLine}
+                      onChange={(e) => setTollTaxLine(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      parking line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Extra to be paid by you to driver"
+                      className="w-full"
+                      value={parkingLine}
+                      onChange={(e) => setParkingLine(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Admin Line checkboxes - State Tax, Toll Tax, Parking, Driver Allowance, Night charges */}
                 <div className="flex flex-wrap gap-3 mt-4">
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
@@ -1031,11 +1087,20 @@ const PerKmFareManagementScreen = () => {
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
-                      checked={adminLineLuggageCarrier}
-                      onChange={(e) => setAdminLineLuggageCarrier(e.target.checked)}
+                      checked={adminLineDriverAllowance}
+                      onChange={(e) => setAdminLineDriverAllowance(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Luggage Carrier</span>
+                    <span className="text-sm font-medium text-gray-700">Driver Allowance</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={adminLineNightCharge}
+                      onChange={(e) => setAdminLineNightCharge(e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                    />
+                    <span className="text-sm font-medium text-gray-700">Night charges</span>
                   </label>
                 </div>
               </div>
