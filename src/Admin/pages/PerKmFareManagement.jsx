@@ -52,6 +52,8 @@ const PerKmFareManagementScreen = () => {
   const [stateTaxLine, setStateTaxLine] = useState("");
   const [tollTaxLine, setTollTaxLine] = useState("");
   const [parkingLine, setParkingLine] = useState("");
+  const [driverAllowanceLine, setDriverAllowanceLine] = useState("");
+  const [nightChargeLine, setNightChargeLine] = useState("");
   const [adminLineStateTax, setAdminLineStateTax] = useState(false);
   const [adminLineTollTax, setAdminLineTollTax] = useState(false);
   const [adminLineParking, setAdminLineParking] = useState(false);
@@ -375,6 +377,8 @@ const PerKmFareManagementScreen = () => {
       stateTaxLine,
       tollTaxLine,
       parkingLine,
+      driverAllowanceLine,
+      nightChargeLine,
       adminLineStateTax,
       adminLineTollTax,
       adminLineParking,
@@ -523,6 +527,8 @@ const PerKmFareManagementScreen = () => {
         setStateTaxLine("");
         setTollTaxLine("");
         setParkingLine("");
+        setDriverAllowanceLine("");
+        setNightChargeLine("");
         setAdminLineStateTax(false);
         setAdminLineTollTax(false);
         setAdminLineParking(false);
@@ -999,7 +1005,7 @@ const PerKmFareManagementScreen = () => {
                     </label>
                     <Input
                       type="text"
-                      placeholder="Extra to be paid by you to driver"
+                      placeholder="State tax line"
                       className="w-full"
                       value={stateTaxLine}
                       onChange={(e) => setStateTaxLine(e.target.value)}
@@ -1011,7 +1017,7 @@ const PerKmFareManagementScreen = () => {
                     </label>
                     <Input
                       type="text"
-                      placeholder="your fare does not include"
+                      placeholder="Toll tax line"
                       className="w-full"
                       value={tollTaxLine}
                       onChange={(e) => setTollTaxLine(e.target.value)}
@@ -1025,10 +1031,36 @@ const PerKmFareManagementScreen = () => {
                     </label>
                     <Input
                       type="text"
-                      placeholder="Extra to be paid by you to driver"
+                      placeholder="Parking line"
                       className="w-full"
                       value={parkingLine}
                       onChange={(e) => setParkingLine(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Driver Allowance line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Driver Allowance line"
+                      className="w-full"
+                      value={driverAllowanceLine}
+                      onChange={(e) => setDriverAllowanceLine(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Night charge line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Night charge line"
+                      className="w-full"
+                      value={nightChargeLine}
+                      onChange={(e) => setNightChargeLine(e.target.value)}
                     />
                   </div>
              

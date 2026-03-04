@@ -66,6 +66,8 @@ const PerKmFareManagementScreen = () => {
   const [stateTaxLine, setStateTaxLine] = useState("");
   const [tollTaxLine, setTollTaxLine] = useState("");
   const [parkingLine, setParkingLine] = useState("");
+  const [driverAllowanceLine, setDriverAllowanceLine] = useState("");
+  const [nightChargeLine, setNightChargeLine] = useState("");
   const [adminLineStateTax, setAdminLineStateTax] = useState(false);
   const [adminLineTollTax, setAdminLineTollTax] = useState(false);
   const [adminLineParking, setAdminLineParking] = useState(false);
@@ -188,6 +190,8 @@ const PerKmFareManagementScreen = () => {
       setStateTaxLine(trip.stateTaxLine || "");
       setTollTaxLine(trip.tollTaxLine || "");
       setParkingLine(trip.parkingLine || "");
+      setDriverAllowanceLine(trip.driverAllowanceLine || "");
+      setNightChargeLine(trip.nightChargeLine || "");
       setAdminLineStateTax(!!trip.adminLineStateTax);
       setAdminLineTollTax(!!trip.adminLineTollTax);
       setAdminLineParking(!!trip.adminLineParking);
@@ -487,9 +491,8 @@ const PerKmFareManagementScreen = () => {
       stateTaxLine,
       tollTaxLine,
       parkingLine,
-      stateTaxLine,
-      tollTaxLine,
-      parkingLine,
+      driverAllowanceLine,
+      nightChargeLine,
       adminLineStateTax,
       adminLineTollTax,
       adminLineParking,
@@ -1051,6 +1054,30 @@ const PerKmFareManagementScreen = () => {
                       className="w-full"
                       value={parkingLine}
                       onChange={(e) => setParkingLine(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Driver Allowance line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Driver Allowance line"
+                      className="w-full"
+                      value={driverAllowanceLine}
+                      onChange={(e) => setDriverAllowanceLine(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Night charge line
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Night charge line"
+                      className="w-full"
+                      value={nightChargeLine}
+                      onChange={(e) => setNightChargeLine(e.target.value)}
                     />
                   </div>
                 </div>
