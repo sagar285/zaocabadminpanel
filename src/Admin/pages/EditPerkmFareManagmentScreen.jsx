@@ -905,9 +905,9 @@ const PerKmFareManagementScreen = () => {
                       type="number"
                       placeholder={getPlaceholder()}
                       className="w-full"
-                      value={waitingTimeCharges}
+                      value={extraTimeCharges}
                       min={0}
-                      onChange={(e) => setWaitingTimeCharges(e.target.value)}
+                      onChange={(e) => setExtraTimeCharges(e.target.value)}
                     />
                   </div>
 
