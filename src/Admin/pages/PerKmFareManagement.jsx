@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, X, Edit, Trash2, Check } from "lucide-react";
 import Sidebar from "../Component/Sidebar";
 import Input from "../Component/Input";
@@ -35,7 +35,7 @@ const PerKmFareManagementScreen = () => {
   const [selectedState, setSelectedState] = useState("");
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState("");
-  const [farename,setfarename] = useState(null);
+  const [farename, setfarename] = useState(null);
 
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subscategories, setSubscategories] = useState([]);
@@ -57,7 +57,8 @@ const PerKmFareManagementScreen = () => {
   const [adminLineStateTax, setAdminLineStateTax] = useState(false);
   const [adminLineTollTax, setAdminLineTollTax] = useState(false);
   const [adminLineParking, setAdminLineParking] = useState(false);
-  const [adminLineDriverAllowance, setAdminLineDriverAllowance] = useState(false);
+  const [adminLineDriverAllowance, setAdminLineDriverAllowance] =
+    useState(false);
   const [adminLineNightCharge, setAdminLineNightCharge] = useState(false);
   const [baseFareForKm, setBaseFareForKm] = useState("");
   const [baseFareForTime, setBaseFareForTime] = useState("");
@@ -99,8 +100,8 @@ const PerKmFareManagementScreen = () => {
   const [timeVoice, setTimeVoice] = useState("");
   const [platformFeeU, setPlatformFeeU] = useState("");
   const [platformFeeD, setPlatformFeeD] = useState("");
- const [PlatformFeeUserAmount,setPlatformFeeUserAmount] =useState(0)
- const [paltformFeeDriverAmount,setpaltformFeeDriverAmount] =useState(0)
+  const [PlatformFeeUserAmount, setPlatformFeeUserAmount] = useState(0);
+  const [paltformFeeDriverAmount, setpaltformFeeDriverAmount] = useState(0);
   const [platformFeePercentage, setPlatformFeePercentage] = useState("");
   const [acFixed, setAcFixed] = useState("");
   const [advanceAcD, setAdvanceAcD] = useState("");
@@ -111,11 +112,26 @@ const PerKmFareManagementScreen = () => {
   const [termsConditions, setTermsConditions] = useState("");
   const [fareRules, setFareRules] = useState("");
 
-  // admin comission values 
+  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] =
+    useState("Fixed");
+  const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] =
+    useState("");
+  const [
+    advanceDriverCommissionWalletType,
+    setAdvanceDriverCommissionWalletType,
+  ] = useState("Fixed");
+  const [
+    advanceDriverCommissionWalletAmount,
+    setAdvanceDriverCommissionWalletAmount,
+  ] = useState("");
 
-  const [AdminBaseFarecomission,setAdminBaseFarecommission] = useState(null);
-  const [AdminExtraperkmchargescomission,setadminExtraperkmchargescomission] = useState(null)
-  const [AdminExtratimechargescomission,setAdminExtratimechargescomission] = useState(null)
+  // admin comission values
+
+  const [AdminBaseFarecomission, setAdminBaseFarecommission] = useState(null);
+  const [AdminExtraperkmchargescomission, setadminExtraperkmchargescomission] =
+    useState(null);
+  const [AdminExtratimechargescomission, setAdminExtratimechargescomission] =
+    useState(null);
 
   const [AddTripApiInAdmin] = useAddTripDetailInAdminMutation();
 
@@ -195,7 +211,7 @@ const PerKmFareManagementScreen = () => {
 
   const updateBookingFeeRow = (index, field, value) => {
     const updatedRows = bookingFeeRows.map((row, i) =>
-      i === index ? { ...row, [field]: value } : row
+      i === index ? { ...row, [field]: value } : row,
     );
     setBookingFeeRows(updatedRows);
   };
@@ -215,7 +231,7 @@ const PerKmFareManagementScreen = () => {
     // Load existing package data if not new
     if (packageValue && packageValue !== "new") {
       const selectedPkg = packageOptions.find(
-        (pkg) => pkg.value === packageValue
+        (pkg) => pkg.value === packageValue,
       );
       if (selectedPkg) {
         // Pre-populate form with existing package data
@@ -226,38 +242,38 @@ const PerKmFareManagementScreen = () => {
             packageValue === "basic"
               ? "30"
               : packageValue === "premium"
-              ? "90"
-              : "365",
+                ? "90"
+                : "365",
           features:
             packageValue === "basic"
               ? "Basic ride features, Standard support"
               : packageValue === "premium"
-              ? "Premium features, Priority support, Advanced analytics"
-              : "Enterprise features, 24/7 support, Custom analytics, API access",
+                ? "Premium features, Priority support, Advanced analytics"
+                : "Enterprise features, 24/7 support, Custom analytics, API access",
           price:
             packageValue === "basic"
               ? "99"
               : packageValue === "premium"
-              ? "299"
-              : "999",
+                ? "299"
+                : "999",
           discountPercentage:
             packageValue === "basic"
               ? "5"
               : packageValue === "premium"
-              ? "15"
-              : "25",
+                ? "15"
+                : "25",
           maxTrips:
             packageValue === "basic"
               ? "50"
               : packageValue === "premium"
-              ? "200"
-              : "unlimited",
+                ? "200"
+                : "unlimited",
           packageType:
             packageValue === "basic"
               ? "Basic"
               : packageValue === "premium"
-              ? "Premium"
-              : "Enterprise",
+                ? "Premium"
+                : "Enterprise",
         });
       }
     } else if (packageValue === "new") {
@@ -291,7 +307,7 @@ const PerKmFareManagementScreen = () => {
 
   const updateCommissionRow = (index, field, value) => {
     const updatedRows = commissionRows.map((row, i) =>
-      i === index ? { ...row, [field]: value } : row
+      i === index ? { ...row, [field]: value } : row,
     );
     setCommissionRows(updatedRows);
   };
@@ -339,8 +355,6 @@ const PerKmFareManagementScreen = () => {
     }
   }, [categoriesDataa, shouldFetchCategories]);
 
-
-
   const handleCategoryChange = (e) => {
     const categoryName = e.target.value;
     setSelectedCategory(categoryName);
@@ -360,7 +374,7 @@ const PerKmFareManagementScreen = () => {
     setSelectedState(stateName);
 
     const selectedStateObj = data?.state.find(
-      (state) => state.name === stateName
+      (state) => state.name === stateName,
     );
     if (selectedStateObj) {
       setCities(selectedStateObj.cities);
@@ -418,8 +432,8 @@ const PerKmFareManagementScreen = () => {
       minTripDifferenceTime: minTripDiffTime,
       DriverMinWalletAmount: driverMinWallet,
       urgentTimeValue: urgentTimeLimit,
-      PlatformFeeUserAmount:PlatformFeeUserAmount,
-      paltformFeeDriverAmount:paltformFeeDriverAmount,
+      PlatformFeeUserAmount: PlatformFeeUserAmount,
+      paltformFeeDriverAmount: paltformFeeDriverAmount,
       // Package data
       selectedPackage: selectedPackage,
       packageName: packageName,
@@ -443,13 +457,15 @@ const PerKmFareManagementScreen = () => {
       fareRules: fareRules,
       settings: settings,
       Rentalpkg: selectedRentalPkg,
-      AdminBaseFarecomission:AdminBaseFarecomission,
-      AdminExtraperkmchargescomission:AdminExtraperkmchargescomission,
-      AdminExtratimechargescomission:AdminExtratimechargescomission,
-      farename:farename
+      AdminBaseFarecomission: AdminBaseFarecomission,
+      AdminExtraperkmchargescomission: AdminExtraperkmchargescomission,
+      AdminExtratimechargescomission: AdminExtratimechargescomission,
+      farename: farename,
+      AdvanceDriverComission: advanceDriverCommissionType,
+      AdvanceDriverComissionAmount:parseInt(advanceDriverCommissionAmount) || 0,
+      AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
+      AdvancedrivercomissionWalletAmount: parseInt(advanceDriverCommissionWalletAmount) || 0,
     };
-
-  
 
     try {
       const { data: dataInAdmin, error: errorInAdmin } =
@@ -588,8 +604,7 @@ const PerKmFareManagementScreen = () => {
                   Basic Information
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-                <div>
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Fare name
                     </label>
@@ -598,7 +613,6 @@ const PerKmFareManagementScreen = () => {
                       placeholder="Passenger Fare / Testing fare"
                       className="w-full"
                       value={farename}
-                 
                       onChange={(e) => setfarename(e.target.value)}
                     />
                   </div>
@@ -890,8 +904,6 @@ const PerKmFareManagementScreen = () => {
                 </div> */}
               </div>
 
-
-
               <div className="border border-gray-200 rounded-lg p-6 bg-purple-50">
                 <h3 className="text-lg font-semibold text-green-700 mb-4">
                   Admin Commission
@@ -909,10 +921,12 @@ const PerKmFareManagementScreen = () => {
                       className="w-full"
                       value={AdminBaseFarecomission}
                       min={0}
-                      onChange={(e) => setAdminBaseFarecommission(e.target.value)}
+                      onChange={(e) =>
+                        setAdminBaseFarecommission(e.target.value)
+                      }
                     />
                   </div>
-                
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Admin Extra/km charges co.
@@ -923,7 +937,9 @@ const PerKmFareManagementScreen = () => {
                       className="w-full"
                       value={AdminExtraperkmchargescomission}
                       min={0}
-                      onChange={(e) => setadminExtraperkmchargescomission(e.target.value)}
+                      onChange={(e) =>
+                        setadminExtraperkmchargescomission(e.target.value)
+                      }
                     />
                   </div>
 
@@ -937,34 +953,13 @@ const PerKmFareManagementScreen = () => {
                       className="w-full"
                       value={AdminExtratimechargescomission}
                       min={0}
-                      onChange={(e) => setAdminExtratimechargescomission(e.target.value)}
+                      onChange={(e) =>
+                        setAdminExtratimechargescomission(e.target.value)
+                      }
                     />
                   </div>
-            
                 </div>
-
-            
               </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
               <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
                 <h3 className="text-lg font-semibold text-green-700 mb-4">
@@ -1063,7 +1058,6 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setNightChargeLine(e.target.value)}
                     />
                   </div>
-             
                 </div>
 
                 {/* Admin Line checkboxes - State Tax, Toll Tax, Parking, Driver Allowance, Night charges */}
@@ -1075,7 +1069,9 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setAdminLineStateTax(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">State Taxes</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      State Taxes
+                    </span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
@@ -1084,7 +1080,9 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setAdminLineTollTax(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Toll Taxes</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Toll Taxes
+                    </span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
@@ -1093,27 +1091,36 @@ const PerKmFareManagementScreen = () => {
                       onChange={(e) => setAdminLineParking(e.target.checked)}
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Parking</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Parking
+                    </span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={adminLineDriverAllowance}
-                      onChange={(e) => setAdminLineDriverAllowance(e.target.checked)}
+                      onChange={(e) =>
+                        setAdminLineDriverAllowance(e.target.checked)
+                      }
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Driver Allowance</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Driver Allowance
+                    </span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
                     <input
                       type="checkbox"
                       checked={adminLineNightCharge}
-                      onChange={(e) => setAdminLineNightCharge(e.target.checked)}
+                      onChange={(e) =>
+                        setAdminLineNightCharge(e.target.checked)
+                      }
                       className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                     />
-                    <span className="text-sm font-medium text-gray-700">Night charges</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      Night charges
+                    </span>
                   </label>
-              
                 </div>
 
                 {/* Night Time Row */}
@@ -1412,7 +1419,7 @@ const PerKmFareManagementScreen = () => {
                             updateBookingFeeRow(
                               index,
                               "bookingFeeType",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           className="w-full"
@@ -1434,7 +1441,7 @@ const PerKmFareManagementScreen = () => {
                             updateBookingFeeRow(
                               index,
                               "beeokingfeeFromKm",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder={`From km / ${index + 1}`}
@@ -1453,7 +1460,7 @@ const PerKmFareManagementScreen = () => {
                             updateBookingFeeRow(
                               index,
                               "beeokingfeeToKm",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder={`To km / ${index + 10}`}
@@ -1472,7 +1479,7 @@ const PerKmFareManagementScreen = () => {
                             updateBookingFeeRow(
                               index,
                               "bookingFee",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder={`Amount / ${(index + 1) * 100}`}
@@ -1514,7 +1521,7 @@ const PerKmFareManagementScreen = () => {
                           onClick={() => {
                             if (commissionRows.length > 1) {
                               const updatedRows = commissionRows.filter(
-                                (_, i) => i !== index
+                                (_, i) => i !== index,
                               );
                               setCommissionRows(updatedRows);
                             }
@@ -1680,9 +1687,10 @@ const PerKmFareManagementScreen = () => {
                       Platform fee Driver
                     </label>
                     <Select
-                    value={platformFeeD}
-                    onChange={(e)=>setPlatformFeeD(e.target.value)}
-                    className="w-full">
+                      value={platformFeeD}
+                      onChange={(e) => setPlatformFeeD(e.target.value)}
+                      className="w-full"
+                    >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -1692,10 +1700,15 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input 
+                    <Input
                       value={paltformFeeDriverAmount}
-                      onChange={(e)=>setpaltformFeeDriverAmount(e.target.value)}
-                    type="number" placeholder="00" className="w-full" />
+                      onChange={(e) =>
+                        setpaltformFeeDriverAmount(e.target.value)
+                      }
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                    />
                   </div>
                 </div>
 
@@ -1705,9 +1718,10 @@ const PerKmFareManagementScreen = () => {
                       Platform fee User
                     </label>
                     <Select
-                    value={platformFeeU}
-                    onChange={(e)=>setPlatformFeeU(e.target.value)}
-                    className="w-full">
+                      value={platformFeeU}
+                      onChange={(e) => setPlatformFeeU(e.target.value)}
+                      className="w-full"
+                    >
                       <Option value="Fixed">Fixed</Option>
                       <Option value="PerKm">Per KM</Option>
                       <Option value="Percentage">Percentage</Option>
@@ -1717,10 +1731,13 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="number"
-                    value={PlatformFeeUserAmount}
-                    onChange={(e)=>setPlatformFeeUserAmount(e.target.value)}
-                    placeholder="00" className="w-full" />
+                    <Input
+                      type="number"
+                      value={PlatformFeeUserAmount}
+                      onChange={(e) => setPlatformFeeUserAmount(e.target.value)}
+                      placeholder="00"
+                      className="w-full"
+                    />
                   </div>
                 </div>
               </div>
@@ -1880,7 +1897,7 @@ const PerKmFareManagementScreen = () => {
                         ? "Create New Package"
                         : `Update ${
                             packageOptions.find(
-                              (p) => p.value === selectedPackage
+                              (p) => p.value === selectedPackage,
                             )?.label
                           }`}
                     </h3>
@@ -1917,7 +1934,7 @@ const PerKmFareManagementScreen = () => {
                         onChange={(e) =>
                           handlePackageDetailsChange(
                             "packageName",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                       />
@@ -1931,7 +1948,7 @@ const PerKmFareManagementScreen = () => {
                         onChange={(e) =>
                           handlePackageDetailsChange(
                             "packageType",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="w-full"
@@ -1968,7 +1985,7 @@ const PerKmFareManagementScreen = () => {
                         onChange={(e) =>
                           handlePackageDetailsChange(
                             "discountPercentage",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                       />
@@ -2013,7 +2030,7 @@ const PerKmFareManagementScreen = () => {
                         onChange={(e) =>
                           handlePackageDetailsChange(
                             "description",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                       ></textarea>
@@ -2041,7 +2058,7 @@ const PerKmFareManagementScreen = () => {
                           toast.success(
                             `Package ${
                               selectedPackage === "new" ? "created" : "updated"
-                            } successfully!`
+                            } successfully!`,
                           );
                         }}
                       >
@@ -2063,10 +2080,15 @@ const PerKmFareManagementScreen = () => {
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {" "}
                       Advance Driver Commission
                     </label>
-                    <Select className="w-full">
+                    <Select
+                      className="w-full"
+                      value={advanceDriverCommissionType}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionType(e.target.value)
+                      }
+                    >
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
@@ -2077,14 +2099,28 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="text" placeholder="00" className="w-full" />
+                    <Input
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={advanceDriverCommissionAmount}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionAmount(e.target.value)
+                      }
+                    />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       wallet
                     </label>
-                    <Select className="w-full">
+                    <Select
+                      className="w-full"
+                      value={advanceDriverCommissionWalletType}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionWalletType(e.target.value)
+                      }
+                    >
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>
@@ -2094,7 +2130,15 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="number" placeholder="00" className="w-full" />
+                    <Input
+                      type="number"
+                      placeholder="00"
+                      className="w-full"
+                      value={advanceDriverCommissionWalletAmount}
+                      onChange={(e) =>
+                        setAdvanceDriverCommissionWalletAmount(e.target.value)
+                      }
+                    />
                   </div>
                 </div>
 
@@ -2137,9 +2181,10 @@ const PerKmFareManagementScreen = () => {
                       wallet
                     </label>
                     <Select
-                    value={addWalletAcD}
-                    onChange={(e)=>setAddWalletAcD(e.target.value)}
-                    className="w-full">
+                      value={addWalletAcD}
+                      onChange={(e) => setAddWalletAcD(e.target.value)}
+                      className="w-full"
+                    >
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>

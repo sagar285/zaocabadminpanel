@@ -93,6 +93,19 @@ const PerKmFareManagementScreen = () => {
   const [urgentTimeLimit, setUrgentTimeLimit] = useState("");
   const [perHours, setPerHours] = useState("");
 
+  const [advanceDriverCommissionType, setAdvanceDriverCommissionType] =
+  useState("Fixed");
+const [advanceDriverCommissionAmount, setAdvanceDriverCommissionAmount] =
+  useState("");
+const [
+  advanceDriverCommissionWalletType,
+  setAdvanceDriverCommissionWalletType,
+] = useState("Fixed");
+const [
+  advanceDriverCommissionWalletAmount,
+  setAdvanceDriverCommissionWalletAmount,
+] = useState("");
+
   const [bookingFeeRows, setBookingFeeRows] = useState([
     {
       bookingFeeType: "PerKm",
@@ -226,7 +239,10 @@ const PerKmFareManagementScreen = () => {
       setadminExtraperkmchargescomission(trip?.AdminExtraperkmchargescomission)
       setAdminExtratimechargescomission(trip.AdminExtratimechargescomission)
 
-
+      setAdvanceDriverCommissionType(trip?.AdvanceDriverComission || "Fixed");
+      setAdvanceDriverCommissionAmount(trip?.AdvanceDriverComissionAmount || "");
+      setAdvanceDriverCommissionWalletType(trip?.AdvancedrivercomissionWallet || "Fixed");
+      setAdvanceDriverCommissionWalletAmount(trip?.AdvancedrivercomissionWalletAmount || "");
 
       if (trip.bookingFeeRows?.length > 0) {
         setBookingFeeRows(trip.bookingFeeRows);
@@ -558,6 +574,10 @@ const PerKmFareManagementScreen = () => {
       AdminBaseFarecomission:AdminBaseFarecomission,
       AdminExtraperkmchargescomission:AdminExtraperkmchargescomission,
       AdminExtratimechargescomission:AdminExtratimechargescomission,
+      AdvanceDriverComission: advanceDriverCommissionType,
+      AdvanceDriverComissionAmount:parseInt(advanceDriverCommissionAmount) || 0,
+      AdvancedrivercomissionWallet: advanceDriverCommissionWalletType,
+      AdvancedrivercomissionWalletAmount: parseInt(advanceDriverCommissionWalletAmount) || 0,
     };
 
     try {
@@ -2002,7 +2022,10 @@ const PerKmFareManagementScreen = () => {
                       {" "}
                       Advance Driver Commission
                     </label>
-                    <Select className="w-full">
+                    <Select 
+                    value={advanceDriverCommissionType}
+                    onChange={(e) => setAdvanceDriverCommissionType(e.target.value)}
+                    className="w-full">
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
@@ -2013,14 +2036,17 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="text" placeholder="00" className="w-full" />
+                    <Input
+                     value={advanceDriverCommissionAmount}
+                     onChange={(e) => setAdvanceDriverCommissionAmount(e.target.value)}
+                    type="text" placeholder="00" className="w-full" />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       wallet
                     </label>
-                    <Select className="w-full">
+                    <Select value={advanceDriverCommissionWalletType} onChange={(e) => setAdvanceDriverCommissionWalletType(e.target.value)} className="w-full">
                       <Option value="CityRide">Fixed</Option>
                       <Option value="Rental">Percentage</Option>
                     </Select>
@@ -2030,7 +2056,10 @@ const PerKmFareManagementScreen = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Amount
                     </label>
-                    <Input type="number" placeholder="00" className="w-full" />
+                    <Input
+                    value={advanceDriverCommissionWalletAmount}
+                    onChange={(e) => setAdvanceDriverCommissionWalletAmount(e.target.value)}
+                    type="number" placeholder="00" className="w-full" />
                   </div>
                 </div>
 
