@@ -1919,9 +1919,9 @@ const FareManagementScreen = () => {
                         setAdvanceDriverCommissionType(e.target.value)
                       }
                     >
-                      <Option value="">All</Option>
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="All">All</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
 
@@ -1951,8 +1951,8 @@ const FareManagementScreen = () => {
                         setAdvanceDriverCommissionWalletType(e.target.value)
                       }
                     >
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
 

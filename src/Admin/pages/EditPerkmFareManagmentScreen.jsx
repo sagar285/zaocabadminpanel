@@ -2026,9 +2026,9 @@ const [
                     value={advanceDriverCommissionType}
                     onChange={(e) => setAdvanceDriverCommissionType(e.target.value)}
                     className="w-full">
-                      <Option value="">All</Option>
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="All">All</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
 
@@ -2039,7 +2039,7 @@ const [
                     <Input
                      value={advanceDriverCommissionAmount}
                      onChange={(e) => setAdvanceDriverCommissionAmount(e.target.value)}
-                    type="text" placeholder="00" className="w-full" />
+                    type="number" placeholder="00" className="w-full" />
                   </div>
 
                   <div>
@@ -2047,8 +2047,8 @@ const [
                       wallet
                     </label>
                     <Select value={advanceDriverCommissionWalletType} onChange={(e) => setAdvanceDriverCommissionWalletType(e.target.value)} className="w-full">
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
 
