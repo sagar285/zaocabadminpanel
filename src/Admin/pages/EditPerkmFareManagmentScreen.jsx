@@ -1481,16 +1481,16 @@ const [
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Driver Commision{" "}
+                          Driver Commision
                         </label>
                         <Select
                           className="w-full"
                           value={tripType}
                           onChange={(e) => setTripType(e.target.value)}
                         >
-                          <Option value="">All</Option>
-                          <Option value="CityRide">Fixed</Option>
-                          <Option value="Rental">Percentage</Option>
+                          <Option value="All">All</Option>
+                          <Option value="Fixed">Fixed</Option>
+                          <Option value="Percentage">Percentage</Option>
                         </Select>
                       </div>
 
@@ -2075,7 +2075,7 @@ const [
                     <Select
                       className="w-full"
                       value={tripType}
-                      onChange={(e) => setTripType(e.target.value)}
+                      onChange={(e) => setAcFixed(e.target.value)}
                     >
                       <Option value="">All</Option>
                       <Option value="CityRide">Fixed</Option>
@@ -2100,9 +2100,12 @@ const [
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       wallet
                     </label>
-                    <Select className="w-full">
-                      <Option value="CityRide">Fixed</Option>
-                      <Option value="Rental">Percentage</Option>
+                    <Select 
+                    value={addWalletAcD}
+                    onChange={(e) => setAddWalletAcD(e.target.value)}
+                    className="w-full">
+                      <Option value="Fixed">Fixed</Option>
+                      <Option value="Percentage">Percentage</Option>
                     </Select>
                   </div>
 
