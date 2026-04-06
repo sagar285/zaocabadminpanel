@@ -159,15 +159,18 @@ const AdminTrips = () => {
   const displayData =
     searchTerm.length > 0 ? searchData?.trips : AdminTrips?.trips;
 
+  // Server search already filters; extra client filter would hide location/state matches.
   const filteredData =
-    displayData?.filter(
-      (item) =>
-        item.tripType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.vehicleCategory
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
-        item.FareStatus?.toLowerCase().includes(searchTerm.toLowerCase())
-    ) || [];
+    searchTerm.trim().length > 0
+      ? displayData ?? []
+      : displayData?.filter(
+          (item) =>
+            item.tripType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.vehicleCategory
+              ?.toLowerCase()
+              .includes(searchTerm.toLowerCase()) ||
+            item.FareStatus?.toLowerCase().includes(searchTerm.toLowerCase())
+        ) ?? [];
 
 
     console.log(filteredData[0],"filtered datattata")

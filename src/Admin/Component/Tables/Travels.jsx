@@ -441,12 +441,11 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
                 </td>
                 <td className="py-2 px-3 border-b">
                   {travel?.wallet?.balance !== undefined ? (
-                    <button
-                      onClick={() => handleOpenAddWalletModal(travel)}
-                      className="flex items-center hover:bg-gray-100 p-1 rounded"
-                    >
-                      <Edit size={16} color="green" />
-                    </button>
+                       <Link to={`/userWalletInfo/${travel?.user?._id}`}>
+                       <button className="flex items-center gap-2 hover:bg-gray-100 p-1 rounded">
+                         <Edit size={16} color="green" />
+                       </button>
+                     </Link>
                   ) : (
                     <button
                       onClick={() => handleOpenAddWalletModal(travel)}

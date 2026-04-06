@@ -255,7 +255,7 @@ const Wallet = () => {
                 ) : (
                   withdrawalTransactions.map((item, index) => (
                     <tr key={item.transaction._id} className={`hover:bg-gray-50 ${
-                      item.transaction?.status === "SUCCESS" ? "bg-green-50" :
+                      item.transaction?.status === "DEBIT" ? "bg-green-50" :
                       item.transaction?.status === "PROCESSING" ? "bg-yellow-50" :
                       item.transaction?.status === "REJECTED" ? "bg-red-50" :
                       item.transaction?.status === "ON_HOLD" ? "bg-orange-50" : ""
@@ -298,7 +298,7 @@ const Wallet = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-3 py-1 inline-flex text-sm font-semibold rounded-sm ${
-                          item.transaction?.status === "COMPLETED" || item.transaction?.status === "SUCCESS" 
+                          item.transaction?.status === "DEBIT" || item.transaction?.status === "SUCCESS" 
                             ? "bg-green-500 text-white"
                             : item.transaction?.status === "CANCELLED" || item.transaction?.status === "REJECTED"
                               ? "bg-red-500 text-white" 
@@ -306,11 +306,7 @@ const Wallet = () => {
                                 ? "bg-orange-500 text-white"
                                 : "bg-yellow-500 text-white"
                         }`}>
-                          {item.transaction?.status === "COMPLETED" ? "Success" : 
-                           item.transaction?.status === "SUCCESS" ? "Success" :
-                           item.transaction?.status === "CANCELLED" ? "Reject" :
-                           item.transaction?.status === "REJECTED" ? "Reject" :
-                           item.transaction?.status === "ON_HOLD" ? "On Hold" : "Processing"}
+                          {item.transaction?.status}
                         </span>
                       </td>
                       <td className="px-6 gap-3 flex py-4 whitespace-nowrap text-sm text-gray-900">
