@@ -156,13 +156,28 @@ const AdminTrips = () => {
     
   }
 
+  // While search is in-flight, `searchData` can be undefined.
+  // Keep showing existing rows until search results arrive.
   const displayData =
-    searchTerm.length > 0 ? searchData?.trips : AdminTrips?.trips;
+    searchTerm.trim().length > 0
+      ? (searchData?.trips ?? AdminTrips?.trips ?? [])
+      : (AdminTrips?.trips ?? []);
+
+  const normalizedSearch = searchTerm.trim().toLowerCase();
+
+  // For fixed/perkm we can do a reliable local filter (matches the table's "Perkm/fixed" column),
+  // even if search API returns partial/old results.
+  const localPerKmFiltered =
+    normalizedSearch === "fixed"
+      ? (AdminTrips?.trips ?? []).filter(t => !t?.perKmFare)
+      : normalizedSearch === "perkm" || normalizedSearch === "per km" || normalizedSearch === "per-km"
+        ? (AdminTrips?.trips ?? []).filter(t => !!t?.perKmFare)
+        : null;
 
   // Server search already filters; extra client filter would hide location/state matches.
   const filteredData =
-    searchTerm.trim().length > 0
-      ? displayData ?? []
+    normalizedSearch.length > 0
+      ? (localPerKmFiltered ?? displayData ?? [])
       : displayData?.filter(
           (item) =>
             item.tripType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
