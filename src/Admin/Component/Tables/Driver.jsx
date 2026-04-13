@@ -274,12 +274,14 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
   };
 
   const handleUpdateWallet = async (amount, transactionType, description) => {
+
     const putdata = {
       transactionType: transactionType,
       description: description,
       walletId: selectedDriver?.wallet?._id,
       amount: Number(amount),
     };
+    console.log(putdata,"putdata");
     const { data, error } = await updateWallet(putdata);
     refetch();
     if (error) {

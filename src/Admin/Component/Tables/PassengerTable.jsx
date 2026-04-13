@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Edit, PlusIcon, BellIcon, Eye, Users, MapPin, Phone, Calendar, Ban, UserCheck, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
-import { useChangeUserRoleMutation } from "../../Redux/Api";
+import { useChangeUserRoleMutation, useUpdateWalletAmountMutation } from "../../Redux/Api";
 
 
 
@@ -278,6 +278,7 @@ const PassengerTable = ({
   const [balanceModalOpen, setBalanceModalOpen] = useState(false);
   const [role, setRole] = useState("passenger");
    const [changeUserRole] = useChangeUserRoleMutation();
+   const [updateWallet] = useUpdateWalletAmountMutation();
 
   // Filter passengers based on search term
   // const filteredPassengers = useMemo(() => {
@@ -357,9 +358,25 @@ const PassengerTable = ({
     console.log('Sending notification:', { title, message, to: selectedPassenger });
   };
 
-  const handleUpdateWallet = (amount, transactionType, description) => {
+  const handleUpdateWallet = async (amount, transactionType, description) => {
     toast.success(`Wallet updated successfully for ${selectedPassenger?.firstName}!`);
     console.log('Wallet update:', { amount, transactionType, description });
+
+    const putdata = {
+      transactionType: transactionType,
+      description: description,
+      walletId: selectedPassenger?.wallet?._id,
+      amount: Number(amount),
+    };
+    console.log(putdata,"putdata");
+    const { data, error } = await updateWallet(putdata);
+    refetch();
+    if (error) {
+      console.log(error);
+      toast.error(error?.data?.message);
+    } else {
+      toast.success(`Wallet updated successfully `);
+    }
   };
 
   const handleAddWallet = (amount) => {
