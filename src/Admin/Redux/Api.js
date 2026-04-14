@@ -195,10 +195,22 @@ export const apiSlice = createApi({
       providesTags: ["trip"],
     }),
     getTripsAdminModel: builder.query({
-      query: ({ page = 1, limit = 10 } = {}) => ({
-        url: "/trip/getAdminTripsFromAdminModel",
-        params: { page, limit },
-      }),
+      query: ({
+        page = 1,
+        limit = 10,
+        tripType,
+        vehicleCategory,
+        fareStatus,
+      } = {}) => {
+        const params = { page, limit };
+        if (tripType) params.tripType = tripType;
+        if (vehicleCategory) params.vehicleCategory = vehicleCategory;
+        if (fareStatus) params.fareStatus = fareStatus;
+        return {
+          url: "/trip/getAdminTripsFromAdminModel",
+          params,
+        };
+      },
       providesTags: ["trip"],
     }),
 
@@ -487,10 +499,30 @@ export const apiSlice = createApi({
     }),
 
     AdminsearchTrips: builder.query({
-      query: (searchTerm) => ({
-        url: "admin/trips/search",
-        params: { search: searchTerm },
-      }),
+      query: (arg) => {
+        const search =
+          typeof arg === "string" ? arg : (arg?.search != null ? String(arg.search) : "");
+        const tripType =
+          typeof arg === "object" && arg?.tripType
+            ? String(arg.tripType)
+            : undefined;
+        const vehicleCategory =
+          typeof arg === "object" && arg?.vehicleCategory
+            ? String(arg.vehicleCategory)
+            : undefined;
+        const fareStatus =
+          typeof arg === "object" && arg?.fareStatus
+            ? String(arg.fareStatus)
+            : undefined;
+        const params = { search };
+        if (tripType) params.tripType = tripType;
+        if (vehicleCategory) params.vehicleCategory = vehicleCategory;
+        if (fareStatus) params.fareStatus = fareStatus;
+        return {
+          url: "admin/trips/search",
+          params,
+        };
+      },
     }),
     UsersearchTrips: builder.query({
       query: (searchTerm) => ({

@@ -8,13 +8,17 @@ import Sidebar from "../Component/Sidebar";
 import { useNavigate } from "react-router-dom";
 import { Eye, Edit, Trash2 } from "lucide-react";
 
+const emptyListFilters = { tripType: "", vehicleCategory: "", fareStatus: "" };
+
 const AdminTrips = () => {
     const [page, setPage] = useState(1); // Current page
     const limit = 10;
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const { data, error } = useGetTripsQuery();
-  const { data: AdminTrips, error: AdminTripsError,refetch } =
-    useGetTripsAdminModelQuery({ page, limit });
+  const [appliedFilters, setAppliedFilters] = useState(emptyListFilters);
+  const [pendingFilters, setPendingFilters] = useState(emptyListFilters);
+  const { data: AdminTrips, error: AdminTripsError } =
+    useGetTripsAdminModelQuery({ page, limit, ...appliedFilters });
   const [triggerSearch, { data: searchData }] = useLazyAdminsearchTripsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState(10);
@@ -38,12 +42,41 @@ const AdminTrips = () => {
     setSearchTerm(value);
 
     if (value.trim().length > 0) {
-      triggerSearch(value);
+      triggerSearch({ search: value, ...appliedFilters });
     }
   };
-    useEffect(() => {
-      refetch();
-    }, [page]);
+
+  useEffect(() => {
+    if (searchTerm.trim().length > 0) {
+      triggerSearch({ search: searchTerm, ...appliedFilters });
+    }
+  }, [appliedFilters]);
+
+  const openFilterModal = () => {
+    setPendingFilters(appliedFilters);
+    setShowFilterModal(true);
+  };
+
+  const applyListFilters = () => {
+    setAppliedFilters({ ...pendingFilters });
+    setPage(1);
+    setShowFilterModal(false);
+  };
+
+  const cancelFilterModal = () => {
+    setShowFilterModal(false);
+  };
+
+  const clearAppliedListFilters = () => {
+    setAppliedFilters({ ...emptyListFilters });
+    setPage(1);
+  };
+
+  const hasAppliedListFilters = Boolean(
+    appliedFilters.tripType ||
+      appliedFilters.vehicleCategory ||
+      appliedFilters.fareStatus
+  );
 
   // City dropdown change handler
   const handleCityDropdownChange = (tripId, value) => {
@@ -188,12 +221,12 @@ const AdminTrips = () => {
         ) ?? [];
 
 
-    console.log(filteredData[0],"filtered datattata")
-
-
     function extractNamesAndCities(array) {
-      const names = array.map(item => item.name);
-      const cities = array.flatMap(item => item.cities);
+      if (!Array.isArray(array)) {
+        return { names: [], cities: [] };
+      }
+      const names = array.map((item) => item.name).filter(Boolean);
+      const cities = array.flatMap((item) => item.cities || []).filter(Boolean);
       return {
         names: names,
         cities: cities
@@ -237,11 +270,21 @@ const AdminTrips = () => {
 
               <div className="flex items-center space-x-3">
                 <button
-                  onClick={() => setShowFilterModal(true)}
+                  type="button"
+                  onClick={openFilterModal}
                   className="bg-cyan-400 text-white px-4 py-2 rounded font-medium hover:bg-cyan-500 transition-colors"
                 >
                   Select Filter
                 </button>
+                {hasAppliedListFilters && (
+                  <button
+                    type="button"
+                    onClick={clearAppliedListFilters}
+                    className="text-sm text-gray-600 underline hover:text-gray-900"
+                  >
+                    Clear filters
+                  </button>
+                )}
                 <button
                   onClick={() => navigate("/addFare")}
                   className="bg-green-500 text-white px-4 py-2 rounded font-medium hover:bg-green-600 transition-colors flex items-center space-x-1"
@@ -537,7 +580,8 @@ const AdminTrips = () => {
                   Select Filters
                 </h2>
                 <button
-                  onClick={() => setShowFilterModal(false)}
+                  type="button"
+                  onClick={cancelFilterModal}
                   className="text-gray-500 hover:text-gray-700"
                 >
                   ×
@@ -549,11 +593,23 @@ const AdminTrips = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Trip Type
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={pendingFilters.tripType}
+                    onChange={(e) =>
+                      setPendingFilters((p) => ({
+                        ...p,
+                        tripType: e.target.value,
+                      }))
+                    }
+                  >
                     <option value="">All Trip Types</option>
-                    <option value="One-Way">One-Way</option>
-                    <option value="Round Trip">Round Trip</option>
-                    <option value="Local">Local</option>
+                    <option value="One-Way">One Way</option>
+                    <option value="Round-Trip">Round Trip</option>
+                    <option value="CityRide">City Ride</option>
+                    <option value="Rental">Rental</option>
+                    <option value="CarPool">CarPool</option>
+                    <option value="bus">BUS</option>
                   </select>
                 </div>
 
@@ -561,11 +617,21 @@ const AdminTrips = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Vehicle Category
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={pendingFilters.vehicleCategory}
+                    onChange={(e) =>
+                      setPendingFilters((p) => ({
+                        ...p,
+                        vehicleCategory: e.target.value,
+                      }))
+                    }
+                  >
                     <option value="">All Vehicle Categories</option>
                     <option value="Sedan">Sedan</option>
                     <option value="SUV">SUV</option>
                     <option value="Mini">Mini</option>
+                    <option value="Hatchback">Hatchback</option>
                   </select>
                 </div>
 
@@ -573,7 +639,16 @@ const AdminTrips = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Fare Status
                   </label>
-                  <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={pendingFilters.fareStatus}
+                    onChange={(e) =>
+                      setPendingFilters((p) => ({
+                        ...p,
+                        fareStatus: e.target.value,
+                      }))
+                    }
+                  >
                     <option value="">All Status</option>
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -581,19 +656,30 @@ const AdminTrips = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-3 mt-6">
+              <div className="flex flex-wrap justify-between items-center gap-3 mt-6">
                 <button
-                  onClick={() => setShowFilterModal(false)}
-                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                  type="button"
+                  onClick={() => setPendingFilters({ ...emptyListFilters })}
+                  className="text-sm text-gray-600 underline hover:text-gray-900"
                 >
-                  Cancel
+                  Reset selections
                 </button>
-                <button
-                  onClick={() => setShowFilterModal(false)}
-                  className="px-4 py-2 bg-cyan-400 text-white rounded-md hover:bg-cyan-500"
-                >
-                  Apply Filter
-                </button>
+                <div className="flex space-x-3">
+                  <button
+                    type="button"
+                    onClick={cancelFilterModal}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyListFilters}
+                    className="px-4 py-2 bg-cyan-400 text-white rounded-md hover:bg-cyan-500"
+                  >
+                    Apply Filter
+                  </button>
+                </div>
               </div>
             </div>
           </div>
