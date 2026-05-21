@@ -63,9 +63,13 @@ const Notification = () => {
         return;
       }
       
-      // For festival type, ensure date is selected
-      if (newNotification.type === "festival" && !newNotification.schedule.date) {
-        toast.error("Please select a date for the festival/event");
+      // For festival / custom / scheduled flash — date required
+      if (
+        ["festival", "custom", "flash"].includes(newNotification.type) &&
+        !newNotification.oneTime &&
+        !newNotification.schedule.date
+      ) {
+        toast.error("Please select a schedule date");
         return;
       }
 
@@ -73,6 +77,14 @@ const Notification = () => {
       if (newNotification.type === "daily" && 
           !Object.values(newNotification.schedule.days).some(day => day)) {
         toast.error("Please select at least one day of the week");
+        return;
+      }
+
+      if (
+        newNotification.links?.trim() &&
+        !/^https?:\/\//i.test(newNotification.links.trim())
+      ) {
+        toast.error("Image link must start with http:// or https://");
         return;
       }
       
@@ -89,7 +101,19 @@ const Notification = () => {
       
       if (response.data) {
         refetch();
-        toast.success("Notification created successfully!");
+        const sentNow = response.data?.sentImmediately;
+        const delivery = response.data?.delivery;
+        if (sentNow && delivery) {
+          toast.success(
+            `Notification sent to ${delivery.sent} device(s)${
+              delivery.failed ? ` (${delivery.failed} failed)` : ""
+            }`
+          );
+        } else if (newNotification.type === "quick") {
+          toast.success("Notification sent immediately!");
+        } else {
+          toast.success("Notification scheduled successfully!");
+        }
         // Reset form but keep the current tab
         setNewNotification({
           title: "",
@@ -453,7 +477,8 @@ const Notification = () => {
                 )}
 
                 {/* Show Date Picker for Festival */}
-                {activeNotificationType === "festival" && (
+                {(activeNotificationType === "festival" ||
+                  activeNotificationType === "custom") && (
                   <div className="mb-3">
                     <input
                       type="date"
@@ -470,6 +495,12 @@ const Notification = () => {
                       }
                     />
                   </div>
+                )}
+
+                {activeNotificationType === "quick" && (
+                  <p className="text-sm text-green-700 mb-2">
+                    Quickly sends to all app users immediately when you tap Send.
+                  </p>
                 )}
 
                 {/* Flash Notification Options */}
@@ -612,7 +643,7 @@ const Notification = () => {
                       links: e.target.value,
                     })
                   }
-                  placeholder="Add links (optional)"
+                  placeholder="Image URL — https://... (shown in push notification)"
                 />
               </div>
             </div>
