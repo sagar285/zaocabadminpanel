@@ -620,6 +620,13 @@ export const apiSlice = createApi({
         body: data,
       }),
     }),
+    uploadNotificationImage: builder.mutation({
+      query: (formData) => ({
+        url: "/notification/uploadImage",
+        method: "POST",
+        body: formData,
+      }),
+    }),
     CreateRoleNotification: builder.mutation({
       query: (data) => ({
         url: "/notification/notificationRoleBase",
@@ -1381,6 +1388,7 @@ export const {
   useDeletenotificationMutation,
   useGetNotificationQuery,
   useCreateNotificationMutation,
+  useUploadNotificationImageMutation,
   useEditCategoryMutation,
   useLazyDriverSearchQuery,
   useLazyTravelSearchQuery,

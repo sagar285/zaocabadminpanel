@@ -4,6 +4,7 @@ import {
   useCreateNotificationMutation,
   useDeletenotificationMutation,
   useGetNotificationQuery,
+  useUploadNotificationImageMutation,
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
 import Sidebar from "../Component/Sidebar";
@@ -13,6 +14,7 @@ const Notification = () => {
   const [activeNotificationType, setActiveNotificationType] = useState("quick");
   const [notifications, setNotifications] = useState([]);
   const [CreateNotification] = useCreateNotificationMutation();
+  const [uploadNotificationImage] = useUploadNotificationImageMutation();
   const [deleteNotification] = useDeletenotificationMutation();
   const { data, error, refetch } = useGetNotificationQuery();
         const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -43,6 +45,7 @@ const Notification = () => {
   // State for managing date and time picker visibility
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -172,6 +175,38 @@ const Notification = () => {
         }
       }
     });
+  };
+
+  const handleUploadImage = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!/^image\/(jpeg|jpg|png)$/i.test(file.type)) {
+      toast.error("Only JPG, JPEG, PNG images are allowed");
+      return;
+    }
+
+    try {
+      setIsUploadingImage(true);
+      const formData = new FormData();
+      formData.append("notification_image", file);
+      const response = await uploadNotificationImage(formData);
+
+      if (response?.data?.imageUrl) {
+        setNewNotification((prev) => ({
+          ...prev,
+          links: response.data.imageUrl,
+        }));
+        toast.success("Image uploaded successfully");
+      } else {
+        toast.error(response?.error?.data?.error || "Image upload failed");
+      }
+    } catch (error) {
+      toast.error("Failed to upload image");
+    } finally {
+      setIsUploadingImage(false);
+      event.target.value = "";
+    }
   };
 
   // Get formatted date string for display
@@ -650,10 +685,16 @@ const Notification = () => {
 
             {/* Image Upload */}
             <div className="flex justify-center mt-4">
-              <button className="bg-orange-200 hover:bg-orange-300 text-black font-medium py-8 px-12 rounded-md flex flex-col items-center justify-center transition-colors">
+              <label className="cursor-pointer bg-orange-200 hover:bg-orange-300 text-black font-medium py-8 px-12 rounded-md flex flex-col items-center justify-center transition-colors">
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png"
+                  className="hidden"
+                  onChange={handleUploadImage}
+                />
                 <Upload className="h-6 w-6 mb-2" />
-                UPLOAD IMAGE
-              </button>
+                {isUploadingImage ? "UPLOADING..." : "UPLOAD IMAGE"}
+              </label>
             </div>
             
             {/* Day selection row for Flash Notification - appears at bottom of form */}
