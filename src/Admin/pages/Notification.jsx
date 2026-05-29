@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Bell, Clock, Calendar, Trash2, Upload, Plus } from "lucide-react";
 import {
-  useCreateNotificationMutation,
+  useCreateRoleNotificationMutation,
   useDeletenotificationMutation,
   useGetNotificationQuery,
   useUploadNotificationImageMutation,
@@ -13,7 +13,8 @@ const Notification = () => {
   const [activeMainTab, setActiveMainTab] = useState("create");
   const [activeNotificationType, setActiveNotificationType] = useState("quick");
   const [notifications, setNotifications] = useState([]);
-  const [CreateNotification] = useCreateNotificationMutation();
+  const [createRoleNotification] = useCreateRoleNotificationMutation();
+  const [targetRole, setTargetRole] = useState("");
   const [uploadNotificationImage] = useUploadNotificationImageMutation();
   const [deleteNotification] = useDeletenotificationMutation();
   const { data, error, refetch } = useGetNotificationQuery();
@@ -65,6 +66,11 @@ const Notification = () => {
         toast.error("Please enter a notification message");
         return;
       }
+
+      if (!targetRole) {
+        toast.error("Please select who should receive this notification");
+        return;
+      }
       
       // For festival / custom / scheduled flash — date required
       if (
@@ -94,13 +100,13 @@ const Notification = () => {
       // Transform data for API if needed
       const apiNotification = {
         ...newNotification,
+        role: targetRole,
         schedule: {
           ...newNotification.schedule,
-          // Add any transformations needed for the API
-        }
+        },
       };
       
-      const response = await CreateNotification(apiNotification);
+      const response = await createRoleNotification(apiNotification);
       
       if (response.data) {
         refetch();
@@ -141,7 +147,10 @@ const Notification = () => {
         });
       } else if (response.error) {
         console.error("API Error:", response.error);
-        toast.error("Failed to create notification: " + (response.error.data?.message || "Unknown error"));
+        toast.error(
+          "Failed to create notification: " +
+            (response.error.data?.error || response.error.data?.message || "Unknown error")
+        );
       }
     } catch (err) {
       console.error("Error creating notification:", err);
@@ -401,6 +410,40 @@ const Notification = () => {
             </div>
           )}
 
+          {/* Audience / role selection */}
+          <div className="mb-6 p-4 border rounded-lg bg-gray-50">
+            <h3 className="text-sm font-semibold text-blue-600 mb-3">
+              Send to (admin users are excluded)
+            </h3>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { value: "Passenger", label: "Passenger" },
+                { value: "driver", label: "Driver" },
+                { value: "travelOwner", label: "Travel Owner" },
+                { value: "all", label: "All (Passenger + Driver + Travel Owner)" },
+              ].map((option) => (
+                <label
+                  key={option.value}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md border cursor-pointer transition-colors ${
+                    targetRole === option.value
+                      ? "bg-blue-500 text-white border-blue-500"
+                      : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="targetRole"
+                    value={option.value}
+                    checked={targetRole === option.value}
+                    onChange={(e) => setTargetRole(e.target.value)}
+                    className="sr-only"
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </div>
+
           {/* Form Fields */}
           <div className="space-y-4">
             {/* Title Field - Common for all types */}
@@ -534,7 +577,7 @@ const Notification = () => {
 
                 {activeNotificationType === "quick" && (
                   <p className="text-sm text-green-700 mb-2">
-                    Quickly sends to all app users immediately when you tap Send.
+                    Quickly sends immediately to the selected audience when you tap Send.
                   </p>
                 )}
 
@@ -849,6 +892,12 @@ const Notification = () => {
                     <span className="px-2 py-1 bg-gray-100 rounded-full text-xs capitalize">
                       {notification.type}
                     </span>
+
+                    {notification.role && (
+                      <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs capitalize">
+                        To: {notification.role === "all" ? "All users" : notification.role}
+                      </span>
+                    )}
                     
                     {/* Show link if available */}
                     {notification.links && (
