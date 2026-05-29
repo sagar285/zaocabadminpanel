@@ -3,7 +3,11 @@ import { Link } from "react-router-dom";
 import { Edit, PlusIcon, BellIcon, Eye, Users, MapPin, Phone, Calendar, Ban, UserCheck, Search } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import moment from "moment";
-import { useChangeUserRoleMutation, useUpdateWalletAmountMutation } from "../../Redux/Api";
+import {
+  useChangeUserRoleMutation,
+  useUpdateWalletAmountMutation,
+  useSingleUserNotificationMutation,
+} from "../../Redux/Api";
 
 
 
@@ -279,6 +283,7 @@ const PassengerTable = ({
   const [role, setRole] = useState("passenger");
    const [changeUserRole] = useChangeUserRoleMutation();
    const [updateWallet] = useUpdateWalletAmountMutation();
+   const [sendUserNotification] = useSingleUserNotificationMutation();
 
   // Filter passengers based on search term
   // const filteredPassengers = useMemo(() => {
@@ -353,9 +358,29 @@ const PassengerTable = ({
     }
   };
 
-  const handleSendNotification = (title, message) => {
-    toast.success(`Notification sent to ${selectedPassenger?.firstName}!`);
-    console.log('Sending notification:', { title, message, to: selectedPassenger });
+  const handleSendNotification = async (title, message) => {
+    const userId = selectedPassenger?._id;
+    if (!userId) {
+      toast.error("Passenger user id not found");
+      return;
+    }
+
+    const { data, error } = await sendUserNotification({
+      userId,
+      title,
+      message,
+      type: "quick",
+      schedule: { time: "10:00" },
+    });
+
+    if (error) {
+      toast.error(error?.data?.error || "Failed to send notification");
+      return;
+    }
+
+    toast.success(
+      `Notification sent to ${selectedPassenger?.firstName || "passenger"}!`
+    );
   };
 
   const handleUpdateWallet = async (amount, transactionType, description) => {

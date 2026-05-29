@@ -230,7 +230,7 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
   const [newNotification, setNewNotification] = useState({
     title: "",
     message: "",
-    type: "daily",
+    type: "quick",
     schedule: {
       time: `${hours}:${minutes}`,
       period: "morning",
@@ -307,30 +307,40 @@ const Driver = ({ setlength, DriversData, limitpage }) => {
   };
   
   const handleAddNotification = async () => {
+    const userId = selectedDriver?.user?._id;
+    if (!userId) {
+      toast.error("Driver user id not found");
+      return;
+    }
+    if (!newNotification.title?.trim() || !newNotification.message?.trim()) {
+      toast.error("Please enter notification title and message");
+      return;
+    }
+
     const notificationdata = {
-      userId: selectedDriver?.user?._id,
-      title: newNotification.title,
-      message: newNotification.message,
-      type: newNotification.type,
-      schedule: newNotification.schedule,
+      userId,
+      title: newNotification.title.trim(),
+      message: newNotification.message.trim(),
+      type: "quick",
+      schedule: { time: newNotification.schedule?.time || "10:00" },
     };
     const { data, error } = await CreateNotification(notificationdata);
     if (data) {
       refetch();
-      toast.success("Notification created successfully!");
+      toast.success("Notification sent successfully!");
       setNewNotification({
         title: "",
         message: "",
-        type: "daily",
+        type: "quick",
         schedule: {
-          time: "09:00",
+          time: `${hours}:${minutes}`,
           period: "morning",
           date: "",
         },
       });
     }
     if (error) {
-      console.log(error);
+      toast.error(error?.data?.error || "Failed to send notification");
     }
   };
 

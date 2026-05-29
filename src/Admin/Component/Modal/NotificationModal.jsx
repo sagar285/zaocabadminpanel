@@ -29,7 +29,7 @@ const NotificationModal = ({ driverName, onAdd, openAddModal, setOpenAddModal,ne
         <div className="flex items-center justify-between p-6 border-b">
           <div className="flex items-center space-x-2">
             <Bell className="h-5 w-5 text-blue-500" />
-            <h2 className="text-xl font-semibold text-gray-800">Create Notification</h2>
+            <h2 className="text-xl font-semibold text-gray-800">Send Notification</h2>
           </div>
           <button
             onClick={() => setOpenAddModal(false)}
@@ -153,7 +153,7 @@ const NotificationModal = ({ driverName, onAdd, openAddModal, setOpenAddModal,ne
               className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
             >
               <Plus className="h-4 w-4" />
-              <span>Create Notification</span>
+              <span>Send Notification</span>
             </button>
           </div>
         </div>

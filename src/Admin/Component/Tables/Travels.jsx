@@ -201,7 +201,7 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
   const [newNotification, setNewNotification] = useState({
     title: "",
     message: "",
-    type: "daily",
+    type: "quick",
     schedule: {
       time: "09:00",
       period: "morning",
@@ -251,21 +251,31 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
   };
 
   const handleAddNotification = async () => {
+    const userId = selectedtravel?.user?._id || selectedtravel?.userId;
+    if (!userId) {
+      toast.error("Travel owner user id not found");
+      return;
+    }
+    if (!newNotification.title?.trim() || !newNotification.message?.trim()) {
+      toast.error("Please enter notification title and message");
+      return;
+    }
+
     const notificationdata = {
-      userId: selectedtravel?.userId,
-      title: newNotification.title,
-      message: newNotification.message,
-      type: newNotification.type,
-      schedule: newNotification.schedule,
+      userId,
+      title: newNotification.title.trim(),
+      message: newNotification.message.trim(),
+      type: "quick",
+      schedule: { time: newNotification.schedule?.time || "10:00" },
     };
     const { data, error } = await CreateNotification(notificationdata);
     if (data) {
       refetch();
-      toast.success("Notification created successfully!");
+      toast.success("Notification sent successfully!");
       setNewNotification({
         title: "",
         message: "",
-        type: "daily",
+        type: "quick",
         schedule: {
           time: "09:00",
           period: "morning",
@@ -273,8 +283,8 @@ const Travels = ({ settravellength, travelsData, limitpage }) => {
         },
       });
     }
-    if(error){
-      console.log(error);
+    if (error) {
+      toast.error(error?.data?.error || "Failed to send notification");
     }
   };
 
