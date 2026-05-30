@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bell, Clock, Calendar, Trash2, Upload, Plus } from "lucide-react";
+import { Bell, Clock, Calendar, Trash2, Upload, Plus, Loader2 } from "lucide-react";
 import {
   useCreateRoleNotificationMutation,
   useDeletenotificationMutation,
@@ -8,6 +8,16 @@ import {
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
 import Sidebar from "../Component/Sidebar";
+
+const NOTIFICATION_IMAGE_MAX_MB = 5;
+const NOTIFICATION_IMAGE_MAX_BYTES = NOTIFICATION_IMAGE_MAX_MB * 1024 * 1024;
+
+const formatFileSize = (bytes) => {
+  if (bytes < 1024 * 1024) {
+    return `${(bytes / 1024).toFixed(1)} KB`;
+  }
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
 
 const Notification = () => {
   const [activeMainTab, setActiveMainTab] = useState("create");
@@ -47,6 +57,7 @@ const Notification = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -105,21 +116,17 @@ const Notification = () => {
           ...newNotification.schedule,
         },
       };
-      
+
+      setIsSending(true);
       const response = await createRoleNotification(apiNotification);
       
       if (response.data) {
         refetch();
-        const sentNow = response.data?.sentImmediately;
-        const delivery = response.data?.delivery;
-        if (sentNow && delivery) {
+        if (response.data?.queuedInBackground) {
           toast.success(
-            `Notification sent to ${delivery.sent} device(s)${
-              delivery.failed ? ` (${delivery.failed} failed)` : ""
-            }`
+            response.data?.message ||
+              "Notification accepted! Delivering to devices in the background."
           );
-        } else if (newNotification.type === "quick") {
-          toast.success("Notification sent immediately!");
         } else {
           toast.success("Notification scheduled successfully!");
         }
@@ -155,6 +162,8 @@ const Notification = () => {
     } catch (err) {
       console.error("Error creating notification:", err);
       toast.error("An error occurred while creating the notification");
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -195,6 +204,14 @@ const Notification = () => {
       return;
     }
 
+    if (file.size > NOTIFICATION_IMAGE_MAX_BYTES) {
+      toast.error(
+        `Image is too large (${formatFileSize(file.size)}). Max allowed: ${NOTIFICATION_IMAGE_MAX_MB} MB.`
+      );
+      event.target.value = "";
+      return;
+    }
+
     try {
       setIsUploadingImage(true);
       const formData = new FormData();
@@ -208,7 +225,15 @@ const Notification = () => {
         }));
         toast.success("Image uploaded successfully");
       } else {
-        toast.error(response?.error?.data?.error || "Image upload failed");
+        const status = response?.error?.status;
+        const apiError = response?.error?.data?.error;
+        if (status === 413) {
+          toast.error(
+            `Server rejected the file (too large). Use JPG/PNG under ${NOTIFICATION_IMAGE_MAX_MB} MB — under 1 MB works best.`
+          );
+        } else {
+          toast.error(apiError || "Image upload failed");
+        }
       }
     } catch (error) {
       toast.error("Failed to upload image");
@@ -269,7 +294,20 @@ const Notification = () => {
 
       {/* Create Notification Tab */}
       {activeMainTab === "create" && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8 relative">
+          {isSending && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/70 backdrop-blur-[1px]">
+              <div className="flex flex-col items-center gap-3 rounded-lg border border-green-200 bg-white px-8 py-6 shadow-lg">
+                <Loader2 className="h-10 w-10 animate-spin text-green-500" />
+                <p className="text-base font-medium text-gray-800">
+                  Sending notification...
+                </p>
+                <p className="text-sm text-gray-500">
+                  Validating and queuing delivery
+                </p>
+              </div>
+            </div>
+          )}
           <h2 className="text-lg font-semibold text-blue-600 mb-4">Select notification type</h2>
           
           {/* Notification Type Buttons */}
@@ -727,17 +765,26 @@ const Notification = () => {
             </div>
 
             {/* Image Upload */}
-            <div className="flex justify-center mt-4">
+            <div className="flex flex-col items-center mt-4 gap-2">
+              <p className="text-sm text-gray-600 text-center">
+                JPG, JPEG, or PNG · max {NOTIFICATION_IMAGE_MAX_MB} MB · under 1 MB recommended for push
+              </p>
               <label className="cursor-pointer bg-orange-200 hover:bg-orange-300 text-black font-medium py-8 px-12 rounded-md flex flex-col items-center justify-center transition-colors">
                 <input
                   type="file"
                   accept="image/jpeg,image/jpg,image/png"
                   className="hidden"
                   onChange={handleUploadImage}
+                  disabled={isUploadingImage}
                 />
                 <Upload className="h-6 w-6 mb-2" />
                 {isUploadingImage ? "UPLOADING..." : "UPLOAD IMAGE"}
               </label>
+              {newNotification.links && (
+                <p className="text-xs text-green-700 break-all text-center max-w-md">
+                  Image ready: {newNotification.links}
+                </p>
+              )}
             </div>
             
             {/* Day selection row for Flash Notification - appears at bottom of form */}
@@ -813,9 +860,17 @@ const Notification = () => {
             <div className="flex justify-end mt-4">
               <button
                 onClick={handleAddNotification}
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-12 rounded-md text-lg font-medium transition-colors"
+                disabled={isSending}
+                className="bg-green-500 hover:bg-green-600 disabled:bg-green-300 disabled:cursor-not-allowed text-white py-2 px-12 rounded-md text-lg font-medium transition-colors flex items-center gap-2"
               >
-                Send
+                {isSending ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send"
+                )}
               </button>
             </div>
           </div>
