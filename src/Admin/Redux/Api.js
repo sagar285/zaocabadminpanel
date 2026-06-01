@@ -625,6 +625,7 @@ export const apiSlice = createApi({
         url: "/notification/uploadImage",
         method: "POST",
         body: formData,
+        // Do not set Content-Type — browser sets multipart boundary for FormData (up to 5 MB images)
       }),
     }),
     CreateRoleNotification: builder.mutation({

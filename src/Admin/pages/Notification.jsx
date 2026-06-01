@@ -8,16 +8,12 @@ import {
 } from "../Redux/Api";
 import toast, { Toaster } from "react-hot-toast";
 import Sidebar from "../Component/Sidebar";
-
-const NOTIFICATION_IMAGE_MAX_MB = 5;
-const NOTIFICATION_IMAGE_MAX_BYTES = NOTIFICATION_IMAGE_MAX_MB * 1024 * 1024;
-
-const formatFileSize = (bytes) => {
-  if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
-  }
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-};
+import {
+  NOTIFICATION_IMAGE_MAX_MB,
+  NOTIFICATION_IMAGE_ACCEPT,
+  formatNotificationImageSize,
+  validateNotificationImageFile,
+} from "../constants/notificationImage";
 
 const Notification = () => {
   const [activeMainTab, setActiveMainTab] = useState("create");
@@ -199,15 +195,9 @@ const Notification = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!/^image\/(jpeg|jpg|png)$/i.test(file.type)) {
-      toast.error("Only JPG, JPEG, PNG images are allowed");
-      return;
-    }
-
-    if (file.size > NOTIFICATION_IMAGE_MAX_BYTES) {
-      toast.error(
-        `Image is too large (${formatFileSize(file.size)}). Max allowed: ${NOTIFICATION_IMAGE_MAX_MB} MB.`
-      );
+    const validation = validateNotificationImageFile(file);
+    if (!validation.ok) {
+      toast.error(validation.error);
       event.target.value = "";
       return;
     }
@@ -223,13 +213,15 @@ const Notification = () => {
           ...prev,
           links: response.data.imageUrl,
         }));
-        toast.success("Image uploaded successfully");
+        toast.success(
+          `Image uploaded (${formatNotificationImageSize(file.size)}, max ${NOTIFICATION_IMAGE_MAX_MB} MB)`
+        );
       } else {
         const status = response?.error?.status;
         const apiError = response?.error?.data?.error;
         if (status === 413) {
           toast.error(
-            `Server rejected the file (too large). Use JPG/PNG under ${NOTIFICATION_IMAGE_MAX_MB} MB — under 1 MB works best.`
+            `Upload rejected: file too large for the server. Use JPG or PNG up to ${NOTIFICATION_IMAGE_MAX_MB} MB. If this persists, ask your host to set nginx client_max_body_size to at least 5m.`
           );
         } else {
           toast.error(apiError || "Image upload failed");
@@ -767,12 +759,12 @@ const Notification = () => {
             {/* Image Upload */}
             <div className="flex flex-col items-center mt-4 gap-2">
               <p className="text-sm text-gray-600 text-center">
-                JPG, JPEG, or PNG · max {NOTIFICATION_IMAGE_MAX_MB} MB · under 1 MB recommended for push
+                JPG, JPEG, or PNG · up to {NOTIFICATION_IMAGE_MAX_MB} MB per image
               </p>
               <label className="cursor-pointer bg-orange-200 hover:bg-orange-300 text-black font-medium py-8 px-12 rounded-md flex flex-col items-center justify-center transition-colors">
                 <input
                   type="file"
-                  accept="image/jpeg,image/jpg,image/png"
+                  accept={NOTIFICATION_IMAGE_ACCEPT}
                   className="hidden"
                   onChange={handleUploadImage}
                   disabled={isUploadingImage}
