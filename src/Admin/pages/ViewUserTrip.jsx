@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  useGetTripDetailsByIdQuery,
   useGetuserTripByIdQuery,
   useUpdateTripwithStateCitiesMutation,
 } from "../Redux/Api";
@@ -60,6 +59,73 @@ const ActionButton = ({ action, onClick }) => (
   </button>
 );
 
+const SettlementPanel = ({ settlement }) => {
+  if (!settlement?.isPassengerTrip) return null;
+  const bill = settlement.passengerBill?.finalBill;
+  const payable = settlement.passengerBill?.payableAmount;
+  const adminInc = settlement.adminIncentive?.total;
+  const driverEarn = settlement.driverEarnings?.total;
+  const walletAdj = settlement.advanceSettlement?.walletAdjustment;
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm p-4 mt-4 border border-blue-200">
+      <h3 className="font-semibold text-lg mb-3">Settlement (passenger trip)</h3>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <div><span className="text-gray-600">Passenger bill</span><p className="font-semibold">₹ {bill ?? "—"}</p></div>
+        <div><span className="text-gray-600">Payable</span><p className="font-semibold">₹ {payable ?? "—"}</p></div>
+        <div><span className="text-gray-600">Admin incentive</span><p className="font-semibold">₹ {adminInc ?? "—"}</p></div>
+        <div><span className="text-gray-600">Driver earnings</span><p className="font-semibold">₹ {driverEarn ?? "—"}</p></div>
+        {walletAdj != null && (
+          <div><span className="text-gray-600">Wallet adjustment</span><p className="font-semibold">₹ {walletAdj}</p></div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const DriverInfoCard = ({ confirmedTrip, trip }) => {
+  const driverUser = confirmedTrip?.userId || confirmedTrip?.DriverId;
+  const vehicle = confirmedTrip?.vehicleId || trip?.vehicleId || trip?.userVehicleId;
+  const driverName = driverUser
+    ? `${driverUser.firstName || ""} ${driverUser.lastName || ""}`.trim()
+    : null;
+  const phone = driverUser?.phone;
+  const vehicleNumber =
+    vehicle?.vehicleNumber || vehicle?.vechileNumber || trip?.vehicleInfo?.vehicleNumber;
+
+  if (!driverName && !phone) {
+    return (
+      <div className="bg-gray-100 rounded-lg p-3 text-xs text-gray-600">
+        No driver assigned yet.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2 text-xs">
+      <div className="bg-red-100 p-2 rounded">
+        <h4 className="font-semibold">Driver</h4>
+        <p className="font-medium">{driverName || "N/A"}</p>
+        <p className="text-gray-600">{phone ? `+91 ${phone}` : "Phone N/A"}</p>
+        {confirmedTrip?.offerStatus && (
+          <p className="text-gray-500 mt-1">Offer: {confirmedTrip.offerStatus}</p>
+        )}
+      </div>
+      {vehicleNumber && (
+        <div className="bg-red-100 p-2 rounded">
+          <p className="font-medium">Vehicle</p>
+          <p className="text-gray-600">{vehicleNumber}</p>
+        </div>
+      )}
+      {confirmedTrip?.offerPrice != null && (
+        <div className="bg-green-100 p-2 rounded text-green-800">
+          Offer fare: ₹ {confirmedTrip.offerPrice}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const ViewUserTrip = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -68,8 +134,7 @@ const ViewUserTrip = () => {
   const { data: tripdata, error, isLoading, isFetching } = useGetuserTripByIdQuery(id);
 
   const trip = tripdata?.tripDetail;
-  const driver = tripdata?.tripDetail?.userId?.role === "driver";
-  const travel = tripdata?.tripDetail?.userId?.role === "travelOwner";
+  const settlement = tripdata?.settlement;
   const [isSkip,setIsSkip]=useState(false)
   // State management for modals and actions
   const [showAddCityModal, setShowAddCityModal] = useState(false);
@@ -129,10 +194,11 @@ const ViewUserTrip = () => {
     setShowCommentBox(!showCommentBox);
   };
 
-  console.log(updateTrip);
-  console.log(trip);
-  console.log(trip?.makeOffer);
-  console.log(updateTrip);
+  useEffect(() => {
+    if (trip?.tripType === "Carpool" && id) {
+      navigate(`/carpoolTrip/${id}`, { replace: true });
+    }
+  }, [trip?.tripType, id, navigate]);
 
   const handleHideTrip = async () => {
     if (window.confirm('Are you sure you want to hide this trip?')) {
@@ -296,8 +362,13 @@ const ViewUserTrip = () => {
   const userInfo = trip?.userId;
   const offeredTrips = tripdata?.userOfferedTrip || [];
   const confirmedTrip = tripdata?.userconfirmOfferedTrip;
-  console.log(trip.tripType);
-  console.log(offeredTrips);
+  const advancePaid =
+    trip?.advanceamountfortrip ?? trip?.advanceamount ?? 0;
+  const extraKm =
+    settlement?.extraKm ??
+    (trip?.totalMeterReading > 0 && trip?.totalKm
+      ? Math.max(0, trip.totalMeterReading - trip.totalKm)
+      : 0);
 
   return (
     <>
@@ -650,6 +721,8 @@ const ViewUserTrip = () => {
                 )}
               </div>
             </div>
+
+            <SettlementPanel settlement={settlement} />
 
           </div>
 
@@ -1362,6 +1435,46 @@ const ViewUserTrip = () => {
                 </div>
               </div>
 
+              {(confirmedTrip || offeredTrips?.length > 0) && (
+                <div className="bg-white rounded-lg shadow-sm mb-4 mt-4">
+                  <div className="p-4 border-b">
+                    <h3 className="font-semibold text-lg">Driver / offers</h3>
+                  </div>
+                  <div className="overflow-x-auto p-4">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 py-2 text-left">Driver</th>
+                          <th className="px-3 py-2 text-left">Fare</th>
+                          <th className="px-3 py-2 text-left">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {confirmedTrip && (
+                          <tr className="border-t">
+                            <td className="px-3 py-2">
+                              {confirmedTrip?.userId?.firstName} {confirmedTrip?.userId?.lastName}
+                              <div className="text-gray-500 text-xs">{confirmedTrip?.userId?.phone || "—"}</div>
+                            </td>
+                            <td className="px-3 py-2">₹ {confirmedTrip?.offerPrice ?? "—"}</td>
+                            <td className="px-3 py-2">{confirmedTrip?.offerStatus || trip?.tripStatus}</td>
+                          </tr>
+                        )}
+                        {offeredTrips.map((offer, idx) => (
+                          <tr key={offer._id || idx} className="border-t">
+                            <td className="px-3 py-2">
+                              {offer?.userId?.firstName} {offer?.userId?.lastName}
+                            </td>
+                            <td className="px-3 py-2">₹ {offer?.offerPrice ?? "—"}</td>
+                            <td className="px-3 py-2">Pending</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
               <div className="grid grid-cols-12 gap-4 mb-6">
 
                 {/* Left Column - Trip Creator Info */}
@@ -1375,7 +1488,7 @@ const ViewUserTrip = () => {
                         </div>
                         <div>
                           <p className="font-medium text-sm">{trip?.userId?.firstName} {trip?.userId?.lastName}</p>
-                          <p className="text-gray-600 text-xs">{''}</p>
+                          <p className="text-gray-600 text-xs">{trip?.userId?.phone ? `+91 ${trip.userId.phone}` : "—"}</p>
                         </div>
                       </div>
 
@@ -1391,7 +1504,11 @@ const ViewUserTrip = () => {
                             {trip.ismySelf ? `${trip.userId.firstName} ${trip.userId.lastName}` : 'N/A'}
                           </p>
                           <p className="text-gray-600 text-xs">
-                            {trip.ismySelf ? '+91-XXXXXXXXXX' : 'N/A'}
+                            {trip.ismySelf && trip.userId?.phone
+                              ? `+91 ${trip.userId.phone}`
+                              : trip.passengerDetails?.number
+                                ? `+91 ${trip.passengerDetails.number}`
+                                : "N/A"}
                           </p>
                         </div>
                       </div>
@@ -1404,7 +1521,10 @@ const ViewUserTrip = () => {
                       <div className="text-center text-gray-600 text-sm mt-8">
                         {trip.makeOffer && trip.makeOffer.length > 0 ?
                           trip.makeOffer.map((offer, index) => (
-                            <p key={index}>₹ {offer.fare} by {offer.driverName}</p>
+                            <p key={offer._id || index}>
+                              ₹ {offer.offerPrice ?? offer.fare ?? "—"} by{" "}
+                              {offer.userId?.firstName || offer.driverName || "Driver"}
+                            </p>
                           )) :
                           ""
                         }
@@ -1504,37 +1624,7 @@ const ViewUserTrip = () => {
                       </div>
                     </div>
 
-                    <div className="bg-red-200 p-2 rounded mb-2">
-                      <h4 className="font-semibold">Travels Partner</h4>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">Ph</div>
-                        <div>
-                          <p className="font-medium">Sonu</p>
-                          <p className="text-gray-600">9872728899 </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-red-200 p-2 rounded mb-2">
-                      <h4 className="font-semibold">Driver</h4>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">Ph</div>
-                        <div>
-                          <p className="font-medium">Dinesh</p>
-                          <p className="text-gray-600">9882709878</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-red-200 p-2 rounded mb-2">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs">P</div>
-                        <div>
-                          <p className="font-medium">Vehicle Number </p>
-                          <p className="text-gray-600">{'UP-02-JL-8972' || trip.vechileType}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <DriverInfoCard confirmedTrip={confirmedTrip} trip={trip} />
 
                     <div className="flex space-x-1 mb-2">
                       <span className="bg-yellow-300 px-2 py-1 rounded text-xs">Total KM: {trip.totalKm}</span>
@@ -1562,7 +1652,7 @@ const ViewUserTrip = () => {
                     <table className="w-full text-xs border-8">
                       <tbody>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Place time</td><td className="p-2">{formatDateTime(trip.createdAt)}</td></tr>
-                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Accept time</td><td className="p-2">N/A</td></tr>
+                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Accept time</td><td className="p-2">{formatDateTime(confirmedTrip?.updatedAt || confirmedTrip?.offerDateTime)}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">On the way time</td><td className="p-2">{formatDateTime(trip.driveronThewayTime)}</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Reached time</td><td className="p-2">{formatDateTime(trip.driverReachedTime)}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Start time</td><td className="p-2">{formatDateTime(trip.startTripTime)}</td></tr>
@@ -1578,9 +1668,9 @@ const ViewUserTrip = () => {
                       <table className="w-full text-xs">
                         <tbody>
                           <tr className="border-b"><td className="p-1 text-gray-600">Start OTP</td><td className="p-1 text-center font-bold">{trip.otp || 'N/A'}</td></tr>
-                          <tr className="border-b bg-gray-50"><td className="p-1 text-gray-600">Start meter reading</td><td className="p-1 text-center">N/A</td></tr>
-                          <tr className="border-b"><td className="p-1 text-gray-600">End meter reading</td><td className="p-1 text-center">N/A</td></tr>
-                          <tr className="border-b bg-gray-50"><td className="p-1 text-gray-600">Total KM</td><td className="p-1 text-center font-bold">{trip.distance || 'N/A'}</td></tr>
+                          <tr className="border-b bg-gray-50"><td className="p-1 text-gray-600">Start meter reading</td><td className="p-1 text-center">{trip.startMeterReading ?? "N/A"}</td></tr>
+                          <tr className="border-b"><td className="p-1 text-gray-600">End meter reading</td><td className="p-1 text-center">{trip.endMeterReading ?? "N/A"}</td></tr>
+                          <tr className="border-b bg-gray-50"><td className="p-1 text-gray-600">Total KM</td><td className="p-1 text-center font-bold">{trip.totalMeterReading ?? trip.totalKm ?? trip.distance ?? "N/A"}</td></tr>
                         </tbody>
                       </table>
                     </div>
@@ -1637,15 +1727,15 @@ const ViewUserTrip = () => {
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Partner incentive</td><td className="p-2 text-right">₹ {trip.yourcomission}</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Booking fee (user)</td><td className="p-2 text-right">₹ 00</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Admin commission (Driver)</td><td className="p-2 text-right">₹ 00</td></tr>
-                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Extra KM {trip?.distance?.split(' ')[0]} X ₹{trip?.extrachargeperkmDriver}</td><td className="p-2 text-right">₹ {parseFloat(tripdata?.distance?.split('')[0]) * tripdata?.extrachargeperkmDriver}</td></tr>
+                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Extra KM {extraKm} X ₹{trip?.extrachargeperkmDriver}</td><td className="p-2 text-right">₹ {settlement?.extraKmPassenger ?? (extraKm * (trip?.extrachargeperkmDriver || 0))}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Extra hour 2 X ₹120</td><td className="p-2 text-right">₹ 00</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Taxes {trip.GstTax}% GST</td><td className="p-2 text-right">₹ {trip.GstTax}</td></tr>
                         <tr className="border-b-4 font-bold bg-yellow-50"><td className="p-2 text-gray-800">Total Amount</td><td className="p-2 text-right">₹ {trip.totalFare}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Paid for promo</td><td className="p-2 text-right">₹ 00</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Skip for pay</td><td className="p-2 text-right">₹ 00</td></tr>
-                        <tr className="border-b-4"><td className="p-2 text-gray-600">Advance received partner</td><td className="p-2 text-right">₹ {trip.advanceamount}</td></tr>
-                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Round off</td><td className="p-2 text-right">₹ 00</td></tr>
-                        <tr className="border-b-4 font-bold bg-green-50"><td className="p-2 text-gray-800">Payable amount</td><td className="p-2 text-right">₹ {trip.totalFare - trip.advanceamount}</td></tr>
+                        <tr className="border-b-4"><td className="p-2 text-gray-600">Advance received partner</td><td className="p-2 text-right">₹ {advancePaid}</td></tr>
+                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Round off</td><td className="p-2 text-right">₹ {settlement?.roundOff ?? "00"}</td></tr>
+                        <tr className="border-b-4 font-bold bg-green-50"><td className="p-2 text-gray-800">Payable amount</td><td className="p-2 text-right">₹ {settlement?.payableAmount ?? (trip.totalFare - advancePaid)}</td></tr>
                         <tr className="bg-blue-50"><td className="p-2 text-gray-600">Paid</td><td className="p-2 text-right font-medium">{trip.whopayDriver === 'Passenger' ? 'Cash/Online by Passenger' : 'Cash/Online by Me'}</td></tr>
                       </tbody>
                     </table>
@@ -1687,6 +1777,17 @@ const ViewUserTrip = () => {
                 </div>
 
               </div>
+
+              <SettlementPanel settlement={settlement} />
+
+              {trip?.fareDetails && (
+                <div className="bg-white rounded-lg shadow-sm p-4 mt-4 text-xs">
+                  <h3 className="font-semibold mb-2">Fare details (from trip)</h3>
+                  <pre className="bg-gray-50 p-2 rounded overflow-auto max-h-48">
+                    {JSON.stringify(trip.fareDetails, null, 2)}
+                  </pre>
+                </div>
+              )}
             </div>
           </div>
         </div>
