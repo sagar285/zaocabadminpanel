@@ -45,6 +45,7 @@ const Notification = () => {
       date: "",
     },
     links: "",
+    imageUrl: "",
     oneTime: false,
     manyTime: false
   });
@@ -145,6 +146,7 @@ const Notification = () => {
             date: "",
           },
           links: "",
+          imageUrl: "",
           oneTime: false,
           manyTime: false
         });
@@ -209,9 +211,11 @@ const Notification = () => {
       const response = await uploadNotificationImage(formData);
 
       if (response?.data?.imageUrl) {
+        const imageUrl = response.data.imageUrl;
         setNewNotification((prev) => ({
           ...prev,
-          links: response.data.imageUrl,
+          links: imageUrl,
+          imageUrl,
         }));
         toast.success(
           `Image uploaded (${formatNotificationImageSize(file.size)}, max ${NOTIFICATION_IMAGE_MAX_MB} MB)`
