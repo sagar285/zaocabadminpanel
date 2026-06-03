@@ -106,8 +106,12 @@ const Notification = () => {
       }
       
       // Transform data for API if needed
+      const imageUrl =
+        (newNotification.imageUrl || newNotification.links || "").trim();
       const apiNotification = {
         ...newNotification,
+        imageUrl: imageUrl || undefined,
+        links: imageUrl || newNotification.links,
         role: targetRole,
         schedule: {
           ...newNotification.schedule,
