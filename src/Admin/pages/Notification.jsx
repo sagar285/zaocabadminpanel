@@ -10,6 +10,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Sidebar from "../Component/Sidebar";
 import {
   NOTIFICATION_IMAGE_MAX_MB,
+  NOTIFICATION_FCM_TRAY_MAX_BYTES,
   NOTIFICATION_IMAGE_ACCEPT,
   formatNotificationImageSize,
   validateNotificationImageFile,
@@ -224,6 +225,12 @@ const Notification = () => {
         toast.success(
           `Image uploaded (${formatNotificationImageSize(file.size)}, max ${NOTIFICATION_IMAGE_MAX_MB} MB)`
         );
+        if (file.size > NOTIFICATION_FCM_TRAY_MAX_BYTES) {
+          toast(
+            "For image in phone notification tray (background/killed), use a photo under 1 MB.",
+            { duration: 6000, icon: "ℹ️" }
+          );
+        }
       } else {
         const status = response?.error?.status;
         const apiError = response?.error?.data?.error;

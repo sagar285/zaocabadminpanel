@@ -281,10 +281,15 @@ export const apiSlice = createApi({
     }),
 
     getUserTrips: builder.query({
-      query: ({ page = 1, limit = 10 }) => ({
-        url: `/trip/getTripsofuserByAdmin`,
-        params: { page, limit },
-      }),
+      query: ({ page = 1, limit = 10, tripStatus = "", tripType = "" } = {}) => {
+        const params = { page, limit };
+        if (tripStatus) params.tripStatus = tripStatus;
+        if (tripType) params.tripType = tripType;
+        return {
+          url: `/trip/getTripsofuserByAdmin`,
+          params,
+        };
+      },
       providesTags: ["trip"],
     }),
 

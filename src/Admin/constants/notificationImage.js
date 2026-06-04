@@ -1,5 +1,9 @@
 /** Must match zaoCabBackend/constants/notificationUpload.js */
 export const NOTIFICATION_IMAGE_MAX_MB = 5;
+/** FCM/Android tray downloads this URL server-side; keep uploads near or under this for background/killed image */
+export const NOTIFICATION_FCM_TRAY_MAX_MB = 1;
+export const NOTIFICATION_FCM_TRAY_MAX_BYTES =
+  NOTIFICATION_FCM_TRAY_MAX_MB * 1024 * 1024;
 export const NOTIFICATION_IMAGE_MAX_BYTES = NOTIFICATION_IMAGE_MAX_MB * 1024 * 1024;
 export const NOTIFICATION_IMAGE_ACCEPT = 'image/jpeg,image/jpg,image/png';
 
