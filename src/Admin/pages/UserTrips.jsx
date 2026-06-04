@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useGetUserTripsQuery, useLazyUsersearchTripsQuery } from "../Redux/Api";
 import Sidebar from "../Component/Sidebar";
 import { useNavigate } from "react-router-dom";
@@ -33,6 +33,8 @@ const TRIP_TYPE_OPTIONS = [
   "Carpool",
 ];
 
+const PAGE_SIZE_OPTIONS = [10, 30, 50, 100];
+
 const UserTrips = () => {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -43,8 +45,21 @@ const UserTrips = () => {
   const [pendingFilters, setPendingFilters] = useState(emptyFilters);
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [showLimitMenu, setShowLimitMenu] = useState(false);
+  const limitMenuRef = useRef(null);
 
   const isSearching = searchTerm.trim().length > 0;
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (limitMenuRef.current && !limitMenuRef.current.contains(e.target)) {
+        setShowLimitMenu(false);
+      }
+    };
+    if (showLimitMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showLimitMenu]);
 
   const { data: paginatedData, error, isLoading, isFetching } = useGetUserTripsQuery(
     {
@@ -128,32 +143,42 @@ const UserTrips = () => {
 
         <div className="mb-6">
           <div className="flex flex-wrap items-center gap-3 mb-4 bg-gray-100 p-4 rounded-md">
-            <div className="relative">
+            <div className="relative" ref={limitMenuRef}>
               <button
                 type="button"
                 onClick={() => setShowLimitMenu((v) => !v)}
-                className="bg-blue-400 text-white px-4 py-1.5 rounded-md text-sm"
+                className="bg-cyan-400 hover:bg-cyan-500 text-white px-4 py-2 rounded text-sm font-medium inline-flex items-center gap-1 min-w-[7.5rem] justify-center"
+                aria-expanded={showLimitMenu}
+                aria-haspopup="listbox"
               >
-                Show {limit} ▾
+                Show me {limit}
+                <span className="text-xs opacity-90">{showLimitMenu ? "▴" : "▾"}</span>
               </button>
               {showLimitMenu && (
-                <div className="absolute z-20 mt-1 bg-white border border-gray-200 rounded shadow-md">
-                  {[10, 20, 30].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                        limit === n ? "bg-blue-50 font-medium" : ""
-                      }`}
-                      onClick={() => {
-                        setLimit(n);
-                        setShowLimitMenu(false);
-                      }}
-                    >
-                      {n}
-                    </button>
+                <ul
+                  role="listbox"
+                  className="absolute z-30 left-0 mt-1 min-w-[7.5rem] bg-white border border-gray-200 rounded-md shadow-lg overflow-hidden"
+                >
+                  {PAGE_SIZE_OPTIONS.map((n) => (
+                    <li key={n} role="option" aria-selected={limit === n}>
+                      <button
+                        type="button"
+                        className={`block w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                          limit === n
+                            ? "bg-cyan-50 text-cyan-800 font-semibold"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                        onClick={() => {
+                          setLimit(n);
+                          setCurrentPage(1);
+                          setShowLimitMenu(false);
+                        }}
+                      >
+                        {n}
+                      </button>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </div>
 
