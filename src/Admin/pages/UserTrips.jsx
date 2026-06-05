@@ -70,26 +70,40 @@ const UserTrips = () => {
     { skip: isSearching }
   );
 
-  const [triggerSearch, { data: searchData, isFetching: isSearchFetching }] =
-    useLazyUsersearchTripsQuery();
+  const [
+    triggerSearch,
+    {
+      data: searchData,
+      isFetching: isSearchFetching,
+      isError: isSearchError,
+      error: searchError,
+    },
+  ] = useLazyUsersearchTripsQuery();
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, limit, appliedFilters]);
 
   useEffect(() => {
-    if (searchTerm.trim().length > 0) {
-      triggerSearch(searchTerm.trim());
-    }
+    const q = searchTerm.trim();
+    if (!q) return undefined;
+    const timer = setTimeout(() => {
+      triggerSearch(q);
+    }, 350);
+    return () => clearTimeout(timer);
   }, [searchTerm, triggerSearch]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  const displayData = isSearching ? searchData?.trips : paginatedData?.data;
+  const searchTrips = searchData?.trips ?? [];
+  const displayData = isSearching ? searchTrips : paginatedData?.data;
+  const rowsToShow = isSearching
+    ? searchTrips.slice((currentPage - 1) * limit, currentPage * limit)
+    : displayData;
   const totalItems = isSearching
-    ? searchData?.trips?.length || 0
+    ? searchTrips.length
     : paginatedData?.pagination?.totalResults || 0;
   const totalPages = isSearching
     ? Math.max(1, Math.ceil((searchData?.trips?.length || 0) / limit))
@@ -121,7 +135,13 @@ const UserTrips = () => {
   };
 
   const hasFilters = Boolean(appliedFilters.tripStatus || appliedFilters.tripType);
-  const loading = isLoading || isFetching || isSearchFetching;
+  const loading =
+    (!isSearching && (isLoading || isFetching)) ||
+    (isSearching && isSearchFetching);
+  const searchErrorMessage =
+    searchError?.data?.message ||
+    searchError?.message ||
+    (isSearchError ? "Search failed. Try again." : "");
 
   return (
     <div className="flex">
@@ -135,9 +155,17 @@ const UserTrips = () => {
           isSidebarOpen ? "ml-64" : "ml-20"
         } transition-all duration-300`}
       >
-        {error && (
+        {error && !isSearching && (
           <p className="text-red-500 text-lg mb-4">
             Failed to load trips: {error?.data?.message || error?.message || "Unknown error"}
+          </p>
+        )}
+        {isSearching && searchErrorMessage && (
+          <p className="text-red-500 text-sm mb-4">{searchErrorMessage}</p>
+        )}
+        {isSearching && !loading && !searchErrorMessage && searchTrips.length === 0 && (
+          <p className="text-gray-600 text-sm mb-4">
+            No trips found for &quot;{searchTerm.trim()}&quot;
           </p>
         )}
 
@@ -186,7 +214,7 @@ const UserTrips = () => {
               <input
                 type="text"
                 className="w-full px-4 py-1.5 bg-white border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Search trip ID, status, type, location…"
+                placeholder="Search name, phone, trip ID, status, type, location, fare…"
                 value={searchTerm}
                 onChange={handleSearch}
               />
@@ -245,7 +273,7 @@ const UserTrips = () => {
                 </tr>
               </thead>
               <tbody>
-                {displayData?.map((trip, index) => {
+                {rowsToShow?.map((trip, index) => {
                   const status = getDisplayTripStatus(trip);
                   const statusStyle = getStatusStyles(status);
                   const tripDateRaw =
@@ -385,7 +413,7 @@ const UserTrips = () => {
                     </tr>
                   );
                 })}
-                {(!displayData || displayData.length === 0) && (
+                {(!rowsToShow || rowsToShow.length === 0) && !loading && (
                   <tr>
                     <td
                       colSpan="13"
@@ -398,7 +426,7 @@ const UserTrips = () => {
               </tbody>
             </table>
 
-            {!isSearching && displayData && displayData.length > 0 && (
+            {!isSearching && rowsToShow && rowsToShow.length > 0 && (
               <div className="flex w-full text-sm font-semibold border-t border-gray-200">
                 <div className="flex items-center w-1/3 border border-gray-200">
                   <span className="px-6 py-3">Total Trip</span>
@@ -421,7 +449,7 @@ const UserTrips = () => {
               </div>
             )}
 
-            {!isSearching && totalItems > 0 && (
+            {totalItems > 0 && (
               <div className="flex items-center justify-end bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
                 <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
                   <button

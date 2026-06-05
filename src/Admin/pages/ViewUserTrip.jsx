@@ -3,8 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   useGetuserTripByIdQuery,
   useUpdateTripwithStateCitiesMutation,
+  useUpdateUserTripByAdminMutation,
+  useDeleteUserTripByAdminMutation,
 } from "../Redux/Api";
 import AddCityModal from "../Component/Modal/AddCityModal";
+import EditUserTripModal from "../Component/Modal/EditUserTripModal";
+import UserTripSettlementBreakdown from "../Component/UserTripSettlementBreakdown";
 import toast, { Toaster } from "react-hot-toast";
 import { baseUrl } from "../Url/baseUrl";
 import Sidebar from '../Component/Sidebar';
@@ -131,11 +135,12 @@ const ViewUserTrip = () => {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: tripdata, error, isLoading, isFetching } = useGetuserTripByIdQuery(id);
+  const { data: tripdata, error, isLoading, isFetching, refetch } = useGetuserTripByIdQuery(id);
 
   const trip = tripdata?.tripDetail;
   const settlement = tripdata?.settlement;
   const [isSkip,setIsSkip]=useState(false)
+  const [showEditModal, setShowEditModal] = useState(false);
   // State management for modals and actions
   const [showAddCityModal, setShowAddCityModal] = useState(false);
   const [showDriverModal, setShowDriverModal] = useState(false);
@@ -159,6 +164,21 @@ const ViewUserTrip = () => {
   });
 
   const [updateTrip] = useUpdateTripwithStateCitiesMutation();
+  const [updateUserTripByAdmin, { isLoading: savingTripEdit }] =
+    useUpdateUserTripByAdminMutation();
+  const [deleteUserTripByAdmin] = useDeleteUserTripByAdminMutation();
+
+  const TRIP_STATUS_OPTIONS = [
+    "Pending",
+    "Confirmed",
+    "onTheWay",
+    "Reached",
+    "StartTrip",
+    "End",
+    "Completed",
+    "Canceled",
+    "Expired",
+  ];
 
   // Update location state when trip data loads
   React.useEffect(() => {
@@ -201,52 +221,70 @@ const ViewUserTrip = () => {
   }, [trip?.tripType, id, navigate]);
 
   const handleHideTrip = async () => {
-    if (window.confirm('Are you sure you want to hide this trip?')) {
-      setActionLoading(true);
-      try {
-        // Add your hide trip API call here
-        // await hideTrip(id);
-        setIsHidden(true);
-        toast.success('Trip hidden successfully');
-      } catch (error) {
-        toast.error('Failed to hide trip');
-      } finally {
-        setActionLoading(false);
-      }
+    if (!window.confirm("Are you sure you want to hide this trip?")) return;
+    setActionLoading(true);
+    try {
+      await updateUserTripByAdmin({ tripId: id, isHidden: true }).unwrap();
+      setIsHidden(true);
+      toast.success("Trip hidden successfully");
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to hide trip");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleDeleteTrip = async () => {
+    if (!window.confirm("Delete this trip permanently?")) return;
+    setActionLoading(true);
+    try {
+      await deleteUserTripByAdmin(id).unwrap();
+      toast.success("Trip deleted");
+      navigate("/userTrips");
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to delete trip");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleSaveTripEdit = async (payload) => {
+    setActionLoading(true);
+    try {
+      await updateUserTripByAdmin({ tripId: id, ...payload }).unwrap();
+      toast.success("Trip updated successfully");
+      setShowEditModal(false);
+      setShowLocationModal(false);
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update trip");
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleStatusUpdate = async (newStatus) => {
     setActionLoading(true);
     try {
-      // Add your status update API call here
-      // await updateTripStatus({ tripId: id, status: newStatus });
+      await updateUserTripByAdmin({ tripId: id, tripStatus: newStatus }).unwrap();
       setSelectedStatus(newStatus);
       setShowStatusModal(false);
       toast.success(`Trip status updated to ${newStatus}`);
-    } catch (error) {
-      toast.error('Failed to update trip status');
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update trip status");
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleLocationUpdate = async () => {
-    setActionLoading(true);
-    try {
-      await updateTrip({
-        tripId: id,
-        pickupLocation: editLocation.pickupLocation,
-        dropLocation: editLocation.dropLocation,
-        dropStops: editLocation.dropStops
-      });
-      setShowLocationModal(false);
-      toast.success('Locations updated successfully');
-    } catch (error) {
-      toast.error('Failed to update locations');
-    } finally {
-      setActionLoading(false);
-    }
+    await handleSaveTripEdit({
+      pickupLocation: editLocation.pickupLocation,
+      dropLocation: editLocation.dropLocation,
+      dropStops: editLocation.dropStops,
+    });
   };
 
   const handleAssignDriver = (driverId) => {
@@ -426,6 +464,13 @@ const ViewUserTrip = () => {
                   className="bg-blue-600 text-white px-6 py-2 rounded text-sm hover:bg-blue-700 transition-colors font-semibold"
                 >
                   📋 VIEW TRIP DETAILS
+                </button>
+                <button 
+                  onClick={() => setShowEditModal(true)}
+                  disabled={actionLoading}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  EDIT TRIP
                 </button>
                 <button 
                   onClick={handleDriverAction}
@@ -1079,7 +1124,7 @@ const ViewUserTrip = () => {
               <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
                 <h3 className="text-lg font-semibold mb-4">Change Trip Status</h3>
                 <div className="space-y-3">
-                  {['pending', 'confirmed', 'ongoing', 'completed', 'cancelled'].map((status) => (
+                  {['Pending', 'Confirmed', 'onTheWay', 'Reached', 'StartTrip', 'End', 'Completed', 'Canceled', 'Expired'].map((status) => (
                     <button
                       key={status}
                       onClick={() => handleStatusUpdate(status)}
@@ -1396,19 +1441,48 @@ const ViewUserTrip = () => {
                     {trip.isurgent && <span className="text-red-600 font-medium"> *Urgent pickup</span>}
                   </p>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
+                <div className="flex flex-col gap-2 items-end">
+                  <div className="flex gap-2 flex-wrap justify-end">
+                    <button
+                      onClick={() => setShowEditModal(true)}
+                      className="px-3 py-1 bg-blue-600 text-white text-xs rounded font-medium hover:bg-blue-700"
+                    >
+                      EDIT TRIP
+                    </button>
+                    <button
+                      onClick={handleLocationEdit}
+                      className="px-3 py-1 bg-blue-500 text-white text-xs rounded font-medium hover:bg-blue-600"
+                    >
+                      Edit & Change Location
+                    </button>
                     <button
                       onClick={handleStatusChange}
-                      className={`px-8 py-1 bg-yellow-400 text-black text-xs rounded font-medium ${trip.tripStatus === 'Confirmed' ? 'bg-green-500' : ''}`}
+                      className={`px-8 py-1 bg-yellow-400 text-black text-xs rounded font-medium ${trip.tripStatus === 'Confirmed' ? 'bg-green-500 text-white' : ''}`}
                     >
                       {trip.tripStatus ? trip.tripStatus.toUpperCase() : 'N/A'}
                     </button>
                   </div>
-                  <button className="px-3 py-1 bg-black text-white text-xs rounded">ADD, CHANGE, REMOVE DRIVER</button>
+                  <button
+                    onClick={handleDriverAction}
+                    className="px-3 py-1 bg-black text-white text-xs rounded hover:bg-gray-800"
+                  >
+                    ADD, CHANGE, REMOVE DRIVER
+                  </button>
                   <div className="flex gap-2">
-                    <button className="px-3 py-1 bg-red-500 text-white text-xs rounded">DELETE</button>
-                    <button className="px-3 py-1 bg-purple-500 text-white text-xs rounded">HIDE TRIP</button>
+                    <button
+                      onClick={handleDeleteTrip}
+                      disabled={actionLoading}
+                      className="px-3 py-1 bg-red-500 text-white text-xs rounded disabled:opacity-50"
+                    >
+                      DELETE
+                    </button>
+                    <button
+                      onClick={handleHideTrip}
+                      disabled={actionLoading || isHidden}
+                      className="px-3 py-1 bg-purple-500 text-white text-xs rounded disabled:opacity-50"
+                    >
+                      {isHidden ? "TRIP HIDDEN" : "HIDE TRIP"}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1643,6 +1717,14 @@ const ViewUserTrip = () => {
                       <h4 className="font-semibold">Comments</h4>
                       <p>{trip.comment || 'No comments'}</p>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={handleDriverAction}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white text-xs py-2 rounded font-medium"
+                    >
+                      Remove / change Driver – Reject offer
+                    </button>
                   </div>
                 </div>
 
@@ -1658,7 +1740,7 @@ const ViewUserTrip = () => {
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Start time</td><td className="p-2">{formatDateTime(trip.startTripTime)}</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Drop off time</td><td className="p-2">{formatDateTime(trip.EndTripTime)}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Complete</td><td className="p-2">{formatDateTime(trip.CompletedTripTime)}</td></tr>
-                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Payment Received</td><td className="p-2">........</td></tr>
+                        <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Payment Received</td><td className="p-2">{trip?.settings?.paymentReceivedAt ? formatDateTime(trip.settings.paymentReceivedAt) : '........'}</td></tr>
                         <tr className="border-b-4"><td className="p-2 text-gray-600">Review & Rating</td><td className="p-2">Pending</td></tr>
                         <tr className="border-b-4 bg-gray-50"><td className="p-2 text-gray-600">Trip duration</td><td className="p-2">N/A</td></tr>
                       </tbody>
@@ -1778,47 +1860,38 @@ const ViewUserTrip = () => {
 
               </div>
 
-              <SettlementPanel settlement={settlement} />
-
-              {trip?.fareDetails && (
-                <div className="bg-white rounded-lg shadow-sm p-4 mt-4 text-xs">
-                  <h3 className="font-semibold mb-2">Fare details (from trip)</h3>
-                  <pre className="bg-gray-50 p-2 rounded overflow-auto max-h-48">
-                    {JSON.stringify(trip.fareDetails, null, 2)}
-                  </pre>
-                </div>
-              )}
+              <UserTripSettlementBreakdown settlement={settlement} trip={trip} />
             </div>
           </div>
         </div>
       )}
 
       {/* Status Change Modal for non-CarPool trips */}
-      {showStatusModal && trip.tripType !== 'CarPool' && (
+      {showStatusModal && trip?.tripType !== 'CarPool' && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
             <h3 className="text-lg font-semibold mb-4">Change Trip Status</h3>
             <div className="space-y-3">
-              {['pending', 'confirmed', 'ongoing', 'completed', 'cancelled'].map((status) => (
+              {TRIP_STATUS_OPTIONS.map((status) => (
                 <button
                   key={status}
                   onClick={() => handleStatusUpdate(status)}
                   disabled={actionLoading}
                   className={`w-full text-left px-4 py-2 rounded border disabled:opacity-50 disabled:cursor-not-allowed ${
-                    selectedStatus === status 
-                      ? 'bg-blue-100 border-blue-500' 
+                    selectedStatus === status
+                      ? 'bg-blue-100 border-blue-500'
                       : 'bg-white border-gray-300 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="capitalize">{actionLoading ? 'Updating...' : status}</span>
+                    <span>{actionLoading ? 'Updating...' : status}</span>
                     <StatusBadge status={status} />
                   </div>
                 </button>
               ))}
             </div>
             <div className="flex gap-2 mt-6">
-              <button 
+              <button
                 onClick={() => setShowStatusModal(false)}
                 className="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
               >
@@ -1828,6 +1901,14 @@ const ViewUserTrip = () => {
           </div>
         </div>
       )}
+
+      <EditUserTripModal
+        open={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        trip={trip}
+        onSave={handleSaveTripEdit}
+        saving={actionLoading || savingTripEdit}
+      />
       
       <Toaster position="top-right" />
     </>

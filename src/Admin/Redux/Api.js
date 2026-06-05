@@ -316,6 +316,23 @@ export const apiSlice = createApi({
       providesTags: ["trip"],
     }),
 
+    updateUserTripByAdmin: builder.mutation({
+      query: ({ tripId, ...body }) => ({
+        url: `/trip/updateUserTripByAdmin/${tripId}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["trip"],
+    }),
+
+    deleteUserTripByAdmin: builder.mutation({
+      query: (tripId) => ({
+        url: `/trip/deleteUserTripByAdmin/${tripId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["trip"],
+    }),
+
     getCarpoolTripById: builder.query({
       query: (id) => ({
         url: `/trip/getCarpoolTripById/${id}`,
@@ -1462,6 +1479,8 @@ export const {
   useDeleteCarpoolseatMutation,
   useGetAllCityofStateQuery,
   useGetuserTripByIdQuery,
+  useUpdateUserTripByAdminMutation,
+  useDeleteUserTripByAdminMutation,
   useGetUserTripsQuery,
   useGetTravelInfoByIdQuery,
   useAddUserProfilePictureMutation,
