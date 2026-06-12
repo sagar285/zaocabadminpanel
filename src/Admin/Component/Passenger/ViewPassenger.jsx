@@ -2,12 +2,19 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { User, FileCheck, X, Clock, AlertTriangle, History, Car, Edit, Eye, Trash } from "lucide-react";
 import Sidebar from "../Sidebar";
 import { useNavigate, useParams } from "react-router-dom";
-import {useGetPassengerInfoQuery, useGetStateAndCitiesQuery, useUpdateAadharStatusMutation, useUpdateLicenseStatusMutation} from '../../Redux/Api'
+import {
+  useGetPassengerInfoQuery,
+  useGetStateAndCitiesQuery,
+  useUpdateAadharStatusMutation,
+  useUpdateLicenseStatusMutation,
+  useVerifiedPassengerPersonalInfoMutation,
+} from '../../Redux/Api'
 
 // PersonalInfoTab Component - Updated with navigation logic
 const PersonalInfoTab = ({
   isProfileVerified,
-  setIsProfileVerified,
+  onProfileVerify,
+  isVerifyingProfile,
   data,
   handleOnClickReport,
   handleInputChange,
@@ -63,13 +70,10 @@ const PersonalInfoTab = ({
                 Verified profile [ 
               </span>
               <button 
-                onClick={() => {
-                  setIsProfileVerified(!isProfileVerified);
-                  if (!isProfileVerified) {
-                    alert("Passenger verified successfully");
-                  }
-                }}
-                className={`mx-1 text-lg font-bold cursor-pointer ${
+                type="button"
+                onClick={onProfileVerify}
+                disabled={isProfileVerified || isVerifyingProfile}
+                className={`mx-1 text-lg font-bold cursor-pointer disabled:opacity-50 ${
                   isProfileVerified ? 'text-green-500' : 'text-gray-400'
                 }`}
               >
@@ -918,43 +922,20 @@ const PersonalInfoTab = ({
 const ViewPassenger = () => {
   const [activeTab, setActiveTab] = useState("personal");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-   const { id } = useParams();
-  const {data:passengerData,error:passengerError} =useGetPassengerInfoQuery(id);
-  
-  
- const [updateAadharStatus] = useUpdateAadharStatusMutation();
+  const { id } = useParams();
+  const {
+    data: passengerData,
+    error: passengerError,
+    isLoading: passengerLoading,
+    refetch: refetchPassenger,
+  } = useGetPassengerInfoQuery(id);
+
+  const [updateAadharStatus] = useUpdateAadharStatusMutation();
   const [updateDriverLicenseStatus] = useUpdateLicenseStatusMutation();
+  const [verifyPassengerProfile, { isLoading: isVerifyingProfile }] =
+    useVerifiedPassengerPersonalInfoMutation();
 
-
-
-  console.log(passengerData,passengerError,"dkjfdhifkhdsjkdhs")
-  
-  // Mock data
-  const [data] = useState({
-    PassengerInfo: {
-      firstName: "Akash Kumar",
-      lastName: "Singh",
-      phoneNumber: "9876543210",
-      email: "akash.kumar@email.com",
-      address: "123 Main Street, Sector 15",
-      verified: true,
-      userId: {
-        profileImage: null,
-        city: "Lucknow",
-        state: "Uttar Pradesh"
-      }
-    },
-    documents: {
-      aadhar: {
-        aadharNumber: "1234-5678-9012",
-        aadharFront: null,
-        aadharBack: null,
-        aadharStatus: "Accepted"
-      },
-      verified: true,
-      _id: "doc123"
-    }
-  });
+  const passengerInfo = passengerData?.personalInfo;
 
   // Suspension state variables
   const [showSuspendModal, setShowSuspendModal] = useState(false);
@@ -974,8 +955,18 @@ const ViewPassenger = () => {
   // Navigation hook
   const navigate = useNavigate();
 
-  // Verification state
-  const [isProfileVerified, setIsProfileVerified] = useState(false);
+  const isProfileVerified = Boolean(passengerInfo?.verified);
+
+  const handleProfileVerify = useCallback(async () => {
+    if (!id || isProfileVerified) return;
+    try {
+      const result = await verifyPassengerProfile({ id }).unwrap();
+      alert(result?.message || 'Passenger verified successfully');
+      refetchPassenger();
+    } catch (err) {
+      alert(err?.data?.message || 'Could not verify passenger profile');
+    }
+  }, [id, isProfileVerified, verifyPassengerProfile, refetchPassenger]);
 
   // Sample data for lists
   const [followersList] = useState([
@@ -1060,16 +1051,16 @@ const ViewPassenger = () => {
 
   // Initial form data को stable reference के साथ memoize करते हैं
   const initialFormData = useMemo(() => ({
-    gender: "Male",
-    firstName: data?.PassengerInfo?.firstName || "",
-    lastName: data?.PassengerInfo?.lastName || "",
-    email: data?.PassengerInfo?.email || "",
-    dateOfBirth: "",
-    mobileNumber: data?.PassengerInfo?.phoneNumber || "",
-    state: data?.PassengerInfo?.userId?.state || "",
-    city: data?.PassengerInfo?.userId?.city || "",
+    gender: passengerInfo?.Gender || "Male",
+    firstName: passengerInfo?.firstName || "",
+    lastName: passengerInfo?.lastName || "",
+    email: passengerInfo?.email || "",
+    dateOfBirth: passengerInfo?.dob || "",
+    mobileNumber: passengerInfo?.phone || passengerInfo?.phoneNumber || "",
+    state: passengerInfo?.state || "",
+    city: passengerInfo?.city || "",
     pin: "",
-    address: data?.PassengerInfo?.address || "",
+    address: passengerInfo?.address || "",
     paymentMethod: "",
     bankDetails: "",
     accountNumber: "",
@@ -1085,14 +1076,14 @@ const ViewPassenger = () => {
     oneWayOutstation: "inactive",
     outstationRoundTrip: "inactive",
     carpool: "inactive"
-  }), [data]);
+  }), [passengerInfo]);
 
   // Current form data
   const [formData, setFormData] = useState(initialFormData);
   
   // State और city के लिए separate state variables
-  const [selectedState, setSelectedState] = useState(data?.PassengerInfo?.userId?.state || "");
-  const [selectedCity, setSelectedCity] = useState(data?.PassengerInfo?.userId?.city || "");
+  const [selectedState, setSelectedState] = useState(passengerInfo?.state || "");
+  const [selectedCity, setSelectedCity] = useState(passengerInfo?.city || "");
 
   // ManageTrip expand state
   const [showManageTripFields, setShowManageTripFields] = useState(false);
@@ -1103,28 +1094,36 @@ const ViewPassenger = () => {
       return formData[key] !== initialFormData[key];
     });
     
-    const stateChanged = selectedState !== (data?.PassengerInfo?.userId?.state || "");
-    const cityChanged = selectedCity !== (data?.PassengerInfo?.userId?.city || "");
+    const stateChanged = selectedState !== (passengerInfo?.state || "");
+    const cityChanged = selectedCity !== (passengerInfo?.city || "");
     
     return formChanged || stateChanged || cityChanged;
-  }, [formData, selectedState, selectedCity, initialFormData, data]);
+  }, [formData, selectedState, selectedCity, initialFormData, passengerInfo]);
 
   // Initialize state and city from existing user data
   useEffect(() => {
-    if (data?.PassengerInfo?.userId?.state && cityData && Array.isArray(cityData)) {
-      const userState = data.PassengerInfo.userId.state;
+    if (passengerInfo?.state && cityData && Array.isArray(cityData)) {
+      const userState = passengerInfo.state;
       const stateObj = cityData.find(state => state.name === userState);
 
       if (stateObj) {
         setSelectedState(userState);
         setAvailableCities(stateObj.cities || []);
         
-        if (data?.PassengerInfo?.userId?.city) {
-          setSelectedCity(data.PassengerInfo.userId.city);
+        if (passengerInfo?.city) {
+          setSelectedCity(passengerInfo.city);
         }
       }
     }
-  }, [data, cityData]);
+  }, [passengerInfo, cityData]);
+
+  useEffect(() => {
+    if (passengerInfo) {
+      setFormData(initialFormData);
+      setSelectedState(passengerInfo.state || "");
+      setSelectedCity(passengerInfo.city || "");
+    }
+  }, [passengerInfo, initialFormData]);
 
   const suspendReasons = [
     "Violation of terms of service",
@@ -1234,28 +1233,28 @@ const ViewPassenger = () => {
     navigate('/passenger/followers-list', {
       state: {
         followersList: followersList,
-        passengerName: `${data.PassengerInfo.firstName} ${data.PassengerInfo.lastName}`
+        passengerName: `${passengerInfo?.firstName || ''} ${passengerInfo?.lastName || ''}`
       }
     });
-  }, [navigate, followersList, data]);
+  }, [navigate, followersList, passengerInfo]);
 
   const handleFollowingClick = useCallback(() => {
     navigate('/passenger/following-list', {
       state: {
         followingList: followingList,
-        passengerName: `${data.PassengerInfo.firstName} ${data.PassengerInfo.lastName}`
+        passengerName: `${passengerInfo?.firstName || ''} ${passengerInfo?.lastName || ''}`
       }
     });
-  }, [navigate, followingList, data]);
+  }, [navigate, followingList, passengerInfo]);
 
   const handleMembershipClick = useCallback(() => {
     navigate('/passenger/membership-list', {
       state: {
         membershipList: membershipList,
-        passengerName: `${data.PassengerInfo.firstName} ${data.PassengerInfo.lastName}`
+        passengerName: `${passengerInfo?.firstName || ''} ${passengerInfo?.lastName || ''}`
       }
     });
-  }, [navigate, membershipList, data]);
+  }, [navigate, membershipList, passengerInfo]);
 
   // Other handlers
   const handleSuspendClick = useCallback(() => {
@@ -1349,20 +1348,36 @@ const ViewPassenger = () => {
     
     navigate(`/report-list/${id}`, {
       state: {
-        passengerData: data,
+        passengerData,
         passengerInfo: {
           id: id,
-          name: `${data.PassengerInfo.firstName} ${data.PassengerInfo.lastName}`,
-          phone: data.PassengerInfo.phoneNumber,
-          email: data.PassengerInfo.email,
-          city: data.PassengerInfo.userId.city,
-          state: data.PassengerInfo.userId.state,
-          verified: data.PassengerInfo.verified,
-          documentStatus: data.documents.aadhar.aadharStatus
+          name: `${passengerInfo?.firstName || ''} ${passengerInfo?.lastName || ''}`,
+          phone: passengerInfo?.phone || passengerInfo?.phoneNumber,
+          email: passengerInfo?.email,
+          city: passengerInfo?.city,
+          state: passengerInfo?.state,
+          verified: passengerInfo?.verified,
+          documentStatus: passengerData?.Documents?.aadhar?.aadharStatus
         }
       }
     });
-  }, [navigate, data]);
+  }, [navigate, passengerData, passengerInfo]);
+
+  if (passengerLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="p-4">Loading passenger details...</div>
+      </div>
+    );
+  }
+
+  if (passengerError) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="p-4 text-red-500">Error loading passenger data</div>
+      </div>
+    );
+  }
 
   // Show loading or error states
   if (isLoading) {
@@ -1384,28 +1399,39 @@ const ViewPassenger = () => {
   // Documents Tab
   const DocumentsTab = ({documents}) => 
   {
-     
-    const DrivingLicenseStatusUpdate =async(status,docId)=>{
-      const payload = {
-        documentId: docId,
-        status: status,
-      };
-      const {data,error} = await updateDriverLicenseStatus(payload);
-      if(data){
-        alert("status updated succesfully")
+    const DrivingLicenseStatusUpdate = async (status, docId) => {
+      if (!docId) {
+        alert('Document not found');
+        return;
       }
- 
-    }
-    const aadharStatusUpdate = async(status,docId)=>{
-      const payload = {
-        documentId: docId,
-        status: status,
-      };
-      const {data,error} = await updateAadharStatus(data);
-      if(data){
-        alert("status updated succesfully")
+      try {
+        const result = await updateDriverLicenseStatus({
+          documentId: docId,
+          status,
+        }).unwrap();
+        alert(result?.message || 'Status updated successfully');
+        refetchPassenger();
+      } catch (err) {
+        alert(err?.data?.message || 'Could not update license status');
       }
-    }
+    };
+
+    const aadharStatusUpdate = async (status, docId) => {
+      if (!docId) {
+        alert('Document not found');
+        return;
+      }
+      try {
+        const result = await updateAadharStatus({
+          documentId: docId,
+          status,
+        }).unwrap();
+        alert(result?.message || 'Status updated successfully');
+        refetchPassenger();
+      } catch (err) {
+        alert(err?.data?.message || 'Could not update aadhar status');
+      }
+    };
 
     return(
     <div className="bg-white rounded-xl shadow-sm p-6">
@@ -1442,8 +1468,9 @@ const ViewPassenger = () => {
           
           <div className="grid grid-cols-2 gap-3">
             <button 
+              type="button"
               className={`py-2 rounded font-medium ${
-                data?.documents?.aadhar?.aadharStatus === "Accepted" 
+                documents?.aadhar?.aadharStatus === "Accepted" 
                   ? "bg-green-500 text-white" 
                   : "border border-green-500 text-green-500"
               }`}
@@ -1452,12 +1479,14 @@ const ViewPassenger = () => {
               VERIFIED
             </button>
             <button 
+              type="button"
               className={`py-2 rounded font-medium ${
-                data?.documents?.aadhar?.aadharStatus === "Rejected" 
+                documents?.aadhar?.aadharStatus === "rejected" ||
+                documents?.aadhar?.aadharStatus === "Rejected"
                   ? "bg-red-500 text-white" 
                   : "border border-red-500 text-red-600"
               }`}
-              onClick={() => aadharStatusUpdate("Rejected",documents?._id)}
+              onClick={() => aadharStatusUpdate("rejected", documents?._id)}
             >
               REJECT
             </button>
@@ -1494,22 +1523,25 @@ const ViewPassenger = () => {
           
           <div className="grid grid-cols-2 gap-3">
             <button 
+              type="button"
               className={`py-2 rounded font-medium ${
                 documents?.drivingLicense?.drivingStatus === "Accepted" 
                   ? "bg-green-500 text-white" 
                   : "border border-green-500 text-green-500"
               }`}
-              onClick={() => DrivingLicenseStatusUpdate( "Accepted",documents?._id)}
+              onClick={() => DrivingLicenseStatusUpdate("Accepted", documents?._id)}
             >
               VERIFIED
             </button>
             <button 
+              type="button"
               className={`py-2 rounded font-medium ${
-                documents?.drivingLicense?.drivingStatus === "Rejected" 
+                documents?.drivingLicense?.drivingStatus === "rejected" ||
+                documents?.drivingLicense?.drivingStatus === "Rejected"
                   ? "bg-red-500 text-white" 
                   : "border border-red-500 text-red-600"
               }`}
-              onClick={() => DrivingLicenseStatusUpdate("Rejected", documents?._id)}
+              onClick={() => DrivingLicenseStatusUpdate("rejected", documents?._id)}
             >
               REJECT
             </button>
@@ -1633,8 +1665,9 @@ const ViewPassenger = () => {
                 <PersonalInfoTab
                   vehiclesList={vehiclesList}
                   isProfileVerified={isProfileVerified}
-                  setIsProfileVerified={setIsProfileVerified}
-                  data={passengerData?.personalInfo}
+                  onProfileVerify={handleProfileVerify}
+                  isVerifyingProfile={isVerifyingProfile}
+                  data={passengerInfo}
                   handleOnClickReport={handleOnClickReport}
                   handleInputChange={handleInputChange}
                   selectedState={selectedState}

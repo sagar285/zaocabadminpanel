@@ -44,6 +44,7 @@ export const apiSlice = createApi({
       query: (id) => ({
         url: `/driver/getPassengerInfo/${id}`,
       }),
+      providesTags: (result, error, id) => [{ type: "user", id }],
     }),
 
     getTravelInfoById: builder.query({
@@ -64,6 +65,14 @@ export const apiSlice = createApi({
       query: (data) => ({
         url: `/driver/updateLicenseStatus`,
         method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["user", "trip"],
+    }),
+    verifiedPassengerPersonalInfo: builder.mutation({
+      query: (data) => ({
+        url: "/admin/verifiedPassengerPersonalInfo",
+        method: "POST",
         body: data,
       }),
       invalidatesTags: ["user", "trip"],
@@ -1406,6 +1415,7 @@ export const {
   useUpdateCarpoolBrandMutation,
   useVerifiedDocumentInfoMutation,
   useVerifiedDriverPersonalInfoMutation,
+  useVerifiedPassengerPersonalInfoMutation,
   useVerifiedTravelPersonalInfoMutation,
   useVerifiedVehicleInfoMutation,
   useDeletenotificationMutation,
