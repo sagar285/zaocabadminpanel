@@ -22,6 +22,7 @@ import {
   useUpdateTravelInfoMutation,
 } from "../Redux/Api";
 import { baseUrl } from "../Url/baseUrl";
+import { resolveDocumentImageUrl } from "../utils/documentImageUrl";
 import moment from "moment";
 import DriversTable from "../Component/Tables/DriversTable";
 import AddDocumentModal from "../Component/Modal/AddDocumentModal";
@@ -268,7 +269,7 @@ const ViewTravel = () => {
 
     const openModal = (imageUrl, side) => {
       setSelectedImage({
-        url: `${url}/${docType}/${imageUrl}`,
+        url: resolveDocumentImageUrl(imageUrl, docType),
         alt: `${title} ${side}`,
       });
     };
@@ -314,35 +315,33 @@ const ViewTravel = () => {
               {frontImage && (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Front Side</p>
-                  <a
-                    href={`${url}/${docType}/${frontImage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openModal(frontImage, 'Front')}
+                    className="block w-full text-left"
                   >
                     <img
-                      src={`${url}/${docType}/${frontImage}`}
+                      src={resolveDocumentImageUrl(frontImage, docType)}
                       alt={`${title} Front`}
-                      // onClick={() => openModal(frontImage, 'Front')}
                       className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
                     />
-                  </a>
+                  </button>
                 </div>
               )}
               {backImage && (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Back Side</p>
-                  <a
-                    href={`${url}/${docType}/${backImage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openModal(backImage, 'Back')}
+                    className="block w-full text-left"
                   >
                     <img
-                      src={`${url}/${docType}/${backImage}`}
+                      src={resolveDocumentImageUrl(backImage, docType)}
                       alt={`${title} Back`}
-                      // onClick={() => openModal(backImage, 'Back')}
                       className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
                     />
-                  </a>
+                  </button>
                 </div>
               )}
             </div>

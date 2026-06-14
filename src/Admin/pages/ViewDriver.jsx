@@ -26,11 +26,13 @@ import {
   useUpdateDriverInfoMutation
 } from "../Redux/Api";
 import { baseUrl } from "../Url/baseUrl";
+import { resolveDocumentImageUrl } from "../utils/documentImageUrl";
 import AddDocumentModal from "../Component/Modal/AddDocumentModal";
 import AddDrivingLicenseDocumentModal from "../Component/Modal/DrivingLicenseMOdal";
 import AddPoliceVerificationDocumentModal from "../Component/Modal/AddPoliceVerification";
 import AddVehicleRCDocumentModal from "../Component/Modal/AddVehicleRcModal";
 import ImageModal from "../Component/Modal/ImageModal";
+import DocumentImagePreview from "../Component/Document/DocumentImagePreview";
 import VehicleDriverPage from "./VehicleDriverpage";
 import toast, { Toaster } from "react-hot-toast";
 import DriverInfoForm from "../Component/Driver/DriverInfo";
@@ -418,7 +420,7 @@ const ViewDriver = () => {
 
     const openModal = (imageUrl, side) => {
       setSelectedImage({
-        url: `${url}/${docType}/${imageUrl}`,
+        url: resolveDocumentImageUrl(imageUrl, docType),
         alt: `${title} ${side}`,
       });
     };
@@ -473,33 +475,33 @@ const ViewDriver = () => {
               {frontImage && (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Front Side</p>
-                  <a
-                    href={`${url}/${docType}/${frontImage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openModal(frontImage, 'Front')}
+                    className="block w-full text-left"
                   >
                     <img
-                      src={`${url}/${docType}/${frontImage}`}
+                      src={resolveDocumentImageUrl(frontImage, docType)}
                       alt={`${title} Front`}
-                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors"
+                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
                     />
-                  </a>
+                  </button>
                 </div>
               )}
               {backImage && (
                 <div className="space-y-2">
                   <p className="text-sm text-gray-500">Back Side</p>
-                  <a
-                    href={`${url}/${docType}/${backImage}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={() => openModal(backImage, 'Back')}
+                    className="block w-full text-left"
                   >
                     <img
-                      src={`${url}/${docType}/${backImage}`}
+                      src={resolveDocumentImageUrl(backImage, docType)}
                       alt={`${title} Back`}
-                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors"
+                      className="w-full h-24 object-cover rounded-lg border-2 border-gray-200 hover:border-blue-500 transition-colors cursor-pointer"
                     />
-                  </a>
+                  </button>
                 </div>
               )}
             </div>
@@ -1103,28 +1105,16 @@ const ViewDriver = () => {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-                      {data?.documents?.aadhar?.aadharFront ? (
-                        <img
-                          src={`${url}/aadhar/${data?.documents?.aadhar?.aadharFront}`}
-                          alt="Aadhar Front"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>Front</span>
-                      )}
-                    </div>
-                    <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-                      {data?.documents?.aadhar?.aadharBack ? (
-                        <img
-                          src={`${url}/aadhar/${data?.documents?.aadhar?.aadharBack}`}
-                          alt="Aadhar Back"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>Back</span>
-                      )}
-                    </div>
+                    <DocumentImagePreview
+                      src={data?.documents?.aadhar?.aadharFront}
+                      docType="aadhar"
+                      label="Front"
+                    />
+                    <DocumentImagePreview
+                      src={data?.documents?.aadhar?.aadharBack}
+                      docType="aadhar"
+                      label="Back"
+                    />
                   </div>
                   
                   <div className="text-center mb-4">
@@ -1175,28 +1165,16 @@ const ViewDriver = () => {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-                      {data?.documents?.drivingLicense?.licenseFront ? (
-                        <img
-                          src={`${url}/driverLicense/${data?.documents?.drivingLicense?.licenseFront}`}
-                          alt="License Front"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>Front</span>
-                      )}
-                    </div>
-                    <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-                      {data?.documents?.drivingLicense?.licenseBack ? (
-                        <img
-                          src={`${url}/driverLicense/${data?.documents?.drivingLicense?.licenseBack}`}
-                          alt="License Back"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span>Back</span>
-                      )}
-                    </div>
+                    <DocumentImagePreview
+                      src={data?.documents?.drivingLicense?.licenseFront}
+                      docType="driverLicense"
+                      label="Front"
+                    />
+                    <DocumentImagePreview
+                      src={data?.documents?.drivingLicense?.licenseBack}
+                      docType="driverLicense"
+                      label="Back"
+                    />
                   </div>
                   
                   <div className="text-center mb-4">

@@ -9,6 +9,7 @@ import {
   useUpdateLicenseStatusMutation,
   useVerifiedPassengerPersonalInfoMutation,
 } from '../../Redux/Api'
+import DocumentImagePreview from '../Document/DocumentImagePreview';
 
 // PersonalInfoTab Component - Updated with navigation logic
 const PersonalInfoTab = ({
@@ -1451,14 +1452,16 @@ const ViewPassenger = () => {
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-              <span>Front</span>
-              <img src={documents?.aadhar?.aadharFront} style={{objectFit:"cover"}}/>
-            </div>
-            <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-              <span>Back</span>
-              <img src={documents?.aadhar?.aadharBack} style={{objectFit:"cover"}}/>
-            </div>
+            <DocumentImagePreview
+              src={documents?.aadhar?.aadharFront}
+              docType="aadhar"
+              label="Front"
+            />
+            <DocumentImagePreview
+              src={documents?.aadhar?.aadharBack}
+              docType="aadhar"
+              label="Back"
+            />
           </div>
            
           <div className="text-center mb-4">
@@ -1506,14 +1509,16 @@ const ViewPassenger = () => {
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-              {/* <span>Front</span> */}
-              <img src={documents?.drivingLicense?.licenseFront}/>
-            </div>
-            <div className="bg-orange-200 p-6 rounded flex items-center justify-center text-white">
-              <span>Back</span>
-              <img src={documents?.drivingLicense?.licenseBack}/>
-            </div>
+            <DocumentImagePreview
+              src={documents?.drivingLicense?.licenseFront}
+              docType="driverLicense"
+              label="Front"
+            />
+            <DocumentImagePreview
+              src={documents?.drivingLicense?.licenseBack}
+              docType="driverLicense"
+              label="Back"
+            />
           </div>
           
           <div className="text-center mb-4">
