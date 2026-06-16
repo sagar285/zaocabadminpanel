@@ -8,6 +8,7 @@ import {
   useUpdateAadharStatusMutation,
   useUpdateLicenseStatusMutation,
   useVerifiedPassengerPersonalInfoMutation,
+  useDeleteUserMutation,
 } from '../../Redux/Api'
 import DocumentImagePreview from '../Document/DocumentImagePreview';
 
@@ -56,7 +57,9 @@ const PersonalInfoTab = ({
   handleMembershipClick,
   followersList,
   followingList,
-  membershipList
+  membershipList,
+  onDeleteAccount,
+  isDeletingAccount,
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 max-w-6xl mx-auto">
@@ -269,6 +272,17 @@ const PersonalInfoTab = ({
           onChange={(e) => handleInputChange('address', e.target.value)}
           placeholder="Enter address"
         />
+      </div>
+
+      <div className="flex flex-wrap gap-3 mb-4">
+        <button
+          type="button"
+          onClick={onDeleteAccount}
+          disabled={isDeletingAccount}
+          className="bg-red-500 text-white py-2 px-4 rounded text-sm font-medium hover:bg-red-600 disabled:opacity-50"
+        >
+          {isDeletingAccount ? 'Deleting...' : 'Delete Account'}
+        </button>
       </div>
 
       {/* Action Buttons */}
@@ -935,6 +949,7 @@ const ViewPassenger = () => {
   const [updateDriverLicenseStatus] = useUpdateLicenseStatusMutation();
   const [verifyPassengerProfile, { isLoading: isVerifyingProfile }] =
     useVerifiedPassengerPersonalInfoMutation();
+  const [deleteUser, { isLoading: isDeletingAccount }] = useDeleteUserMutation();
 
   const passengerInfo = passengerData?.personalInfo;
 
@@ -968,6 +983,27 @@ const ViewPassenger = () => {
       alert(err?.data?.message || 'Could not verify passenger profile');
     }
   }, [id, isProfileVerified, verifyPassengerProfile, refetchPassenger]);
+
+  const handleDeleteAccount = useCallback(async () => {
+    if (!id) return;
+
+    const passengerName =
+      `${passengerInfo?.firstName || ''} ${passengerInfo?.lastName || ''}`.trim() ||
+      'this passenger';
+
+    const confirmed = window.confirm(
+      `Delete ${passengerName}? This action cannot be undone.`,
+    );
+    if (!confirmed) return;
+
+    try {
+      const result = await deleteUser({ userId: id }).unwrap();
+      alert(result?.message || 'Passenger deleted successfully');
+      navigate('/passenger-travels');
+    } catch (err) {
+      alert(err?.data?.message || 'Could not delete passenger account');
+    }
+  }, [id, passengerInfo, deleteUser, navigate]);
 
   // Sample data for lists
   const [followersList] = useState([
@@ -1712,6 +1748,8 @@ const ViewPassenger = () => {
                   followersList={followersList}
                   followingList={followingList}
                   membershipList={membershipList}
+                  onDeleteAccount={handleDeleteAccount}
+                  isDeletingAccount={isDeletingAccount}
                 />
               
               )}
