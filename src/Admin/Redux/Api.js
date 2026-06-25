@@ -18,6 +18,7 @@ export const apiSlice = createApi({
     "notification",
     "feedback",
     "carpoolSeat",
+    "homeBanner",
   ],
   endpoints: (builder) => ({
     getDriver: builder.query({
@@ -688,6 +689,50 @@ export const apiSlice = createApi({
         method: "DELETE",
       }),
       invalidatesTags: ["notification"],
+    }),
+
+    getAllHomeBanners: builder.query({
+      query: () => ({
+        url: "/homeBanner/all",
+      }),
+      providesTags: ["homeBanner"],
+    }),
+    createHomeBanner: builder.mutation({
+      query: (data) => ({
+        url: "/homeBanner/create",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["homeBanner"],
+    }),
+    updateHomeBanner: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `/homeBanner/update/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["homeBanner"],
+    }),
+    toggleHomeBannerStatus: builder.mutation({
+      query: (id) => ({
+        url: `/homeBanner/toggle/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["homeBanner"],
+    }),
+    deleteHomeBanner: builder.mutation({
+      query: (id) => ({
+        url: `/homeBanner/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["homeBanner"],
+    }),
+    uploadHomeBannerImage: builder.mutation({
+      query: (formData) => ({
+        url: "/homeBanner/uploadImage",
+        method: "POST",
+        body: formData,
+      }),
     }),
 
     verifiedDriverPersonalInfo: builder.mutation({
@@ -1544,4 +1589,10 @@ export const {
   useGetAllCarpoolAddVechileQuery,
   useEditCarpoolAddVechileMutation,
   useDeleteCarpoolAddVehicleMutation,
+  useGetAllHomeBannersQuery,
+  useCreateHomeBannerMutation,
+  useUpdateHomeBannerMutation,
+  useToggleHomeBannerStatusMutation,
+  useDeleteHomeBannerMutation,
+  useUploadHomeBannerImageMutation,
 } = apiSlice;

@@ -51,6 +51,7 @@ import {
   Boxes,
   List,
   ReceiptSwissFrancIcon,
+  Image,
 } from "lucide-react";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
@@ -163,6 +164,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       ],
     },
     { title: "Notifications", icon: Bell, path: "/notifications" },
+    { title: "Home Banners", icon: Image, path: "/home-banners" },
     { title: "Feedback", icon: MessageSquare, path: "/feedback" },
     { title: "Subscription Plan", icon: Ticket, path: "/plan" },
     {

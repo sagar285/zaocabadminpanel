@@ -79,6 +79,7 @@ import PerKmFareManagementScreen from "./Admin/pages/EditPerkmFareManagmentScree
 import AlertTrip from "./Admin/pages/AlertTrip.jsx";
 import Travels from "./Admin/pages/Travels.jsx";
 import TripDropStates from "./Admin/pages/TripActiveStates/TripDropState.jsx";
+import HomeBannerManagement from "./Admin/pages/HomeBannerManagement.jsx";
 
 
 const App = () => {
@@ -161,6 +162,7 @@ const App = () => {
       <Route path="/userTrips" element={<UserTrips />} />
       <Route path="/trips" element={<AdminTrips />} />
       <Route path="/notifications" element={<Notification />} />
+      <Route path="/home-banners" element={<HomeBannerManagement />} />
       <Route path="/withdraw" element={<Wallet />} />
       <Route path="/transaction/:id" element={<Transaction />} />
       <Route path="/transaction/credit" element={<CreditTransactions />} />
