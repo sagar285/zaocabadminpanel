@@ -3,10 +3,12 @@ import {
   useGetTripsAdminModelQuery,
   useGetTripsQuery,
   useLazyAdminsearchTripsQuery,
+  useToggleAdminTripFareStatusMutation,
 } from "../Redux/Api";
 import Sidebar from "../Component/Sidebar";
 import { useNavigate } from "react-router-dom";
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Eye, Edit, Trash2, Power } from "lucide-react";
+import toast from "react-hot-toast";
 
 const emptyListFilters = { tripType: "", vehicleCategory: "", fareStatus: "" };
 
@@ -17,8 +19,9 @@ const AdminTrips = () => {
   const { data, error } = useGetTripsQuery();
   const [appliedFilters, setAppliedFilters] = useState(emptyListFilters);
   const [pendingFilters, setPendingFilters] = useState(emptyListFilters);
-  const { data: AdminTrips, error: AdminTripsError } =
+  const { data: AdminTrips, error: AdminTripsError, refetch } =
     useGetTripsAdminModelQuery({ page, limit, ...appliedFilters });
+  const [toggleAdminTripFareStatus] = useToggleAdminTripFareStatusMutation();
   const [triggerSearch, { data: searchData }] = useLazyAdminsearchTripsQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState(10);
@@ -70,6 +73,19 @@ const AdminTrips = () => {
   const clearAppliedListFilters = () => {
     setAppliedFilters({ ...emptyListFilters });
     setPage(1);
+  };
+
+  const handleToggleFareStatus = async (tripId) => {
+    try {
+      const result = await toggleAdminTripFareStatus(tripId).unwrap();
+      toast.success(
+        result?.message ||
+          `Fare ${result?.FareStatus === "Active" ? "activated" : "deactivated"}`
+      );
+      refetch();
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to update fare status");
+    }
   };
 
   const hasAppliedListFilters = Boolean(
@@ -387,14 +403,19 @@ const AdminTrips = () => {
                     {extractNamesAndCities(trip.activeStates).cities.join(", ") || "-"}
                     </td>
                   
-                    <td
-                      className={`px-3 py-3 border text-xs ${
-                        trip.FareStatus === "Active"
-                          ? "text-green-600"
-                          : "bg-red-200"
-                      }`}
-                    >
-                      {trip.FareStatus}
+                    <td className="px-3 py-3 border text-xs">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleFareStatus(trip._id)}
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+                          trip.FareStatus === "Active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        <Power size={12} />
+                        {trip.FareStatus === "Active" ? "Active" : "De-active"}
+                      </button>
                     </td>
 
                     <td className="px-3 py-3 border text-xs">

@@ -489,6 +489,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["trip"],
     }),
+    toggleAdminTripFareStatus: builder.mutation({
+      query: (id) => ({
+        url: `/trip/toggleFareStatus/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["trip"],
+    }),
     deleteCategoryByAdmin: builder.mutation({
       query: (id) => ({
         url: `/category/deleteCategory/${id}`,
@@ -1510,6 +1517,7 @@ export const {
   useUpdateCategoryByAdminMutation,
   useDeleteCategoryByAdminMutation,
   useDeleteTripByAdminInAdminTripMutation,
+  useToggleAdminTripFareStatusMutation,
   useEditTripDetailMutation,
   useUpdateTransactionStatusMutation,
   useGetTransactionInfoQuery,
