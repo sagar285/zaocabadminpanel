@@ -43,10 +43,34 @@ const defaultForm = {
   features: "",
   targetRoles: ["Passenger"],
   vehicleCategory: "All",
+  cities: [],
+  allCities: false,
   city: "",
   state: "",
   isActive: true,
   permissions: EMPTY_PERMISSIONS,
+};
+
+const formatPackageLocation = (pkg) => {
+  const state = pkg?.state || "";
+  if (pkg?.allCities) {
+    return state ? `All Cities, ${state}` : "All Cities";
+  }
+  const cities = Array.isArray(pkg?.cities) && pkg.cities.length
+    ? pkg.cities
+    : pkg?.city
+      ? [pkg.city]
+      : [];
+  if (!cities.length && !state) {
+    return "All";
+  }
+  if (!cities.length) {
+    return state;
+  }
+  if (state) {
+    return `${cities.join(", ")}, ${state}`;
+  }
+  return cities.join(", ");
 };
 
 const PASSENGER_OPTIONS = [
@@ -115,6 +139,12 @@ const SubscriptionPackages = () => {
           ? pkg.targetRoles
           : ["Passenger"],
         vehicleCategory: pkg.vehicleCategory || "All",
+        cities: Array.isArray(pkg.cities) && pkg.cities.length
+          ? pkg.cities
+          : pkg.city
+            ? [pkg.city]
+            : [],
+        allCities: Boolean(pkg.allCities),
         city: pkg.city || "",
         state: pkg.state || "",
         isActive: pkg.isActive !== false,
@@ -175,10 +205,49 @@ const SubscriptionPackages = () => {
     }));
   };
 
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setFormData((prev) => ({
+      ...prev,
+      state,
+      cities: [],
+      allCities: false,
+      city: "",
+    }));
+  };
+
+  const handleAllCitiesChange = (checked) => {
+    setFormData((prev) => ({
+      ...prev,
+      allCities: checked,
+      cities: checked ? [] : prev.cities,
+      city: checked ? "" : prev.city,
+    }));
+  };
+
+  const toggleCitySelection = (cityName) => {
+    setFormData((prev) => {
+      const exists = prev.cities.includes(cityName);
+      const cities = exists
+        ? prev.cities.filter((city) => city !== cityName)
+        : [...prev.cities, cityName];
+      return {
+        ...prev,
+        allCities: false,
+        cities,
+        city: cities[0] || "",
+      };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.targetRoles.length) {
       toast.error("Select at least one role");
+      return;
+    }
+    if (formData.state && !formData.allCities && !formData.cities.length) {
+      toast.error("Select at least one city or choose All Cities");
       return;
     }
 
@@ -189,6 +258,9 @@ const SubscriptionPackages = () => {
       offerPrice: Number(formData.offerPrice),
       durationValue: Number(formData.durationValue) || 1,
       months: Number(formData.durationValue) || Number(formData.months) || 1,
+      cities: formData.allCities ? [] : formData.cities,
+      allCities: Boolean(formData.allCities),
+      city: formData.allCities ? "" : formData.cities[0] || "",
       features: formData.features
         ? formData.features.split(",").map((f) => f.trim()).filter(Boolean)
         : [],
@@ -280,7 +352,7 @@ const SubscriptionPackages = () => {
                 <select
                   name="state"
                   value={formData.state}
-                  onChange={handleChange}
+                  onChange={handleStateChange}
                   className="border p-2 rounded"
                 >
                   <option value="">Select State</option>
@@ -291,20 +363,56 @@ const SubscriptionPackages = () => {
                       </option>
                     ))}
                 </select>
-                <select
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="border p-2 rounded"
-                >
-                  <option value="">Select City</option>
-                  {citiesForState.map((city) => (
-                    <option key={city} value={city}>
-                      {city}
-                    </option>
-                  ))}
-                </select>
               </div>
+
+              {formData.state ? (
+                <div className="rounded-lg border p-4 space-y-3">
+                  <label className="flex items-center gap-2 text-sm font-medium">
+                    <input
+                      type="checkbox"
+                      checked={formData.allCities}
+                      onChange={(e) => handleAllCitiesChange(e.target.checked)}
+                    />
+                    All Cities
+                  </label>
+
+                  {!formData.allCities ? (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        Select Cities
+                      </p>
+                      {citiesForState.length ? (
+                        <div className="max-h-48 overflow-y-auto rounded border p-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                          {citiesForState.map((city) => (
+                            <label
+                              key={city}
+                              className="flex items-center gap-2 text-sm text-gray-700"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={formData.cities.includes(city)}
+                                onChange={() => toggleCitySelection(city)}
+                              />
+                              {city}
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500">No cities found for this state.</p>
+                      )}
+                      {formData.cities.length > 0 ? (
+                        <p className="text-xs text-gray-500 mt-2">
+                          Selected: {formData.cities.join(", ")}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      This package will apply to all cities in {formData.state}.
+                    </p>
+                  )}
+                </div>
+              ) : null}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="number" name="orderNumber" placeholder="Order Number" value={formData.orderNumber} onChange={handleChange} className="border p-2 rounded" />
@@ -414,7 +522,7 @@ const SubscriptionPackages = () => {
                     <td className="px-4 py-3">{pkg.orderNumber || 0}</td>
                     <td className="px-4 py-3">{pkg.name}</td>
                     <td className="px-4 py-3">{(pkg.targetRoles || []).join(", ")}</td>
-                    <td className="px-4 py-3">{[pkg.city, pkg.state].filter(Boolean).join(", ") || "All"}</td>
+                    <td className="px-4 py-3">{formatPackageLocation(pkg)}</td>
                     <td className="px-4 py-3">{pkg.vehicleCategory || "All"}</td>
                     <td className="px-4 py-3">₹{pkg.price}</td>
                     <td className="px-4 py-3">₹{pkg.offerPrice}</td>
