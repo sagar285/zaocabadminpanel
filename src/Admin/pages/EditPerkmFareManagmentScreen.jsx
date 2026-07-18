@@ -183,6 +183,7 @@ const [
     hideSeatView: false,
     hideChat: false,
     hideNumber: false,
+    acceptOnlinePayment: false,
   });
 
   console.log(editTripData, "dddddddddddddddddddddd");
@@ -215,6 +216,7 @@ const [
       setWaitingTimeMinutes(trip.waitingTimeMinutes || "");
       setExtraPerKmCharges(trip.extraPerKmCharges || "");
       setExtraTimeCharges(trip.extraTimeCharges || "");
+      setChargeType(trip.extraTimeChargeType === "perHour" ? "perHour" : "perMin");
       setWaitingTimeCharges(trip.waitingTimeCharges || "");
 
       setNightTimeCharge(trip.nightTimeCharge || "");
@@ -525,6 +527,7 @@ const [
       waitingTimeMinutes: waitingTimeMinutes,
       extraPerKmCharges: extraPerKmCharges,
       extraTimeCharges: extraTimeCharges,
+      extraTimeChargeType: chargeType === 'perHour' ? 'perHour' : 'perMin',
       waitingTimeCharges: waitingTimeCharges,
       nightTimeCharge: nightTimeCharge,
       nightTimeFrom: nightTimeFrom,
@@ -717,6 +720,11 @@ const [
                 label="Hide Number"
                 isSelected={settings.hideNumber}
                 onClick={() => toggleSetting("hideNumber")}
+              />
+              <ToggleButton
+                label="Accept Online Payment"
+                isSelected={!!settings.acceptOnlinePayment}
+                onClick={() => toggleSetting("acceptOnlinePayment")}
               />
             </div>
           </div>

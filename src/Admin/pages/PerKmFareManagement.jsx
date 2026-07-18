@@ -183,6 +183,7 @@ const PerKmFareManagementScreen = () => {
     hideSeatView: false,
     hideChat: false,
     hideNumber: false,
+    acceptOnlinePayment: false,
   });
 
   const toggleSetting = (settingKey) => {
@@ -410,6 +411,7 @@ const PerKmFareManagementScreen = () => {
       waitingTimeMinutes: waitingTimeMinutes,
       extraPerKmCharges: extraPerKmCharges,
       extraTimeCharges: extraTimeCharges,
+      extraTimeChargeType: chargeType === 'perHour' ? 'perHour' : 'perMin',
       waitingTimeCharges: waitingTimeCharges,
       nightTimeCharge: nightTimeCharge,
       nightTimeFrom: nightTimeFrom,
@@ -592,6 +594,11 @@ const PerKmFareManagementScreen = () => {
                 label="Hide Number"
                 isSelected={settings.hideNumber}
                 onClick={() => toggleSetting("hideNumber")}
+              />
+              <ToggleButton
+                label="Accept Online Payment"
+                isSelected={!!settings.acceptOnlinePayment}
+                onClick={() => toggleSetting("acceptOnlinePayment")}
               />
             </div>
           </div>
